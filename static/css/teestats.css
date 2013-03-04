@@ -1,0 +1,367 @@
+body, input, select { 
+    color: #666666;
+    font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+body { 
+    background: url("/images/bg.png") repeat-x #91C5FF;
+    margin: 0px;
+}
+
+a:visited { 
+    color: #AA7733;
+    text-decoration: none;
+}
+
+a { 
+    color: #800080;
+    text-decoration: underline;
+}
+
+a:hover { 
+    color: #FFAA33;
+    text-decoration: underline;
+}
+
+/* Header */
+#top_left { 
+    background: url("/images/top_left.png") no-repeat transparent;
+}
+
+#top_mid { 
+    background: url("/images/top_mid.png") 100% 0% transparent;
+    height: 143px;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#top_right { 
+    background: url("/images/top_right.png") 100% 0% no-repeat transparent;
+}
+
+div { 
+    display: block;
+}
+
+div#outer { 
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1100px;
+    min-width: 880px;
+    width: 90%;
+}
+
+div#top_left img.logo {
+    margin-top: 35px;
+}
+
+
+/* main menu */
+#menu_left { 
+    background: url("/images/menu_left.png") no-repeat transparent;
+}
+
+#menu_right { 
+    background: url("/images/menu_right.png") 100% 0% no-repeat transparent;
+}
+
+#menu_mid { 
+    background: url("/images/menu_mid.png") 100% 0% transparent;
+    height: 53px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#menu, #forum-menu { 
+    font-size: 14px;
+    height: 53px;
+    padding-right: 20px;
+    text-align: right;
+    vertical-align: bottom;
+}
+
+#menu ul, #forum-menu ul { 
+    list-style: none outside none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#menu li, #forum-menu li { 
+    background: url("/images/menu_closed_left.png") no-repeat transparent;
+    float: right;
+    margin: 0px;
+    padding: 0px 0px 0px 13px;
+}
+
+#menu a, #menu strong, #menu span, #forum-menu a { 
+    background: url("/images/menu_closed_right.png") 100% 0% no-repeat transparent;
+    color: #666666;
+    display: block;
+    padding: 23px 19px 15px 8px;
+    text-decoration: none;
+}
+
+#menu #current, #forum-menu .isactive { 
+    background-image: url("/images/menu_open_left.png");
+}
+
+#menu #current a, #forum-menu .isactive a { 
+    background-image: url("/images/menu_open_right.png");
+    padding-bottom: 31px;
+    padding-top: 7px;
+}
+
+#tlc { 
+    background: url("/images/tlc.png") no-repeat transparent;
+}
+
+#trc { 
+    background: url("/images/trc.png") 100% 0% no-repeat transparent;
+}
+
+#tb { 
+    background: url("/images/tb.png") 100% 0% repeat-x transparent;
+}
+
+#tb, #bb { 
+    font-size: 0px;
+    height: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+
+/* Footer */
+#blc { 
+    background: url("/images/blc.png") no-repeat transparent;
+}
+
+#brc { 
+    background: url("/images/brc.png") 100% 0% no-repeat transparent;
+}
+
+#bb { 
+    background: url("/images/bb.png") 100% 0% repeat-x transparent;
+}
+
+
+#page_foot { 
+    color: #FFFFFF;
+    font-size: 10px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    text-align: center;
+}
+
+/* Main Container */
+
+#lb { 
+    background: url("/images/lb.png") repeat-y transparent;
+}
+
+#rb { 
+    background: url("/images/rb.png") 100% 0% repeat-y transparent;
+}
+
+#mid { 
+    background: url("/images/mid.png") 100% 0% transparent;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#container { 
+    padding: 20px 10px 10px 20px;
+}
+
+
+/* search player */
+
+div#search_player {
+    padding: 10px 20px ;
+    background: #A5CF4A;
+    border: 1px solid #918F61;
+}
+
+div#search_player label {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+
+div#search_player input {
+    font-size: 20px;
+    line-height: 20px;
+    width: 300px;
+}
+
+
+
+
+/* Ladder */
+
+table.ladder th {
+    padding: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+table.ladder td {
+    padding: 5px 10px 5px 10px;
+    text-align: center;
+}
+
+
+table.ladder th.sorted a {
+    text-decoration: underline;
+}
+
+
+/* Home cards */
+div.card {
+    margin: 30px;
+    padding: 20px;
+    width: 250px;
+    height: 320px;
+    text-align: center;
+    float: left;
+    background: #E7E5BE;
+}
+
+div.card div.title {
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 30px;
+}
+
+div.card div.img {
+    margin: 10px 0px;
+    line-height: 220px;
+    height: 220px;
+    border: 1px solid #CCCCCC;
+    background: white;
+}
+
+div.card div.img img {
+    vertical-align: middle;
+}
+
+
+div.card div.data div.player a {
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 30px;
+    text-decoration: underline;
+}
+
+div.card div.data div.score {
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 30px;
+}
+
+
+/* Profile */
+
+div.statstitle {
+    margin: 50px 10% 20px 10%;
+    font-size: 35px;
+    font-weight: bold;
+    line-height: 50px;
+    padding: 5px 0px;
+    text-decoration: underline;
+    width: 80%;
+    text-align: center;
+    background: #E7E5BE;
+    color: #666666;
+    border: 1px solid #918F61;
+}
+
+div.statscard {
+    margin: 10px;
+    float: left;
+}
+
+div.profilecard table {
+    border: 1px solid #918F61;
+    border-collapse:collapse;
+}
+
+div.profilecard table tr th {
+    padding: 3px 15px;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
+}
+div.profilecard table tr td {
+    padding: 5px 15px;
+    border-top : 1px solid #CCCCCC;
+}
+
+div.profilecard table tr td.dataname{
+    font-size: 15px;
+    text-align: left;
+    width: 60px;
+}
+
+div.profilecard table tr td.image{
+    width: 150px;
+    text-align: center;
+    height: 120px;
+}
+
+div.profilecard table tr td.image img{
+    max-width: 150px;
+    max-height: 120px;
+}
+
+div.profilecard table tr td.datavalue{
+    text-align: right;
+    font-size: 15px;
+}
+
+div.favorites table tr td.dataname{
+    font-size: 20px;
+    width: 120px;
+    line-height: 25px;
+}
+
+div.favorites table tr td.datavalue{
+    font-size: 20px;
+    width: 130px;
+    line-height: 25px;
+}
+
+div.favorites table tr td.datavalue span{
+    font-size: 15px;
+}
+
+
+table.weaponstats {
+    border: 1px solid #918F61;
+    border-collapse:collapse;
+}
+
+table.weaponstats th {
+    padding: 3px 15px;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+table.weaponstats tr td {
+    padding: 5px 15px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    text-align: center;
+    width: 55px;
+}
+
+table.weaponstats tr td a {
+    font-weight: bold;
+    color: #AA7733;
+    text-decoration: underline
+}
