@@ -212,9 +212,18 @@ table.ladder td {
     text-align: center;
 }
 
+table.ladder th a {
+    text-decoration: none;
+    color: #AA7733;
+}
+
+table.ladder th.sorted a.visited {
+    color: #AA7733;
+}
 
 table.ladder th.sorted a {
     text-decoration: underline;
+    color: #AA7733;
 }
 
 
@@ -231,7 +240,7 @@ div.card {
 
 div.card div.title {
     font-weight: bold;
-    font-size: 35px;
+    font-size: 30px;
     line-height: 30px;
 }
 
@@ -268,14 +277,30 @@ div.statstitle {
     margin: 50px 10% 20px 10%;
     font-size: 35px;
     font-weight: bold;
-    line-height: 50px;
+    line-height:100px;
     padding: 5px 0px;
     text-decoration: underline;
     width: 80%;
     text-align: center;
     background: #E7E5BE;
-    color: #666666;
+    color: black;
     border: 1px solid #918F61;
+    vertical-align: middle;
+}
+
+div.statstitle div.imagerank {
+    float: left;
+    padding: 7px 0px 7px 12px;
+    position: absolute;
+}
+
+div.statstitle div.playername {
+    float: left;
+}
+
+div.statstitle img {
+    vertical-align: middle;
+    border: 2px solid #CCCCCC;
 }
 
 div.statscard {

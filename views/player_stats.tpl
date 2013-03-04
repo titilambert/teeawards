@@ -5,7 +5,10 @@
 ${lib.search_player()}
 
 <div class="statstitle">
-    Stats for ${player}
+  <div class="imagerank">
+    <img src="/images/ranks/rank_${rank[0]}.png" />
+  </div>
+  "${rank[1]}" ${player}
 </div>
 
 <div class="statscard">
@@ -57,6 +60,14 @@ ${lib.search_player()}
         </td>
         <td class="datavalue">
           ${deaths} deaths
+        </td>
+      </tr>
+      <tr>
+        <td class="dataname">
+          Suicide
+        </td>
+        <td class="datavalue">
+          ${suicides} suicides
         </td>
       </tr>
     </body>
@@ -191,11 +202,6 @@ ${lib.search_player()}
 </div>
 </div>
 
-
-
-
-
-
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -226,6 +232,11 @@ ${lib.search_player()}
     </tr>
   </tbody>
 </table>
+</div>
+
+
+
+<div class="statscard">
 </div>
 
 <div style="clear: both">

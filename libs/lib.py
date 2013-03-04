@@ -127,7 +127,6 @@ def get_player_stats(player):
         if not key in ret:
             ret[key] = 0
         ret[key] += 1
-        print data
         return ret
 
     def compute_kill_stats(ret, data):
@@ -190,5 +189,4 @@ def get_players_victims(ret, data):
     if not data['victim'] in ret:
         ret[data['victim']] = 0
     ret[data['victim']] += 1
-    print data
     return ret

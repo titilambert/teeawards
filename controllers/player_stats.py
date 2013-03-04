@@ -25,8 +25,8 @@ def player_stats(player=None):
     context['score'] = context['kills'] - context['suicides']
     context['deaths'] = context['suicides'] + sum(context['vstats']['weapon'].values())
     context['ratio'] = context['kills'] / float(context['deaths'])
-    context['favorite_victim'] = sorted([x for x in context['kstats']['victim'].items()], key=lambda x: x[1])[0]
-    context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1])[0]
+    context['favorite_victim'] = sorted([x for x in context['kstats']['victim'].items()], key=lambda x: x[1], reverse=True)[0]
+    context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1], reverse=True)[0]
 
     return context
 

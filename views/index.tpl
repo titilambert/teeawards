@@ -47,7 +47,7 @@ ${lib.search_player()}
   </div>
   <div class="data">
     <div class="player"><a href="/player_stats/${best_ratio[0]}">${best_ratio[0]}</a></div>
-    <div class="score">${best_ratio[1]} Kills/Deaths</div>
+    <div class="score">${"%0.2f" % best_ratio[1]} Kills/Deaths</div>
   </div> 
 </div>
 
@@ -60,7 +60,7 @@ ${lib.search_player()}
 &nbsp;
   </div>
   <div class="data">
-    <div class="player"><a href="/player_stats/${best_ratio[0]}">${best_suicider[0]}</a></div>
+    <div class="player"><a href="/player_stats/${best_suicider[0]}">${best_suicider[0]}</a></div>
     <div class="score">${best_suicider[1]} suicides</div>
   </div> 
 </div>
@@ -88,7 +88,7 @@ ${lib.search_player()}
 &nbsp;
   </div>
   <div class="data">
-    <div class="player"><a href="/player_stats/${best_hammer_victim[0]}">${best_victim[0]}</a></div>
+    <div class="player"><a href="/player_stats/${best_hammer_victim[0]}">${best_hammer_victim[0]}</a></div>
     <div class="score">${best_hammer_victim[1]} hammer deaths</div>
   </div> 
 </div>

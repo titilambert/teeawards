@@ -36,7 +36,7 @@
           #${i}
         </td>
         <td>
-          <img src="/images/rank/rank_${stats['rank']}.gif" />
+          <img src="/images/ranks/rank_${stats['rank']}.gif" />
           <a href="/player_stats/${player}" >${player}</a>
         </td>
         <td>
