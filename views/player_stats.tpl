@@ -259,7 +259,7 @@ ${lib.search_player()}
       <td class="image">
         <img src="/images/ranks/rank_${nextrank[0]}.jpg" />
       </td>
-      <td class="requirements">
+      <td class="requirements last">
         <strong>
             Next rank: ${nextrank[1]}:
         </strong>
