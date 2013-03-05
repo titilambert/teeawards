@@ -8,6 +8,9 @@ def player_stats(player=None):
     if request.method == 'POST':
         player = request.params['player']
     # Test player exists
+    if not player in get_player_list():
+        context["not_found"] = player
+        return context
 
     context['player'] = player
     context['kill_mapping'] = kill_mapping

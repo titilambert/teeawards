@@ -8,7 +8,7 @@ def item_stats():
     #    return "bad item"
 
     context['items'] = []
-    context['itemlist'] = ['hearth', 'shield', 'gun', 'hammer', 
+    context['itemlist'] = ['hearth', 'shield', 'hammer', 'gun', 
              'shutgun', 'grenade', 'laser', 'ninja',]
     for item in context['itemlist']:
         context['items'].append(get_item_stats(item))

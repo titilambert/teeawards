@@ -4,6 +4,12 @@
 
 ${lib.search_player()}
 
+% if not_found:
+    <div class="error">
+    Player '${not_found}' not found
+    </div>
+%else:
+
 <div class="statstitle">
   <div class="imagerank">
     <img src="/images/ranks/rank_${rank[0]}.png" />
@@ -272,4 +278,4 @@ ${lib.search_player()}
 
 <div style="clear: both">
 </div>
-
+% endif

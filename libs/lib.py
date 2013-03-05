@@ -119,7 +119,9 @@ def get_item_stats(item):
 
     return stats
 
-    
+def get_player_list():
+    player_list = set([x['player'] for x in pickup_table.find(fields=['player'])])
+    return player_list
 
 def get_player_stats(player):
     def compute_item_stats(ret, data):
