@@ -25,6 +25,19 @@ a:hover {
     text-decoration: underline;
 }
 
+table th {
+    padding: 3px 15px;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+table {
+    border: 1px solid #918F61;
+    border-collapse:collapse;
+}
+
 /* Header */
 #top_left { 
     background: url("/images/top_left.png") no-repeat transparent;
@@ -202,14 +215,34 @@ div#search_player input {
 
 /* Ladder */
 
+table.ladder {
+    margin: 0px 25px;
+    text-align: center;
+}
+
 table.ladder th {
     padding: 5px 10px 5px 10px;
     text-align: center;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
 }
 
 table.ladder td {
     padding: 5px 10px 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
     text-align: center;
+    width: 100px;
+}
+
+table.ladder td.nickname {
+    width: 240px;
+}
+
+table.ladder td.last {
+    border-right: 1px solid #918F61;
 }
 
 table.ladder th a {
@@ -275,11 +308,10 @@ div.card div.data div.score {
 
 div.statstitle {
     margin: 50px 10% 20px 10%;
-    font-size: 35px;
+    font-size: 40px;
     font-weight: bold;
     line-height:100px;
     padding: 5px 0px;
-    text-decoration: underline;
     width: 80%;
     text-align: center;
     background: #E7E5BE;
@@ -390,3 +422,76 @@ table.weaponstats tr td a {
     color: #AA7733;
     text-decoration: underline
 }
+
+
+div.statscard table.nextrank {
+    width: 490px;
+}
+
+div.statscard table.nextrank th {
+    width: 490px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+div.statscard table.nextrank td.image {
+    padding: 5px 10px;
+    width:  100px;
+}
+
+div.statscard table.nextrank img {
+    border: 1px solid #CCCCCC;
+}
+
+div.statscard td.requirements {
+    padding: 20px;
+}
+
+div.statscard div.progressbar { 
+    background-color: #E3E3E3;
+    border: 0px solid #3F3F3F;
+    float: left;
+    margin: 10px 0px 5px 0px;
+    padding: 0px;
+    width: 100%;
+}
+
+div.statscard div.progressbar div { 
+    background: #5EAA5E;
+}
+
+/* Ranks */
+
+table.ranklist {
+    margin: 10px 5%;
+    width:90%
+}
+
+table.ranklist th {
+    background: #E7E5BE;
+    color: #666666;
+    text-align: left;
+    font-size: 27px;
+    line-height: 35px;
+    padding: 3px 15px 3px 20px;
+    border: 1px solid #CCCCCC;
+}
+
+table.ranklist td {
+    padding-bottom: 40px;
+    line-height: 40px;
+}
+
+table.ranklist td.image {
+    width: 150px;
+}
+
+table.ranklist td.image img{
+    border: 1px solid #918F61;
+    margin: 15px;
+}
+
+table.ranklist td.requirements {
+    font-size: 20px;
+    line-height: 25px;
+}
+

@@ -24,7 +24,7 @@
         <a href="/ladder/deaths">Deaths</a>
       </th>
       <th ${'class="sorted"' if sort == 'suicides' else ''} >
-        <a href="/ladder/suicides">Suicide</a>
+        <a href="/ladder/suicides">Suicides</a>
       </th>
     </tr>
   </thead>
@@ -35,7 +35,7 @@
         <td>
           #${i}
         </td>
-        <td>
+        <td class="nickname">
           <img src="/images/ranks/rank_${stats['rank']}.gif" />
           <a href="/player_stats/${player}" >${player}</a>
         </td>
@@ -51,7 +51,7 @@
         <td>
           ${stats['deaths']}
         </td>
-        <td>
+        <td class="last">
           ${stats['suicides']}
         </td>
       </tr>

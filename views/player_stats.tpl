@@ -147,6 +147,9 @@ ${lib.search_player()}
 </table>
 </div>
 
+<div style="clear: both">
+</div>
+
 <div class="statscard">
 <div class="profilecard favorites">
   <table>
@@ -237,6 +240,34 @@ ${lib.search_player()}
 
 
 <div class="statscard">
+<table class="nextrank">
+  <thead>
+    <tr>
+      <th colspan="10">
+        Progress towards Next Rank
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="image">
+        <img src="/images/ranks/rank_${nextrank[0]}.jpg" />
+      </td>
+      <td class="requirements">
+        <strong>
+            Next rank: ${nextrank[1]}:
+        </strong>
+        <% prct = 100 * score / float(nextrank[2]) %>
+        <% prct = prct if prct > 0 else 0 %>
+        <div class="progressbar">
+            <div class="progress" style="width: ${prct}%"> ${prct}%</div>
+        </div>
+        <br/>
+        Current Global Score: ${score} of ${nextrank[2]}. Remaining points: ${nextrank[2] - score}.
+      </td>
+    </tr>
+  </tbody>
+</table>
 </div>
 
 <div style="clear: both">
