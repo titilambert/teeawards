@@ -12,7 +12,7 @@ ${lib.search_player()}
 
 <div class="statstitle">
   <div class="imagerank">
-    <img src="/images/ranks/rank_${rank[0]}.png" />
+    <img src="/images/ranks/rank_${rank[0]}.jpg" />
   </div>
   "${rank[1]}" ${player}
 </div>

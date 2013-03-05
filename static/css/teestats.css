@@ -345,6 +345,7 @@ div.statstitle div.playername {
 div.statstitle img {
     vertical-align: middle;
     border: 2px solid #CCCCCC;
+    width: 83px;
 }
 
 div.statscard {
