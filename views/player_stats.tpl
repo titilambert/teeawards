@@ -89,7 +89,7 @@ ${lib.search_player()}
       %for w in kill_mapping:
         % if w != 'exit':
         <td>
-          <a href="/item_stats/${w}">${w}</a>
+          <a href="/items#${w}">${w}</a>
         </td>
         % endif
       %endfor
@@ -125,7 +125,7 @@ ${lib.search_player()}
       %for w in kill_mapping:
         % if w != 'exit':
         <td>
-          <a href="/item_stats/${w}">${w}</a>
+          <a href="/items#${w}">${w}</a>
         </td>
         % endif
       %endfor
@@ -218,7 +218,7 @@ ${lib.search_player()}
     <tr>
       %for i in pickup_mapping:
         <td>
-          <a href="/item_stats/${i}">${i}</a>
+          <a href="/items#${i}">${i}</a>
         </td>
       %endfor
     </tr>

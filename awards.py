@@ -25,7 +25,7 @@ def setup_routing(app):
     app.route('/ladder', method=['GET', 'POST'], callback=ladder)
     app.route('/ranks', method=['GET', 'POST'], callback=ranks)
     app.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
-    app.route('/item_stats/<item>', method=['GET', 'POST'], callback=item_stats)
+    app.route('/items', method=['GET', 'POST'], callback=item_stats)
     app.route('/player_stats/<player>', method=['GET'], callback=player_stats)
     app.route('/player_stats', method=['POST'], callback=player_stats)
     app.route('/css/:filepath#.+#', method=['GET', 'POST'], callback=server_css)

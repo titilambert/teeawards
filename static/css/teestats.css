@@ -495,3 +495,30 @@ table.ranklist td.requirements {
     line-height: 25px;
 }
 
+/* Item */
+
+table.itemstats {
+    margin: 20px;
+}
+
+table.itemstats th {
+    border: 1px solid #918F61;
+}
+
+table.itemstats td.statname {
+    width: 150px;
+}
+
+table.itemstats td {
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    width: 100px;
+    margin: 20px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+table.itemstats td.last {
+    border-right: 1px solid #918F61;
+}
+

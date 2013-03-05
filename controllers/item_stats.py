@@ -2,13 +2,15 @@ from bottle import mako_view, request, response, redirect
 from libs.lib import *
 
 @mako_view('item_stats')
-def item_stats(item):
+def item_stats():
     context = {}
-    item = item.lower()
-    if not item in kill_mapping.keys() + pickup_mapping.keys():
-        return "bad item"
+    #if not item in kill_mapping.keys() + pickup_mapping.keys():
+    #    return "bad item"
 
-    context['item'] = item
-    context['stats'] = get_item_stats(item)
+    context['items'] = []
+    context['itemlist'] = ['hearth', 'shield', 'gun', 'hammer', 
+             'shutgun', 'grenade', 'laser', 'ninja',]
+    for item in context['itemlist']:
+        context['items'].append(get_item_stats(item))
     return context
 
