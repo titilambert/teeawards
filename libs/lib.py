@@ -18,9 +18,11 @@ kill_table = tee_db['kill']
 
 
 #Team
-#red team=0
-#blue team=1
-
+team_mapping = {
+    'Spectator': '-1',
+    'Red': '0',
+    'Blue': 1,
+}
 
 # Mapping
 pickup_mapping = {

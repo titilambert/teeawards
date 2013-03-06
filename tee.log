@@ -1,377 +1,279 @@
-[5131bc5d][client]: starting...
-[5131bc5d][engine/mastersrv]: refreshing master server addresses
-[5131bc5d][client/sound]: sound init successful
-[5131bc5d][localization]: loaded 'languages/french.txt'
-[5131bc5d][textrender]: loaded pFont from '/usr/share/games/teeworlds/data/fonts/DejaVuSans.ttf'
-[5131bc5d][textrender]: default pFont set 0x25b4400
-[5131bc5d][]: pFont memory usage: 2097152
-[5131bc5e][countryflags]: loaded country flag 'default'
-[5131bc5e][countryflags]: loaded country flag 'XEN'
-[5131bc5e][cou[5131bc61][server]: player is ready. ClientID=0 addr=[fe80:0:0:0:4a5b:39ff:fe70:34aa]:40238
-[5131bc61][game]: Teams are balanced (red=1 blue=0)
-[5131bc61][server]: 'Taytay' -> 'Taytay'
-[5131bc61][server]: player has entered the game. ClientID=0 addr=[fe80:0:0:0:4a5b:39ff:fe70:34aa]:40238
-[5131bc61][chat]: *** 'Taytay' entered and joined the red team
-[5131bc61][game]: team_join player='0:Taytay' team=0
-[5131bc69][chat]: *** 'Taytay' joined the blue team
-[5131bc69][game]: kill killer='0:Taytay' victim='0:Taytay' weapon=-3 special=0
-[5131bc69][game]: team_join player='0:Taytay' m_Team=1
-[5131bc69][game]: Teams are balanced (red=0 blue=1)
-[5131bd1d][server]: client dropped. cid=0 addr=[fe80:0:0:0:4a5b:39ff:fe70:34aa]:40238 reason='Kicked for inactivity'
-[5131bd1d][game]: kill killer='0:Taytay' victim='0:Taytay' weapon=-3 special=0
-[5131bd1d][chat]: *** 'Taytay' has left the game (Kicked for inactivity)
-[5131bd1d][game]: leave player='0:Taytay'
-[5131bd1d][game]: Teams are balanced (red=0 blue=0)
-[5131bd30][server]: player is ready. ClientID=0 addr=192.168.2.11:57479
-[5131bd30][game]: Teams are balanced (red=1 blue=0)
-[5131bd31][server]: client dropped. cid=0 addr=192.168.2.11:57479 reason=''
-[5131bd31][game]: Teams are balanced (red=0 blue=0)
-[5131bd32][server]: player is ready. ClientID=0 addr=[fe80:0:0:0:4a5b:39ff:fe70:34aa]:40238
-[5131bd32][game]: Teams are balanced (red=1 blue=0)
-[5131bd33][server]: 'Taytay' -> 'Taytay'
-[5131bd33][server]: player has entered the game. ClientID=0 addr=[fe80:0:0:0:4a5b:39ff:fe70:34aa]:40238
-[5131bd33][chat]: *** 'Taytay' entered and joined the red team
-[5131bd33][game]: team_join player='0:Taytay' team=0
-[5131bd39][game]: pickup player='0:Taytay' item=2/2
-[5131bd3a][game]: pickup player='0:Taytay' item=1/0
-[5131bd3b][game]: pickup player='0:Taytay' item=1/0
-[5131bd3b][game]: pickup player='0:Taytay' item=1/0
-[5131bd4a][game]: pickup player='0:Taytay' item=1/0
-[5131bd53][game]: pickup player='0:Taytay' item=3/5
-[5131bd5a][game]: pickup player='0:Taytay' item=1/0
-[5131bd5b][game]: pickup player='0:Taytay' item=1/0
-[5131bd5b][game]: pickup player='0:Taytay' item=1/0
-[5131bd6a][game]: pickup player='0:Taytay' item=1/0
-[5131bd79][game]: pickup player='0:Taytay' item=1/0
-[5131bd88][game]: pickup player='0:Taytay' item=1/0
-[5131bdb6][game]: pickup player='0:Taytay' item=2/3
-[5131bdbe][game]: kill killer='0:Taytay' victim='0:Taytay' weapon=-1 special=0
-[5131bdcb][game]: pickup player='0:Taytay' item=2/2
-[5131bdcc][game]: pickup player='0:Taytay' item=1/0
-[5131bdcd][game]: pickup player='0:Taytay' item=1/0
-[5131bdcd][game]: pickup player='0:Taytay' item=1/0
-[5131bdd0][game]: pickup player='0:Taytay' item=3/5
-[5131be0e][game]: pickup player='0:Taytay' item=2/3
-[5131be33][game]: pickup player='0:Taytay' item=1/0
-[5131be33][game]: pickup player='0:Taytay' item=1/0
-[5131be33][game]: pickup player='0:Taytay' item=1/0
-[5131be64][game]: pickup player='0:Taytay' item=1/0
-[5131be64][game]: pickup player='0:Taytay' item=1/0
-[5131be64][game]: pickup player='0:Taytay' item=1/0
-[5131be6e][game]: pickup player='0:Taytay' item=2/3
-[5131be7d][game]: pickup player='0:Taytay' item=2/3
-[5131be9a][game]: pickup player='0:Taytay' item=2/4
-[5131bea3][game]: pickup player='0:Taytay' item=0/0
-[5131bea5][game]: pickup player='0:Taytay' item=0/0
-[5131bea7][game]: pickup player='0:Taytay' item=0/0
-[5131beb6][game]: pickup player='0:Taytay' item=0/0
-[5131bebb][game]: pickup player='0:Taytay' item=1/0
-[5131bebb][game]: pickup player='0:Taytay' item=1/0
-[5131bebc][game]: pickup player='0:Taytay' item=1/0
-[5131bec2][game]: pickup player='0:Taytay' item=1/0
-[5131bec2][game]: pickup player='0:Taytay' item=1/0
-[5131bec3][game]: pickup player='0:Taytay' item=1/0
-[5131becb][game]: pickup player='0:Taytay' item=1/0
-[5131becc][game]: pickup player='0:Taytay' item=1/0
-[5131becc][game]: pickup player='0:Taytay' item=1/0
-[5131bedb][server]: client dropped. cid=0 addr=[fe80:0:0:0:4a5b:39ff:fe70:34aa]:40238 reason=''
-[5131bedb][game]: kill killer='0:Taytay' victim='0:Taytay' weapon=-3 special=0
-[5131bedb][chat]: *** 'Taytay' has left the game
-[5131bedb][game]: leave player='0:Taytay'
-[5131bedb][game]: Teams are balanced (red=0 blue=0)
-gs]: loaded country flag 'GE'
-[5131bc5e][countryflags]: loaded country flag 'DE'
-[5131bc5e][countryflags]: loaded country flag 'GH'
-[5131bc5e][countryflags]: loaded country flag 'GI'
-[5131bc5e][countryflags]: loaded country flag 'GR'
-[5131bc5e][countryflags]: loaded country flag 'GL'
-[5131bc5e][countryflags]: loaded country flag 'GD'
-[5131bc5e][countryflags]: loaded country flag 'GP'
-[5131bc5e][countryflags]: loaded country flag 'GU'
-[5131bc5e][countryflags]: loaded country flag 'GT'
-[5131bc5e][countryflags]: loaded country flag 'GG'
-[5131bc5e][countryflags]: loaded country flag 'GN'
-[5131bc5e][countryflags]: loaded country flag 'GW'
-[5131bc5e][countryflags]: loaded country flag 'GY'
-[5131bc5e][countryflags]: loaded country flag 'HT'
-[5131bc5e][countryflags]: loaded country flag 'VA'
-[5131bc5e][countryflags]: loaded country flag 'HN'
-[5131bc5e][countryflags]: loaded country flag 'HK'
-[5131bc5e][countryflags]: loaded country flag 'HU'
-[5131bc5e][countryflags]: loaded country flag 'IS'
-[5131bc5e][countryflags]: loaded country flag 'IN'
-[5131bc5e][countryflags]: loaded country flag 'ID'
-[5131bc5e][countryflags]: loaded country flag 'IR'
-[5131bc5e][countryflags]: loaded country flag 'IQ'
-[5131bc5e][countryflags]: loaded country flag 'IE'
-[5131bc5e][countryflags]: loaded country flag 'IM'
-[5131bc5e][countryflags]: loaded country flag 'IL'
-[5131bc5e][countryflags]: loaded country flag 'IT'
-[5131bc5e][countryflags]: loaded country flag 'JM'
-[5131bc5e][countryflags]: loaded country flag 'JP'
-[5131bc5e][countryflags]: loaded country flag 'JE'
-[5131bc5e][countryflags]: loaded country flag 'JO'
-[5131bc5e][countryflags]: loaded country flag 'KZ'
-[5131bc5e][countryflags]: loaded country flag 'KE'
-[5131bc5e][countryflags]: loaded country flag 'KI'
-[5131bc5e][countryflags]: loaded country flag 'KP'
-[5131bc5e][countryflags]: loaded country flag 'KR'
-[5131bc5e][countryflags]: loaded country flag 'KW'
-[5131bc5e][countryflags]: loaded country flag 'KG'
-[5131bc5e][countryflags]: loaded country flag 'LA'
-[5131bc5e][countryflags]: loaded country flag 'LV'
-[5131bc5e][countryflags]: loaded country flag 'LB'
-[5131bc5e][countryflags]: loaded country flag 'LS'
-[5131bc5e][countryflags]: loaded country flag 'LR'
-[5131bc5e][countryflags]: loaded country flag 'LY'
-[5131bc5e][countryflags]: loaded country flag 'LI'
-[5131bc5e][countryflags]: loaded country flag 'LT'
-[5131bc5e][countryflags]: loaded country flag 'LU'
-[5131bc5e][countryflags]: loaded country flag 'MO'
-[5131bc5e][countryflags]: loaded country flag 'MK'
-[5131bc5e][countryflags]: loaded country flag 'MG'
-[5131bc5e][countryflags]: loaded country flag 'MW'
-[5131bc5e][countryflags]: loaded country flag 'MY'
-[5131bc5e][countryflags]: loaded country flag 'MV'
-[5131bc5e][countryflags]: loaded country flag 'ML'
-[5131bc5e][countryflags]: loaded country flag 'MT'
-[5131bc5e][countryflags]: loaded country flag 'MH'
-[5131bc5e][countryflags]: loaded country flag 'MQ'
-[5131bc5e][countryflags]: loaded country flag 'MR'
-[5131bc5e][countryflags]: loaded country flag 'MU'
-[5131bc5e][countryflags]: loaded country flag 'MX'
-[5131bc5e][countryflags]: loaded country flag 'FM'
-[5131bc5e][countryflags]: loaded country flag 'MD'
-[5131bc5e][countryflags]: loaded country flag 'MC'
-[5131bc5e][countryflags]: loaded country flag 'MN'
-[5131bc5e][countryflags]: loaded country flag 'ME'
-[5131bc5e][countryflags]: loaded country flag 'MS'
-[5131bc5e][countryflags]: loaded country flag 'MA'
-[5131bc5e][countryflags]: loaded country flag 'MZ'
-[5131bc5e][countryflags]: loaded country flag 'MM'
-[5131bc5e][countryflags]: loaded country flag 'NA'
-[5131bc5e][countryflags]: loaded country flag 'NR'
-[5131bc5e][countryflags]: loaded country flag 'NP'
-[5131bc5e][countryflags]: loaded country flag 'NL'
-[5131bc5e][countryflags]: loaded country flag 'NC'
-[5131bc5e][countryflags]: loaded country flag 'NZ'
-[5131bc5e][countryflags]: loaded country flag 'NI'
-[5131bc5e][countryflags]: loaded country flag 'NE'
-[5131bc5e][countryflags]: loaded country flag 'NG'
-[5131bc5e][countryflags]: loaded country flag 'NU'
-[5131bc5e][countryflags]: loaded country flag 'NF'
-[5131bc5e][countryflags]: loaded country flag 'MP'
-[5131bc5e][countryflags]: loaded country flag 'NO'
-[5131bc5e][countryflags]: loaded country flag 'OM'
-[5131bc5e][countryflags]: loaded country flag 'PK'
-[5131bc5e][countryflags]: loaded country flag 'PW'
-[5131bc5e][countryflags]: loaded country flag 'PA'
-[5131bc5e][countryflags]: loaded country flag 'PG'
-[5131bc5e][countryflags]: loaded country flag 'PY'
-[5131bc5e][countryflags]: loaded country flag 'PE'
-[5131bc5e][countryflags]: loaded country flag 'PH'
-[5131bc5e][countryflags]: loaded country flag 'PN'
-[5131bc5e][countryflags]: loaded country flag 'PL'
-[5131bc5e][countryflags]: loaded country flag 'PT'
-[5131bc5e][countryflags]: loaded country flag 'PR'
-[5131bc5e][countryflags]: loaded country flag 'QA'
-[5131bc5e][countryflags]: loaded country flag 'RE'
-[5131bc5e][countryflags]: loaded country flag 'RO'
-[5131bc5e][countryflags]: loaded country flag 'RU'
-[5131bc5e][countryflags]: loaded country flag 'RW'
-[5131bc5e][countryflags]: loaded country flag 'BL'
-[5131bc5e][countryflags]: loaded country flag 'SH'
-[5131bc5e][countryflags]: loaded country flag 'KN'
-[5131bc5e][countryflags]: loaded country flag 'LC'
-[5131bc5e][countryflags]: loaded country flag 'MF'
-[5131bc5e][countryflags]: loaded country flag 'PM'
-[5131bc5e][countryflags]: loaded country flag 'VC'
-[5131bc5e][countryflags]: loaded country flag 'WS'
-[5131bc5e][countryflags]: loaded country flag 'SM'
-[5131bc5e][countryflags]: loaded country flag 'ST'
-[5131bc5e][countryflags]: loaded country flag 'SA'
-[5131bc5e][countryflags]: loaded country flag 'SN'
-[5131bc5e][countryflags]: loaded country flag 'RS'
-[5131bc5e][countryflags]: loaded country flag 'SC'
-[5131bc5e][countryflags]: loaded country flag 'SL'
-[5131bc5e][countryflags]: loaded country flag 'SG'
-[5131bc5e][countryflags]: loaded country flag 'SX'
-[5131bc5e][countryflags]: loaded country flag 'SK'
-[5131bc5e][countryflags]: loaded country flag 'SI'
-[5131bc5e][countryflags]: loaded country flag 'SB'
-[5131bc5e][countryflags]: loaded country flag 'SO'
-[5131bc5e][countryflags]: loaded country flag 'ZA'
-[5131bc5e][countryflags]: loaded country flag 'GS'
-[5131bc5e][countryflags]: loaded country flag 'ES'
-[5131bc5e][countryflags]: loaded country flag 'LK'
-[5131bc5e][countryflags]: loaded country flag 'SD'
-[5131bc5e][countryflags]: loaded country flag 'SR'
-[5131bc5e][countryflags]: loaded country flag 'SZ'
-[5131bc5e][countryflags]: loaded country flag 'SE'
-[5131bc5e][countryflags]: loaded country flag 'CH'
-[5131bc5e][countryflags]: loaded country flag 'SY'
-[5131bc5e][countryflags]: loaded country flag 'TW'
-[5131bc5e][countryflags]: loaded country flag 'TJ'
-[5131bc5e][countryflags]: loaded country flag 'TZ'
-[5131bc5e][countryflags]: loaded country flag 'TH'
-[5131bc5e][countryflags]: loaded country flag 'TL'
-[5131bc5e][countryflags]: loaded country flag 'TG'
-[5131bc5e][countryflags]: loaded country flag 'TK'
-[5131bc5e][countryflags]: loaded country flag 'TO'
-[5131bc5e][countryflags]: loaded country flag 'TT'
-[5131bc5e][countryflags]: loaded country flag 'TN'
-[5131bc5e][countryflags]: loaded country flag 'TR'
-[5131bc5e][countryflags]: loaded country flag 'TM'
-[5131bc5e][countryflags]: loaded country flag 'TC'
-[5131bc5e][countryflags]: loaded country flag 'TV'
-[5131bc5e][countryflags]: loaded country flag 'UG'
-[5131bc5e][countryflags]: loaded country flag 'UA'
-[5131bc5e][countryflags]: loaded country flag 'AE'
-[5131bc5e][countryflags]: loaded country flag 'GB'
-[5131bc5e][countryflags]: loaded country flag 'US'
-[5131bc5e][countryflags]: loaded country flag 'UY'
-[5131bc5e][countryflags]: loaded country flag 'UZ'
-[5131bc5e][countryflags]: loaded country flag 'VU'
-[5131bc5e][countryflags]: loaded country flag 'VE'
-[5131bc5e][countryflags]: loaded country flag 'VN'
-[5131bc5e][countryflags]: loaded country flag 'VG'
-[5131bc5e][countryflags]: loaded country flag 'VI'
-[5131bc5e][countryflags]: loaded country flag 'WF'
-[5131bc5e][countryflags]: loaded country flag 'EH'
-[5131bc5e][countryflags]: loaded country flag 'YE'
-[5131bc5e][countryflags]: loaded country flag 'ZM'
-[5131bc5e][countryflags]: loaded country flag 'ZW'
-[5131bc5e][game]: load skin coala
-[5131bc5e][game]: load skin redstripe
-[5131bc5e][game]: load skin bluestripe
-[5131bc5e][game]: load skin saddo
-[5131bc5e][game]: load skin warpaint
-[5131bc5e][game]: load skin brownbear
-[5131bc5e][game]: load skin toptri
-[5131bc5e][game]: load skin x_ninja
-[5131bc5e][game]: load skin pinky
-[5131bc5e][game]: load skin cammostripes
-[5131bc5e][game]: load skin redbopp
-[5131bc5e][game]: load skin default
-[5131bc5e][game]: load skin twintri
-[5131bc5e][game]: load skin cammo
-[5131bc5e][game]: load skin bluekitty
-[5131bc5e][game]: load skin twinbop
-[5131bc5e][game]: load skin limekitty
-[5131bc5e][gameclient]: initialisation finished after 685.31ms
-[5131bc5e][client]: version 0.6 626fce9a778df4d4
-[5131bc5e][engine/mastersrv]: saving addresses
-[5131bc5e][]: pFont memory usage: 2228224
-[5131bc5e][]: pFont memory usage: 2359296
-[5131bc5e][]: pFont memory usage: 2490368
-[5131bc5e][]: pFont memory usage: 2621440
-[5131bc5e][]: pFont memory usage: 2752512
-[5131bc5e][]: pFont memory usage: 2883584
-[5131bc61][client]: disconnecting. reason='unknown'
-[5131bc61][client]: connecting to '[fe80:0:0:0:4a5b:39ff:fe70:34aa]:8303'
-[5131bc61][]: pFont memory usage: 3932160
-[5131bc61][]: pFont memory usage: 4456448
-[5131bc61][client]: connected, sending info
-[5131bc61][client]: loading map, map=dm6 wanted crc=474da235
-[5131bc61][datafile]: loading. filename='maps/dm6.map'
-[5131bc61][datafile]: allocsize=3016
-[5131bc61][datafile]: readsize=2720
-[5131bc61][datafile]: swaplen=2740
-[5131bc61][datafile]: item_size=2328
-[5131bc61][datafile]: loading done. datafile='maps/dm6.map'
-[5131bc61][client]: loaded map 'maps/dm6.map'
-[5131bc61][client/network]: loading done
-[5131bc61][datafile]: loading data index=17 size=559 uncompressed=28080
-[5131bc61][datafile]: loading data index=12 size=178 uncompressed=14400
-[5131bc61][datafile]: loading data index=13 size=166 uncompressed=24624
-[5131bc61][datafile]: loading data index=14 size=842 uncompressed=32760
-[5131bc61][datafile]: loading data index=15 size=279 uncompressed=30960
-[5131bc61][datafile]: loading data index=16 size=326 uncompressed=25200
-[5131bc61][datafile]: loading data index=18 size=213 uncompressed=25200
-[5131bc61][datafile]: loading data index=19 size=56 uncompressed=28800
-[5131bc61][datafile]: loading data index=20 size=1422 uncompressed=34200
-[5131bc61][datafile]: loading data index=21 size=447 uncompressed=34200
-[5131bc61][datafile]: loading data index=0 size=23 uncompressed=15
-[5131bc61][datafile]: loading data index=1 size=20 uncompressed=12
-[5131bc61][datafile]: loading data index=2 size=25 uncompressed=17
-[5131bc61][datafile]: loading data index=3 size=26 uncompressed=18
-[5131bc61][datafile]: loading data index=4 size=27 uncompressed=19
-[5131bc61][datafile]: loading data index=5 size=27 uncompressed=19
-[5131bc61][datafile]: loading data index=6 size=13 uncompressed=5
-[5131bc61][chat]: *** 'Taytay' entered and joined the red team
-[5131bc61][datafile]: loading data index=7 size=128 uncompressed=304
-[5131bc61][datafile]: loading data index=8 size=56 uncompressed=152
-[5131bc61][datafile]: loading data index=9 size=79 uncompressed=152
-[5131bc61][datafile]: loading data index=10 size=96 uncompressed=152
-[5131bc61][datafile]: loading data index=11 size=65 uncompressed=152
-[5131bc69][chat]: *** 'Taytay' joined the blue team
-[5131bc69][]: pFont memory usage: 4587520
-[5131bc69][]: pFont memory usage: 4718592
-[5131bd1d][client]: disconnecting. reason='unknown'
-[5131bd1d][client]: offline error=' Kicked for inactivity'
-[5131bd30][client]: disconnecting. reason='unknown'
-[5131bd30][client]: connecting to '192.168.2.11:8303'
-[5131bd30][client]: connected, sending info
-[5131bd30][client]: loading map, map=dm6 wanted crc=474da235
-[5131bd30][datafile]: loading. filename='maps/dm6.map'
-[5131bd30][datafile]: allocsize=3016
-[5131bd30][datafile]: readsize=2720
-[5131bd30][datafile]: swaplen=2740
-[5131bd30][datafile]: item_size=2328
-[5131bd30][datafile]: loading done. datafile='maps/dm6.map'
-[5131bd30][client]: loaded map 'maps/dm6.map'
-[5131bd30][client/network]: loading done
-[5131bd30][datafile]: loading data index=17 size=559 uncompressed=28080
-[5131bd30][datafile]: loading data index=12 size=178 uncompressed=14400
-[5131bd30][datafile]: loading data index=13 size=166 uncompressed=24624
-[5131bd31][datafile]: loading data index=14 size=842 uncompressed=32760
-[5131bd31][datafile]: loading data index=15 size=279 uncompressed=30960
-[5131bd31][datafile]: loading data index=16 size=326 uncompressed=25200
-[5131bd31][datafile]: loading data index=18 size=213 uncompressed=25200
-[5131bd31][datafile]: loading data index=19 size=56 uncompressed=28800
-[5131bd31][datafile]: loading data index=20 size=1422 uncompressed=34200
-[5131bd31][datafile]: loading data index=21 size=447 uncompressed=34200
-[5131bd31][datafile]: loading data index=0 size=23 uncompressed=15
-[5131bd31][datafile]: loading data index=1 size=20 uncompressed=12
-[5131bd31][datafile]: loading data index=2 size=25 uncompressed=17
-[5131bd31][datafile]: loading data index=3 size=26 uncompressed=18
-[5131bd31][datafile]: loading data index=4 size=27 uncompressed=19
-[5131bd31][datafile]: loading data index=5 size=27 uncompressed=19
-[5131bd31][datafile]: loading data index=6 size=13 uncompressed=5
-[5131bd31][client]: disconnecting. reason='unknown'
-[5131bd32][client]: disconnecting. reason='unknown'
-[5131bd32][client]: connecting to '[fe80:0:0:0:4a5b:39ff:fe70:34aa]:8303'
-[5131bd32][client]: connected, sending info
-[5131bd32][client]: loading map, map=dm6 wanted crc=474da235
-[5131bd32][datafile]: loading. filename='maps/dm6.map'
-[5131bd32][datafile]: allocsize=3016
-[5131bd32][datafile]: readsize=2720
-[5131bd32][datafile]: swaplen=2740
-[5131bd32][datafile]: item_size=2328
-[5131bd32][datafile]: loading done. datafile='maps/dm6.map'
-[5131bd32][client]: loaded map 'maps/dm6.map'
-[5131bd32][client/network]: loading done
-[5131bd32][datafile]: loading data index=17 size=559 uncompressed=28080
-[5131bd32][datafile]: loading data index=12 size=178 uncompressed=14400
-[5131bd32][datafile]: loading data index=13 size=166 uncompressed=24624
-[5131bd32][datafile]: loading data index=14 size=842 uncompressed=32760
-[5131bd32][datafile]: loading data index=15 size=279 uncompressed=30960
-[5131bd32][datafile]: loading data index=16 size=326 uncompressed=25200
-[5131bd32][datafile]: loading data index=18 size=213 uncompressed=25200
-[5131bd32][datafile]: loading data index=19 size=56 uncompressed=28800
-[5131bd32][datafile]: loading data index=20 size=1422 uncompressed=34200
-[5131bd32][datafile]: loading data index=21 size=447 uncompressed=34200
-[5131bd32][datafile]: loading data index=0 size=23 uncompressed=15
-[5131bd32][datafile]: loading data index=1 size=20 uncompressed=12
-[5131bd32][datafile]: loading data index=2 size=25 uncompressed=17
-[5131bd32][datafile]: loading data index=3 size=26 uncompressed=18
-[5131bd32][datafile]: loading data index=4 size=27 uncompressed=19
-[5131bd32][datafile]: loading data index=5 size=27 uncompressed=19
-[5131bd32][datafile]: loading data index=6 size=13 uncompressed=5
-[5131bd33][chat]: *** 'Taytay' entered and joined the red team
-[5131bd33][datafile]: loading data index=7 size=128 uncompressed=304
-[5131bd33][datafile]: loading data index=8 size=56 uncompressed=152
-[5131bd33][datafile]: loading data index=9 size=79 uncompressed=152
-[5131bd33][datafile]: loading data index=10 size=96 uncompressed=152
-[5131bd33][datafile]: loading data index=11 size=65 uncompressed=152
-[5131bedb][client]: disconnecting. reason='unknown'
+[51374539][client]: starting...
+[51374539][engine/mastersrv]: refreshing master server addresses
+[5137453a][localization]: loaded 'languages/french.txt'
+[5137453a][textrender]: loaded pFont from '/usr/share/games/teeworlds/data/fonts/DejaVuSans.ttf'
+[5137453a][textrender]: default pFont set 0x30b4c90
+[5137453a][]: pFont memory usage: 2097152
+[5137453a][countryflags]: loaded country flag 'default'
+[5137453a][countryflags]: loaded country flag 'XEN'
+[5137453a][countryflags]: loaded country flag 'XNI'
+[5137453a][countryflags]: loaded country flag 'XSC'
+[5137453a][countryflags]: loaded country flag 'XWA'
+[5137453a][countryflags]: loaded country flag 'SS'
+[5137453a][countryflags]: loaded country flag 'AF'
+[5137453a][countryflags]: loaded country flag 'AX'
+[5137453a][countryflags]: loaded country flag 'AL'
+[5137453a][countryflags]: loaded country flag 'DZ'
+[5137453a][countryflags]: loaded country flag 'AS'
+[5137453a][countryflags]: loaded country flag 'AD'
+[5137453a][countryflags]: loaded country flag 'AO'
+[5137453a][countryflags]: loaded country flag 'AI'
+[5137453a][countryflags]: loaded country flag 'AG'
+[5137453a][countryflags]: loaded country flag 'AR'
+[5137453a][countryflags]: loaded country flag 'AM'
+[5137453a][countryflags]: loaded country flag 'AW'
+[5137453a][countryflags]: loaded country flag 'AU'
+[5137453a][countryflags]: loaded country flag 'AT'
+[5137453a][countryflags]: loaded country flag 'AZ'
+[5137453a][countryflags]: loaded country flag 'BS'
+[5137453a][countryflags]: loaded country flag 'BH'
+[5137453a][countryflags]: loaded country flag 'BD'
+[5137453a][countryflags]: loaded country flag 'BB'
+[5137453a][countryflags]: loaded country flag 'BY'
+[5137453a][countryflags]: loaded country flag 'BE'
+[5137453a][countryflags]: loaded country flag 'BZ'
+[5137453a][countryflags]: loaded country flag 'BJ'
+[5137453a][countryflags]: loaded country flag 'BM'
+[5137453a][countryflags]: loaded country flag 'BT'
+[5137453a][countryflags]: loaded country flag 'BO'
+[5137453a][countryflags]: loaded country flag 'BA'
+[5137453a][countryflags]: loaded country flag 'BW'
+[5137453a][countryflags]: loaded country flag 'BR'
+[5137453a][countryflags]: loaded country flag 'IO'
+[5137453a][countryflags]: loaded country flag 'BN'
+[5137453a][countryflags]: loaded country flag 'BG'
+[5137453a][countryflags]: loaded country flag 'BF'
+[5137453a][countryflags]: loaded country flag 'BI'
+[5137453a][countryflags]: loaded country flag 'KH'
+[5137453a][countryflags]: loaded country flag 'CM'
+[5137453a][countryflags]: loaded country flag 'CA'
+[5137453a][countryflags]: loaded country flag 'CV'
+[5137453a][countryflags]: loaded country flag 'KY'
+[5137453a][countryflags]: loaded country flag 'CF'
+[5137453a][countryflags]: loaded country flag 'TD'
+[5137453a][countryflags]: loaded country flag 'CL'
+[5137453a][countryflags]: loaded country flag 'CN'
+[5137453a][countryflags]: loaded country flag 'CX'
+[5137453a][countryflags]: loaded country flag 'CC'
+[5137453a][countryflags]: loaded country flag 'CO'
+[5137453a][countryflags]: loaded country flag 'KM'
+[5137453a][countryflags]: loaded country flag 'CG'
+[5137453a][countryflags]: loaded country flag 'CD'
+[5137453a][countryflags]: loaded country flag 'CK'
+[5137453a][countryflags]: loaded country flag 'CR'
+[5137453a][countryflags]: loaded country flag 'CI'
+[5137453a][countryflags]: loaded country flag 'HR'
+[5137453a][countryflags]: loaded country flag 'CU'
+[5137453a][countryflags]: loaded country flag 'CW'
+[5137453a][countryflags]: loaded country flag 'CY'
+[5137453a][countryflags]: loaded country flag 'CZ'
+[5137453a][countryflags]: loaded country flag 'DK'
+[5137453a][countryflags]: loaded country flag 'DJ'
+[5137453a][countryflags]: loaded country flag 'DM'
+[5137453a][countryflags]: loaded country flag 'DO'
+[5137453a][countryflags]: loaded country flag 'EC'
+[5137453a][countryflags]: loaded country flag 'EG'
+[5137453a][countryflags]: loaded country flag 'SV'
+[5137453a][countryflags]: loaded country flag 'GQ'
+[5137453a][countryflags]: loaded country flag 'ER'
+[5137453a][countryflags]: loaded country flag 'EE'
+[5137453a][countryflags]: loaded country flag 'ET'
+[5137453a][countryflags]: loaded country flag 'FK'
+[5137453a][countryflags]: loaded country flag 'FO'
+[5137453a][countryflags]: loaded country flag 'FJ'
+[5137453a][countryflags]: loaded country flag 'FI'
+[5137453a][countryflags]: loaded country flag 'FR'
+[5137453a][countryflags]: loaded country flag 'GF'
+[5137453a][countryflags]: loaded country flag 'PF'
+[5137453a][countryflags]: loaded country flag 'TF'
+[5137453a][countryflags]: loaded country flag 'GA'
+[5137453a][countryflags]: loaded country flag 'GM'
+[5137453a][countryflags]: loaded country flag 'GE'
+[5137453a][countryflags]: loaded country flag 'DE'
+[5137453a][countryflags]: loaded country flag 'GH'
+[5137453a][countryflags]: loaded country flag 'GI'
+[5137453a][countryflags]: loaded country flag 'GR'
+[5137453a][countryflags]: loaded country flag 'GL'
+[5137453a][countryflags]: loaded country flag 'GD'
+[5137453a][countryflags]: loaded country flag 'GP'
+[5137453a][countryflags]: loaded country flag 'GU'
+[5137453a][countryflags]: loaded country flag 'GT'
+[5137453a][countryflags]: loaded country flag 'GG'
+[5137453a][countryflags]: loaded country flag 'GN'
+[5137453a][countryflags]: loaded country flag 'GW'
+[5137453a][countryflags]: loaded country flag 'GY'
+[5137453a][countryflags]: loaded country flag 'HT'
+[5137453a][countryflags]: loaded country flag 'VA'
+[5137453a][countryflags]: loaded country flag 'HN'
+[5137453a][countryflags]: loaded country flag 'HK'
+[5137453a][countryflags]: loaded country flag 'HU'
+[5137453a][countryflags]: loaded country flag 'IS'
+[5137453a][countryflags]: loaded country flag 'IN'
+[5137453a][countryflags]: loaded country flag 'ID'
+[5137453a][countryflags]: loaded country flag 'IR'
+[5137453a][countryflags]: loaded country flag 'IQ'
+[5137453a][countryflags]: loaded country flag 'IE'
+[5137453a][countryflags]: loaded country flag 'IM'
+[5137453a][countryflags]: loaded country flag 'IL'
+[5137453a][countryflags]: loaded country flag 'IT'
+[5137453a][countryflags]: loaded country flag 'JM'
+[5137453a][countryflags]: loaded country flag 'JP'
+[5137453a][countryflags]: loaded country flag 'JE'
+[5137453a][countryflags]: loaded country flag 'JO'
+[5137453a][countryflags]: loaded country flag 'KZ'
+[5137453a][countryflags]: loaded country flag 'KE'
+[5137453a][countryflags]: loaded country flag 'KI'
+[5137453a][countryflags]: loaded country flag 'KP'
+[5137453a][countryflags]: loaded country flag 'KR'
+[5137453a][countryflags]: loaded country flag 'KW'
+[5137453a][countryflags]: loaded country flag 'KG'
+[5137453a][countryflags]: loaded country flag 'LA'
+[5137453a][countryflags]: loaded country flag 'LV'
+[5137453a][countryflags]: loaded country flag 'LB'
+[5137453a][countryflags]: loaded country flag 'LS'
+[5137453a][countryflags]: loaded country flag 'LR'
+[5137453a][countryflags]: loaded country flag 'LY'
+[5137453a][countryflags]: loaded country flag 'LI'
+[5137453a][countryflags]: loaded country flag 'LT'
+[5137453a][countryflags]: loaded country flag 'LU'
+[5137453a][countryflags]: loaded country flag 'MO'
+[5137453a][countryflags]: loaded country flag 'MK'
+[5137453a][countryflags]: loaded country flag 'MG'
+[5137453a][countryflags]: loaded country flag 'MW'
+[5137453a][countryflags]: loaded country flag 'MY'
+[5137453a][countryflags]: loaded country flag 'MV'
+[5137453a][countryflags]: loaded country flag 'ML'
+[5137453a][countryflags]: loaded country flag 'MT'
+[5137453a][countryflags]: loaded country flag 'MH'
+[5137453a][countryflags]: loaded country flag 'MQ'
+[5137453a][countryflags]: loaded country flag 'MR'
+[5137453a][countryflags]: loaded country flag 'MU'
+[5137453a][countryflags]: loaded country flag 'MX'
+[5137453a][countryflags]: loaded country flag 'FM'
+[5137453a][countryflags]: loaded country flag 'MD'
+[5137453a][countryflags]: loaded country flag 'MC'
+[5137453a][countryflags]: loaded country flag 'MN'
+[5137453a][countryflags]: loaded country flag 'ME'
+[5137453a][countryflags]: loaded country flag 'MS'
+[5137453a][countryflags]: loaded country flag 'MA'
+[5137453a][countryflags]: loaded country flag 'MZ'
+[5137453a][countryflags]: loaded country flag 'MM'
+[5137453a][countryflags]: loaded country flag 'NA'
+[5137453a][countryflags]: loaded country flag 'NR'
+[5137453a][countryflags]: loaded country flag 'NP'
+[5137453a][countryflags]: loaded country flag 'NL'
+[5137453a][countryflags]: loaded country flag 'NC'
+[5137453a][countryflags]: loaded country flag 'NZ'
+[5137453a][countryflags]: loaded country flag 'NI'
+[5137453a][countryflags]: loaded country flag 'NE'
+[5137453a][countryflags]: loaded country flag 'NG'
+[5137453a][countryflags]: loaded country flag 'NU'
+[5137453a][countryflags]: loaded country flag 'NF'
+[5137453a][countryflags]: loaded country flag 'MP'
+[5137453a][countryflags]: loaded country flag 'NO'
+[5137453a][countryflags]: loaded country flag 'OM'
+[5137453a][countryflags]: loaded country flag 'PK'
+[5137453a][countryflags]: loaded country flag 'PW'
+[5137453a][countryflags]: loaded country flag 'PA'
+[5137453a][countryflags]: loaded country flag 'PG'
+[5137453a][countryflags]: loaded country flag 'PY'
+[5137453a][countryflags]: loaded country flag 'PE'
+[5137453a][countryflags]: loaded country flag 'PH'
+[5137453a][countryflags]: loaded country flag 'PN'
+[5137453a][countryflags]: loaded country flag 'PL'
+[5137453a][countryflags]: loaded country flag 'PT'
+[5137453a][countryflags]: loaded country flag 'PR'
+[5137453a][countryflags]: loaded country flag 'QA'
+[5137453a][countryflags]: loaded country flag 'RE'
+[5137453a][countryflags]: loaded country flag 'RO'
+[5137453a][countryflags]: loaded country flag 'RU'
+[5137453a][countryflags]: loaded country flag 'RW'
+[5137453a][countryflags]: loaded country flag 'BL'
+[5137453a][countryflags]: loaded country flag 'SH'
+[5137453a][countryflags]: loaded country flag 'KN'
+[5137453a][countryflags]: loaded country flag 'LC'
+[5137453a][countryflags]: loaded country flag 'MF'
+[5137453a][countryflags]: loaded country flag 'PM'
+[5137453a][countryflags]: loaded country flag 'VC'
+[5137453a][countryflags]: loaded country flag 'WS'
+[5137453a][countryflags]: loaded country flag 'SM'
+[5137453a][countryflags]: loaded country flag 'ST'
+[5137453a][countryflags]: loaded country flag 'SA'
+[5137453a][countryflags]: loaded country flag 'SN'
+[5137453a][countryflags]: loaded country flag 'RS'
+[5137453a][countryflags]: loaded country flag 'SC'
+[5137453a][countryflags]: loaded country flag 'SL'
+[5137453a][countryflags]: loaded country flag 'SG'
+[5137453a][countryflags]: loaded country flag 'SX'
+[5137453a][countryflags]: loaded country flag 'SK'
+[5137453a][countryflags]: loaded country flag 'SI'
+[5137453a][countryflags]: loaded country flag 'SB'
+[5137453a][countryflags]: loaded country flag 'SO'
+[5137453a][countryflags]: loaded country flag 'ZA'
+[5137453a][countryflags]: loaded country flag 'GS'
+[5137453a][countryflags]: loaded country flag 'ES'
+[5137453a][countryflags]: loaded country flag 'LK'
+[5137453a][countryflags]: loaded country flag 'SD'
+[5137453a][countryflags]: loaded country flag 'SR'
+[5137453a][countryflags]: loaded country flag 'SZ'
+[5137453a][countryflags]: loaded country flag 'SE'
+[5137453a][countryflags]: loaded country flag 'CH'
+[5137453a][countryflags]: loaded country flag 'SY'
+[5137453a][countryflags]: loaded country flag 'TW'
+[5137453a][countryflags]: loaded country flag 'TJ'
+[5137453a][countryflags]: loaded country flag 'TZ'
+[5137453a][countryflags]: loaded country flag 'TH'
+[5137453a][countryflags]: loaded country flag 'TL'
+[5137453a][countryflags]: loaded country flag 'TG'
+[5137453a][countryflags]: loaded country flag 'TK'
+[5137453a][countryflags]: loaded country flag 'TO'
+[5137453a][countryflags]: loaded country flag 'TT'
+[5137453a][countryflags]: loaded country flag 'TN'
+[5137453a][countryflags]: loaded country flag 'TR'
+[5137453a][countryflags]: loaded country flag 'TM'
+[5137453a][countryflags]: loaded country flag 'TC'
+[5137453a][countryflags]: loaded country flag 'TV'
+[5137453a][countryflags]: loaded country flag 'UG'
+[5137453a][countryflags]: loaded country flag 'UA'
+[5137453a][countryflags]: loaded country flag 'AE'
+[5137453a][countryflags]: loaded country flag 'GB'
+[5137453a][countryflags]: loaded country flag 'US'
+[5137453a][countryflags]: loaded country flag 'UY'
+[5137453a][countryflags]: loaded country flag 'UZ'
+[5137453a][countryflags]: loaded country flag 'VU'
+[5137453a][countryflags]: loaded country flag 'VE'
+[5137453a][countryflags]: loaded country flag 'VN'
+[5137453a][countryflags]: loaded country flag 'VG'
+[5137453a][countryflags]: loaded country flag 'VI'
+[5137453a][countryflags]: loaded country flag 'WF'
+[5137453a][countryflags]: loaded country flag 'EH'
+[5137453a][countryflags]: loaded country flag 'YE'
+[5137453a][countryflags]: loaded country flag 'ZM'
+[5137453a][countryflags]: loaded country flag 'ZW'
+[5137453a][game]: load skin coala
+[5137453a][game]: load skin redstripe
+[5137453a][game]: load skin bluestripe
+[5137453a][game]: load skin saddo
+[5137453a][game]: load skin warpaint
+[5137453a][game]: load skin brownbear
+[5137453a][game]: load skin toptri
+[5137453a][game]: load skin x_ninja
+[5137453a][game]: load skin pinky
+[5137453a][game]: load skin cammostripes
+[5137453a][game]: load skin redbopp
+[5137453a][game]: load skin default
+[5137453a][game]: load skin twintri
+[5137453a][game]: load skin cammo
+[5137453a][game]: load skin bluekitty
+[5137453a][game]: load skin twinbop
+[5137453a][game]: load skin limekitty
+[5137453a][gameclient]: initialisation finished after 337.36ms
+[5137453a][client]: version 0.6 626fce9a778df4d4
+[5137453a][engine/mastersrv]: saving addresses
+[5137453a][]: pFont memory usage: 2228224
+[5137453a][]: pFont memory usage: 2359296
+[5137453a][]: pFont memory usage: 2490368
+[5137453a][]: pFont memory usage: 2621440
+[5137453a][]: pFont memory usage: 2752512
+[5137453a][]: pFont memory usage: 2883584
+[5137453e][client]: disconnecting. reason='unknown'
