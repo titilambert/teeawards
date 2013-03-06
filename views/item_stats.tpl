@@ -25,7 +25,7 @@
         <td class="statname">
           ${stat.capitalize()}
         </td>
-        % for player, nb in sorted_data:
+        % for player, nb in sorted_data[:7]:
         <td class="last">
             <a href="/player_stats/${player}">${player}</a><br/>Count: ${nb}
         </td>

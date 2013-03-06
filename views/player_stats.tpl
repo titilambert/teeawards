@@ -14,7 +14,7 @@ ${lib.search_player()}
   <div class="imagerank">
     <img src="/images/ranks/rank_${rank[0]}.jpg" />
   </div>
-  "${rank[1]}" ${player}
+  "${rank[1]}"<br/> ${player}
 </div>
 
 <div class="statscard">

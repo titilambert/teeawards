@@ -9,6 +9,7 @@ import os
 import sys
 import re
 from datetime import datetime
+import select
 
 class TeeWorldsManagerServer(object):
     def __init__(self):
@@ -44,48 +45,59 @@ class TeeWorldsManagerServer(object):
         return self.server.is_alive()
 
     def start(self):
-        self.server = TeeWorldsServer(self)
+        # Prepare server
+        # Server Command
+        self.command = '/usr/games/teeworlds-server'
+        # Open pty
+        master, slave = pty.openpty()
+        # Launch server
+        self.process = Popen(self.command, shell=True, stdin=PIPE, stdout=slave, stderr=slave, close_fds=True)
+
+        # Init thread
+        self.server = TeeWorldsServer(self, master)
+        # Start Server
         self.server.start()
 
     def stop(self):
-        self.server.stop_server()
-
-class TeeWorldsServer(threading.Thread):
-    def __init__(self, manager):
-        threading.Thread.__init__(self)
-        self.manager = manager
-
-        self.process = None
-        self.stop = threading.Event()
-
-    def stop_server(self):
         if self.process:
-            self.stop.set()
-            # Kill teeworlds server !!
+            # Stop thread
+            self.server.stop_server()
+            # Kill  childs
             ps_command = Popen("ps -o pid --ppid %d --noheaders" % self.process.pid, shell=True, stdout=PIPE)
             ps_output = ps_command.stdout.read()
             retcode = ps_command.wait()
-            assert retcode == 0, "ps command returned %d" % retcode
+            #assert retcode == 0, "ps command returned %d" % retcode
             for pid_str in ps_output.split("\n")[:-1]:
-                    os.kill(int(pid_str), 15)
-            os.kill(self.process.pid, 15)
+                os.kill(int(pid_str), 15)
+            # Kill teeworlds server !!
+            self.process.terminate()
             self.process = None
+
+class TeeWorldsServer(threading.Thread):
+    def __init__(self, manager, master):
+        threading.Thread.__init__(self)
+        self.manager = manager
+
+        self.process = manager.process
+	self.master = master
+
+        self.stop = threading.Event()
+
+    def stop_server(self):
+        self.stop.set()
 
     def stopped(self):
         return self.stop.isSet()
 
     def run(self):
-        # Prepare serveu
-        # Server Command
-        self.command = '/usr/games/teeworlds-server ' + " ".join(sys.argv[1:])
-        #cmd = '/usr/games/teeworlds-server -f /home/titilambert/projets_opensource/teeworlds/tee.cfg'
-        master, slave = pty.openpty()
-        # Launch server
-        self.process = Popen(self.command, shell=True, stdin=PIPE, stdout=slave, stderr=slave, close_fds=True)
-        stdout = os.fdopen(master)
 
+        timeout = 2
         while not self.stopped():
-            line = stdout.readline()
+#            print "read"
+            ready, _, _ = select.select([self.master], [], [], timeout)
+            if not ready:
+                continue
+            line = os.read(self.master, 512)
             # Join team:
             if re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
                 time, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line).groups()
@@ -146,8 +158,6 @@ class TeeWorldsServer(threading.Thread):
             # Other
             else:
                  print line
-        print "DDDDDDDDDDDDDDDDDDDDDDDDDEND "
-
 
 
 
