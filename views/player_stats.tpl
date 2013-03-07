@@ -266,7 +266,7 @@ ${lib.search_player()}
         <% prct = 100 * (score - rank[2]) / float(nextrank[2] - rank[2]) %>
         <% prct = prct if prct > 0 else 0 %>
         <div class="progressbar">
-            <div class="progress" style="width: ${prct}%"> ${prct}%</div>
+            <div class="progress" style="width: ${prct}%"> ${"%0.2f" % prct}%</div>
         </div>
         <br/>
         Current Global Score: ${score} of ${nextrank[2]}. Remaining points: ${nextrank[2] - score}.
