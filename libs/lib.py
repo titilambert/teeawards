@@ -4,6 +4,7 @@ con = Connection()
 tee_db = con['teeworlds']
 pickup_table = tee_db['pickup']
 kill_table = tee_db['kill']
+conf_table = tee_db['config']
 
 #Team score
 #+1 for taking the flag from the flag stand 
