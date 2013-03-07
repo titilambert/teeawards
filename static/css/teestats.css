@@ -227,12 +227,8 @@ table.ladder {
 }
 
 table.ladder th {
-    padding: 5px 10px 5px 10px;
-    text-align: center;
-    background: #E7E5BE;
-    color: #666666;
-    font-size: 20px;
-    line-height: 30px;
+    font-size: 18px;
+    padding: 3px 10px;
 }
 
 table.ladder td {

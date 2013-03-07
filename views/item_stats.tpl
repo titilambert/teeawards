@@ -19,8 +19,9 @@
     </tr>
   </thead>
   <tbody>
-    %for stat, data in item.items()[:7]:
-    <% sorted_data = sorted([x for x in data.items()], key=lambda x: x[1], reverse=True) %>
+  <% sorted_items = sorted(item.keys(), reverse=True) %>
+    %for stat in sorted_items:
+      <% sorted_data = sorted([x for x in item[stat].items()], key=lambda x: x[1], reverse=True) %>
       <tr>
         <td class="statname">
           ${stat.capitalize()}

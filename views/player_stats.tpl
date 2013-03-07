@@ -263,7 +263,7 @@ ${lib.search_player()}
         <strong>
             Next rank: ${nextrank[1]}:
         </strong>
-        <% prct = 100 * score / float(nextrank[2]) %>
+        <% prct = 100 * (score - rank[2]) / float(nextrank[2] - rank[2]) %>
         <% prct = prct if prct > 0 else 0 %>
         <div class="progressbar">
             <div class="progress" style="width: ${prct}%"> ${prct}%</div>

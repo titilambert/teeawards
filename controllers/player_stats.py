@@ -20,7 +20,7 @@ def player_stats(player=None):
     context['suicides'] = context['vstats']['suicide']
 
     rank_level = get_rank(player, context)
-    context['rank'] = (rank_level, ranks[rank_level][0])
+    context['rank'] = (rank_level, ranks[rank_level][0], ranks[rank_level][1])
     context['nextrank'] = (rank_level + 1, ranks[rank_level + 1][0], ranks[rank_level + 1][1])
 
     context['favorite_weapon'] = sorted([x for x in context['kstats']['weapon'].items()],
