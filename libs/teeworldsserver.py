@@ -47,7 +47,7 @@ class TeeWorldsManagerServer(object):
     def start(self):
         # Prepare server
         # Server Command
-        self.command = '/usr/games/teeworlds-server'
+        self.command = '/usr/games/teeworlds-server -f /home/sfladmin/teeawards/config.cfg'
         # Open pty
         master, slave = pty.openpty()
         # Launch server
