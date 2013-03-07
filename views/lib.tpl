@@ -19,7 +19,7 @@
             <div style="float: right; margin-right: -8px; margin-top: 5px;">
           </div>
           <a href="/">
-            <img class="logo"  src="/images/teeworlds-stats.png" alt="teeworlds-stats logo">
+            <img class="logo"  src="/images/teeawards-logo.png" alt="tee-awards logo">
           </a>
         </div>
       </div>
