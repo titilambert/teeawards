@@ -2,31 +2,80 @@
 
 <%inherit file="base.tpl" />
 
-<div>
+<div class="statstitle">
     Admin page
 </div>
 
-<% configlist = [x for x in config_list] %>
-% if server_alive:
-  <form name="toggle_server" method="post" action="/admin/toggle_server">
-    <input type="hidden" value="stop" name="toggle_server" />
-    <button>Stop server</button>
-  </form>
-% else:
-  <form name="toggle_server" method="post" action="/admin/toggle_server">
-    <select name="config">
-      % for conf in configlist:
-        <option value="${conf['name']}">${conf['name']}</option>
-      % endfor
-    </select>
-    <input type="hidden" value="start" name="toggle_server" />
-    <button>Start server</button>
-  </form>
+<table class="servermanager">
+<thead>
+  <tr><th colspan="3">
+    Server Manager
+  </td></th>
+</thead>
+<tbody>
+  <tr>
+    <% configlist = [x for x in config_list] %>
+    % if server_alive:
+    <td>
+      ${fullserverstatus['name']}
+    </td>
+    <td class="last">
+      <form name="toggle_server" method="post" action="/admin/toggle_server">
+        <input type="hidden" value="stop" name="toggle_server" />
+        <button>Stop server</button>
+      </form>
+    </td>
+    % else:
+    <form name="toggle_server" method="post" action="/admin/toggle_server">
+    <td>
+        <select name="config">
+          % for conf in configlist:
+            <option value="${conf['name']}">${conf['name']}</option>
+          % endfor
+        </select>
+    </td>
+    <td class="last">
+      <input type="hidden" value="start" name="toggle_server" />
+      <button>Start server</button>
+    </td>
+    </form>
+% endif
+</td></td>
+<tbody>
+</table>
+
+
+% if fullserverstatus:
+<table class="serverstatus">
+  <thead>
+    <tr>
+      <th colspan="40">
+        Server Status
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    % for k, v in fullserverstatus.items():
+      <tr>
+        <td>
+            ${k.capitalize()}
+        </td>
+        <td class="last">
+        % if k == 'players':
+          ${"<br/>".join(v)}
+        % else:
+            ${v}
+        % endif
+        </td>
+      </tr>
+    %endfor
+  </tbody>
+</table>
 % endif
 
 
 <div>
-  <table>
+  <table class="configlist">
     <thead>
         <tr>
           <th colspan="20">
@@ -43,13 +92,13 @@
             <td>
               <a href="/admin/conf/edit/${conf['name']}">Edit</a>
             </td>
-            <td>
+            <td class="last">
               <a href="/admin/conf/delete/${conf['_id']}">Delete</a>
             </td>
           </tr>
       % endfor
       <tr>
-        <td>
+        <td colspan="3" class="last">
           <a href="/admin/conf/edit">New conf</a>
         </td>
       </tr>
@@ -57,9 +106,4 @@
   </table>
 
 </div>
-
-<div>
-    Server status ${fullserverstatus}
-</div>
-
 

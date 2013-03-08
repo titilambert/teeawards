@@ -533,4 +533,29 @@ table.itemstats td {
     text-align: center;
 }
 
+/* Admin */
+table.servermanager {
+    margin-bottom: 30px;
+}
 
+table.servermanager td {
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}
+
+table.serverstatus {
+    margin-bottom: 30px;
+}
+
+table.serverstatus td {
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}
+
+table.configlist td {
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}

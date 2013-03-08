@@ -70,7 +70,6 @@ def double_kill_fct(self, player):
 from datetime import datetime, timedelta
 def time_fct(self, player):
     def toto(x, y):
-        print x, y
         if y is None:
             return (x['when'], None)
         return (x['when'], y['when'])
