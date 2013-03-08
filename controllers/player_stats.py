@@ -1,6 +1,8 @@
 from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs.rank import get_rank, ranks
+from libs.teeworldsserver import twms
+
 
 @mako_view('player_stats')
 def player_stats(player=None):
@@ -18,6 +20,10 @@ def player_stats(player=None):
     context['kstats'], context['vstats'], context['pstats'] = get_player_stats(player)
     context['kills'] = sum(context['kstats']['victim'].values())
     context['suicides'] = context['vstats']['suicide']
+    context['fullserverstatus'] = twms.get_server_info()
+    if context['fullserverstatus']:
+        context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
+        context['gametype'] = context['fullserverstatus']['gametype']
 
     rank_level = get_rank(player, context)
     context['rank'] = (rank_level, ranks[rank_level][0], ranks[rank_level][1])

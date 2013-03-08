@@ -2,9 +2,20 @@ from pymongo import Connection
 
 con = Connection()
 tee_db = con['teeworlds']
+conf_table = tee_db['config']
+
+join_table = tee_db['join']
+changeteam_table = tee_db['changeteam']
+round_table = tee_db['round']
+map_table = tee_db['map']
+kick_table = tee_db['kick']
+timeout_table = tee_db['timeout']
+leave_table = tee_db['leave']
 pickup_table = tee_db['pickup']
 kill_table = tee_db['kill']
-conf_table = tee_db['config']
+flaggrab_table = tee_db['flaggrab']
+flagreturn_table = tee_db['flagreturn']
+
 
 #Team score
 #+1 for taking the flag from the flag stand 
@@ -45,6 +56,14 @@ kill_mapping = {
     'grenade': '3',
     'laser': '4',
     'ninja': '5',
+    }
+
+# Special
+special = {
+    'normal_death': '0',
+    'die_with_flag': '1',
+    'your_killer_have_flag': '2',
+    'suicide_with_flag': '3',
     }
 
 r_kill_mapping = dict([(x[1], x[0]) for x in kill_mapping.items()])

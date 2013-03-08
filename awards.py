@@ -7,7 +7,8 @@ from controllers.ladder import ladder
 from controllers.item_stats import item_stats
 from controllers.player_stats import player_stats
 from controllers.ranks import ranks
-from controllers.admin import admin
+from controllers.admin import admin, conf_edit, conf_delete
+from controllers.achievements import achievements
 
 def server_css(filepath):
     return static_file(filepath, root='static/css/')
@@ -26,7 +27,14 @@ def setup_routing(app):
     app.route('/ladder', method=['GET', 'POST'], callback=ladder)
     app.route('/ranks', method=['GET', 'POST'], callback=ranks)
     app.route('/admin', method=['GET', 'POST'], callback=admin)
+    app.route('/achievements', method=['GET', 'POST'], callback=achievements)
+    app.route('/achievements/<achievement_name>/<player_name>', method=['GET', 'POST'], callback=achievements)
     app.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
+    app.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
+    app.route('/admin/conf/edit', method=['GET', 'POST'], callback=conf_edit)
+    app.route('/admin/conf/edit/', method=['GET', 'POST'], callback=conf_edit)
+    app.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)
+    app.route('/admin/conf/delete/<id_>', method=['GET', 'POST'], callback=conf_delete)
     app.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
     app.route('/items', method=['GET', 'POST'], callback=item_stats)
     app.route('/player_stats/<player>', method=['GET'], callback=player_stats)

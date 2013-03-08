@@ -6,9 +6,23 @@
     Admin page
 </div>
 
-<div>
-    <a href="/admin/new">New conf</a>
-</div>
+<% configlist = [x for x in config_list] %>
+% if server_alive:
+  <form name="toggle_server" method="post" action="/admin/toggle_server">
+    <input type="hidden" value="stop" name="toggle_server" />
+    <button>Stop server</button>
+  </form>
+% else:
+  <form name="toggle_server" method="post" action="/admin/toggle_server">
+    <select name="config">
+      % for conf in configlist:
+        <option value="${conf['name']}">${conf['name']}</option>
+      % endfor
+    </select>
+    <input type="hidden" value="start" name="toggle_server" />
+    <button>Start server</button>
+  </form>
+% endif
 
 
 <div>
@@ -21,83 +35,31 @@
         </tr>
     </thead>
     <tbody>
-      % for conf in config_list:
+      % for conf in configlist:
           <tr>
             <td>
               ${conf['name']}
             </td>
             <td>
-              <a href="/admin/conf/edit/${conf['_id']}">Edit</a>
+              <a href="/admin/conf/edit/${conf['name']}">Edit</a>
             </td>
             <td>
               <a href="/admin/conf/delete/${conf['_id']}">Delete</a>
             </td>
           </tr>
       % endfor
+      <tr>
+        <td>
+          <a href="/admin/conf/edit">New conf</a>
+        </td>
+      </tr>
     </tbody>
   </table>
 
 </div>
 
 <div>
-    Server status ${server_alive}
+    Server status ${fullserverstatus}
 </div>
 
-% if server_alive:
-  <form name="toggle_server" method="post" action="/admin/toggle_server">
-    <input type="hidden" value="stop" name="toggle_server" />
-    <button>Stop server</button>
-  </form>
-% else:
-  <form name="toggle_server" method="post" action="/admin/toggle_server">
-    <input type="hidden" value="start" name="toggle_server" />
-    <button>Start server</button>
-  </form>
-% endif
-
-
-% if engine_settings and game_settings:
-  <form name="new_conf" method="post" action="/admin/new">
-    <button>Save configuration</button>
-    <table>
-      <thead>
-        <tr>
-          <th colspan="20">
-            Engine settings
-          </th>
-        </tr>
-      </thead>
-    % for setting in engine_settings:
-      <tr>
-        <td>
-          ${setting[1]}
-        </td>
-        <td>
-          <input name="${setting[0]}" type="text" value="${setting[2]}" />
-        </td>
-      </tr>
-    % endfor
-    </table>
-    <table>
-      <thead>
-        <tr>
-          <th colspan="20">
-            Game settings
-          </th>
-        </tr>
-      </thead>
-    % for setting in game_settings:
-      <tr>
-        <td>
-          ${setting[1]}
-        </td>
-        <td>
-          <input name="${setting[0]}" type="text" value="${setting[2]}" />
-        </td>
-      </tr>
-    % endfor
-    </table>
-    <button>Save configuration</button>
-  </form> 
-% endif
 
