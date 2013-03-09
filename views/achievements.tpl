@@ -6,8 +6,8 @@
     Achievements
 </div>
 
+<ul>
 % for a in achievement_list:
-<br/>
-<a href="/achievements/${a}/tcohen">${a}</a>
+<li>${a}</li>
 % endfor
-
+</ul>

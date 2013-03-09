@@ -2,7 +2,7 @@ from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs import rank
 from libs.teeworldsserver import twms
-from libs.achievements import *
+from libs.achievement import *
 
 @mako_view('achievements')
 def achievements(achievement_name=None,player_name=None):
@@ -17,4 +17,3 @@ def achievements(achievement_name=None,player_name=None):
 
 
     return context
-

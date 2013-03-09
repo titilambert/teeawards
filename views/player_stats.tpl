@@ -243,8 +243,6 @@ ${lib.search_player()}
 </table>
 </div>
 
-
-
 <div class="statscard">
 <table class="nextrank">
   <thead>
@@ -277,5 +275,50 @@ ${lib.search_player()}
 </div>
 
 <div style="clear: both">
+
+<div class="statscard">
+<table class="achievements">
+  <thead>
+    <tr>
+      <th colspan="10">
+        Achievements
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    % for a, data in achievement_list.items():
+      <tr>
+        <td>
+          <table>
+            <thead>
+              <tr>
+               <% data = sorted([x for x in data.items()], key=lambda x: x[0]) %>
+                % for k in data:
+                   <th>
+                    ${k[1][0]}
+                  </th>
+                  % endfor
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  % for k in data:
+                    <td>
+                      ${k[1][1]}
+                    </td>
+                  % endfor
+                </tr>
+              </tbody>
+            </table>
+        </td>
+      </tr>
+    % endfor
+  </tbody>
+</table>
+</div>
+
+<div style="clear: both">
+
+
 </div>
 % endif

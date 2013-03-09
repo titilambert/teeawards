@@ -28,7 +28,6 @@ def setup_routing(app):
     app.route('/ranks', method=['GET', 'POST'], callback=ranks)
     app.route('/admin', method=['GET', 'POST'], callback=admin)
     app.route('/achievements', method=['GET', 'POST'], callback=achievements)
-    app.route('/achievements/<achievement_name>/<player_name>', method=['GET', 'POST'], callback=achievements)
     app.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
     app.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
     app.route('/admin/conf/edit', method=['GET', 'POST'], callback=conf_edit)

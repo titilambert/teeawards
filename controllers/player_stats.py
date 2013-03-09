@@ -2,6 +2,7 @@ from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs.rank import get_rank, ranks
 from libs.teeworldsserver import twms
+from libs.achievement import achievement_list
 
 
 @mako_view('player_stats')
@@ -37,6 +38,10 @@ def player_stats(player=None):
     context['ratio'] = context['kills'] / float(context['deaths'])
     context['favorite_victim'] = sorted([x for x in context['kstats']['victim'].items()], key=lambda x: x[1], reverse=True)[0]
     context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1], reverse=True)[0]
+
+    context['achievement_list'] = {}
+    for achievement in achievement_list.items():
+        context['achievement_list'][achievement[0]] = achievement[1].has_achievements(player)
 
     return context
 

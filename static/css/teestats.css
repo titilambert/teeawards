@@ -510,6 +510,10 @@ table.ranklist td.requirements {
     line-height: 25px;
 }
 
+table.achievements td {
+    text-align: center;
+}
+
 /* Item */
 
 table.itemstats {
@@ -559,3 +563,5 @@ table.configlist td {
     border-top: 1px solid #CCCCCC;
     border-right: 1px solid #CCCCCC;
 }
+
+

@@ -250,9 +250,6 @@ class TeeWorldsServer(threading.Thread):
             else:
                  print line
 
-
-
-
 engine_settings = [
     ('sv_name', 'Name of the server', 'unnamed server'),
     ('sv_bindaddr', 'Address to bind', ''),

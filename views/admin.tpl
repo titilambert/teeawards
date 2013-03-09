@@ -62,9 +62,9 @@
         </td>
         <td class="last">
         % if k == 'players':
-          ${"<br/>".join(v)}
+          ${"<br/>".join([p['name'] for p in v])}
         % else:
-            ${v}
+          ${v}
         % endif
         </td>
       </tr>
