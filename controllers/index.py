@@ -23,25 +23,48 @@ def index():
                               }
                         )
                         for p, data in stats_by_players.items()]
-    context['best_killer'] = sorted([(x, data['kills']) for x, data in stats_by_players],
+    try:
+        context['best_killer'] = sorted([(x, data['kills']) for x, data in stats_by_players],
                                     key=lambda x: x[1],
                                     reverse=True)[0]
-    context['best_score'] = sorted([(x, data['score']) for x, data in stats_by_players],
+    except:
+        context['best_killer'] = ("Nostat", 0)
+
+    try:
+        context['best_score'] = sorted([(x, data['score']) for x, data in stats_by_players],
                                    key=lambda x: x[1],
                                    reverse=True)[0]
-    context['best_ratio'] = sorted([(x, data['ratio']) for x, data in stats_by_players],
+    except:
+        context['best_score'] = ("Nostat", 0)
+
+    try:
+        context['best_ratio'] = sorted([(x, data['ratio']) for x, data in stats_by_players],
                                    key=lambda x: x[1],
                                    reverse=True)[0]
-    context['best_suicider'] = sorted([(x, data['suicides']) for x, data in stats_by_players],
+    except:
+        context['best_ratio'] = ("Nostat", 0)
+
+    try:
+        context['best_suicider'] = sorted([(x, data['suicides']) for x, data in stats_by_players],
                                       key=lambda x: x[1],
                                       reverse=True)[0]
-    context['best_victim'] = sorted([(x, data['deaths']) for x, data in stats_by_players],
+    except:
+        context['best_suicider'] = ("Nostat", 0)
+
+    try:
+        context['best_victim'] = sorted([(x, data['deaths']) for x, data in stats_by_players],
                                     key=lambda x: x[1],
                                     reverse=True)[0]
+    except:
+        context['best_victim'] = ("Nostat", 0)
 
-    hammer_victims = get_item_stats('hammer')['dead by Hammer']
-    context['best_hammer_victim'] = sorted([(x, data) for x, data in hammer_victims.items()],
+
+    try:
+        hammer_victims = get_item_stats('hammer')['dead by Hammer']
+        context['best_hammer_victim'] = sorted([(x, data) for x, data in hammer_victims.items()],
                                            key=lambda x: x[1],
                                            reverse=True)[0]
+    except:
+        context['best_hammer_victim'] = ("Nostat", 0)
     return context
 
