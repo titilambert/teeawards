@@ -1,6 +1,11 @@
+#!/usr/bin/python
+import sys
+import time
+import signal
+
+import bottle
 from bottle import Bottle, run, mako_template, TEMPLATE_PATH
 from bottle import static_file, route
-import bottle
 
 from controllers.index import index
 from controllers.ladder import ladder
@@ -9,6 +14,7 @@ from controllers.player_stats import player_stats
 from controllers.ranks import ranks
 from controllers.admin import admin, conf_edit, conf_delete
 from controllers.achievements import achievements
+from libs.teeworldsserver import twms
 
 def server_css(filepath):
     return static_file(filepath, root='static/css/')
@@ -47,6 +53,13 @@ app = Bottle()
 
 setup_routing(app)
 
+def signal_handler(signal, frame):
+        print 'You pressed Ctrl+C!'
+        if twms.stop():
+            print 'Please waiting... The teeworlds server is stopping !'
+            time.sleep(3)
+        sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
 
 run(app, host='0.0.0.0', port=8081)
 

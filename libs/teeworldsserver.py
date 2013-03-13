@@ -32,12 +32,14 @@ class TeeWorldsManagerServer(object):
         self.kick_table = tee_db['kick']
         self.timeout_table = tee_db['timeout']
         self.leave_table = tee_db['leave']
+        self.servershutdown_table = tee_db['servershutdown']
         self.pickup_table = tee_db['pickup']
         self.kill_table = tee_db['kill']
         self.flaggrab_table = tee_db['flaggrab']
         self.flagreturn_table = tee_db['flagreturn']
         self.flagcapture_table = tee_db['flagcapture']
         self.conf = conf
+        self.process = None
         #import pdb;pdb.set_trace()
 
     def empty_db(self):
@@ -132,6 +134,10 @@ class TeeWorldsManagerServer(object):
             # Kill teeworlds server !!
             self.process.terminate()
             self.process = None
+            data = {'when': datetime.now()}
+            self.servershutdown_table.save(data)
+            return True
+        return False
 
 class TeeWorldsServer(threading.Thread):
     def __init__(self, manager, master):
@@ -139,7 +145,7 @@ class TeeWorldsServer(threading.Thread):
         self.manager = manager
 
         self.process = manager.process
-	self.master = master
+        self.master = master
 
         self.stop = threading.Event()
 
