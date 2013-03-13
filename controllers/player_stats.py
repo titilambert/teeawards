@@ -30,14 +30,23 @@ def player_stats(player=None):
     context['rank'] = (rank_level, ranks[rank_level][0], ranks[rank_level][1])
     context['nextrank'] = (rank_level + 1, ranks[rank_level + 1][0], ranks[rank_level + 1][1])
 
-    context['favorite_weapon'] = sorted([x for x in context['kstats']['weapon'].items()],
+    try:
+        context['favorite_weapon'] = sorted([x for x in context['kstats']['weapon'].items()],
                                  key=lambda x: x[1],
                                  reverse=True)[0]
+    except:
+        context['favorite_weapon'] = ("No data", 0)
     context['score'] = context['kills'] - context['suicides']
     context['deaths'] = context['suicides'] + sum(context['vstats']['weapon'].values())
     context['ratio'] = context['kills'] / float(context['deaths'])
-    context['favorite_victim'] = sorted([x for x in context['kstats']['victim'].items()], key=lambda x: x[1], reverse=True)[0]
-    context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1], reverse=True)[0]
+    try:
+        context['favorite_victim'] = sorted([x for x in context['kstats']['victim'].items()], key=lambda x: x[1], reverse=True)[0]
+    except:
+        context['favorite_victim'] = ("No data", 0)
+    try:
+        context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1], reverse=True)[0]
+    except:
+        context['favorite_victim'] = ("No data", 0)
 
     context['achievement_list'] = {}
     for achievement in achievement_list.items():

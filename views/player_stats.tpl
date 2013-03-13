@@ -81,6 +81,7 @@ ${lib.search_player()}
 </div>
 </div>
 
+% if kstats['weapon']:
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -116,7 +117,9 @@ ${lib.search_player()}
   </tbody>
 </table>
 </div>
+% endif
 
+% if vstats['weapon']:
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -152,6 +155,7 @@ ${lib.search_player()}
   </tbody>
 </table>
 </div>
+% endif
 
 <div style="clear: both">
 </div>
@@ -167,17 +171,20 @@ ${lib.search_player()}
       </tr>
     </thead>
     <tbody>
+      % if favorite_weapon:
       <tr>
         <td class="dataname">
           Weapon
         </td>
         <td class="image">
-          <img src="/images/weapon/${favorite_weapon[0]}.png" />
+          <img src="/images/weapon/${favorite_weapon[0]}.png" alt="${favorite_weapon[0]}"/>
         </td>
         <td class="datavalue">
           ${favorite_weapon[1]} ${favorite_weapon[0]} kills
         </td>
       </tr>
+      % endif
+      % if favorite_victim:
       <tr>
         <td class="dataname">
           Victim
@@ -193,6 +200,8 @@ ${lib.search_player()}
           <span>${favorite_victim[1]} times</span>
         </td>
       </tr>
+      % endif
+      % if favorite_killer:
       <tr>
         <td class="dataname">
           Killer
@@ -206,11 +215,13 @@ ${lib.search_player()}
           <span>killed YOU ${favorite_killer[1]} times</span>
         </td>
       </tr>
+      % endif
     </body>
   </table>
 </div>
 </div>
 
+% if pstats:
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -242,6 +253,7 @@ ${lib.search_player()}
   </tbody>
 </table>
 </div>
+% endif
 
 <div class="statscard">
 <table class="nextrank">
