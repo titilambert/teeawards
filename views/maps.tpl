@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     %for map_ in map_list:
-      <tr>
+      <tr id="${map_['name']}">
         <td class="info">
           <div class="title">${map_['name']}</div>
           <br/>

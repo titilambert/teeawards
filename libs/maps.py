@@ -40,6 +40,9 @@ def save_map(request):
         if os.path.exists(os.path.join(map_screenshot_folder, filename)):
             os.remove(os.path.join(map_screenshot_folder, filename))
         request.files['screenshot'].save(map_screenshot_folder)
+        old_name = os.path.join(map_screenshot_folder, request.files['screenshot'].filename)
+        new_name = os.path.join(map_screenshot_folder, filename)
+        os.rename(old_name, new_name)
         data['map']['screenshot'] = filename
 
     prefered_mod = request.params['prefered_mod']

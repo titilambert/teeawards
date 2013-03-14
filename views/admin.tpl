@@ -140,7 +140,7 @@
       % for map_ in map_list:
           <tr>
             <td>
-              ${map_['name']}
+              <a href="/maps#${map_['name']}">${map_['name']}</a>
             </td>
             <td>
               ${map_['map']['min_players']}
