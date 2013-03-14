@@ -104,6 +104,70 @@
       </tr>
     </tbody>
   </table>
+</div>
 
+
+<div>
+    <table class="configlist">
+    <thead>
+        <tr>
+          <th colspan="20">
+           Maps
+          </th>
+        </tr>
+        <tr class="subhead">
+          <th>
+           Map name
+          </th>
+          <th>
+           Min player
+          </th>
+          <th>
+           Max player
+          </th>
+          <th>
+           Best mode
+          </th>
+          <th>
+           Likes
+          </th>
+          <th colspan="2">
+           Actions
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      % for map_ in map_list:
+          <tr>
+            <td>
+              ${map_['name']}
+            </td>
+            <td>
+              ${map_['map']['min_players']}
+            </td>
+            <td>
+              ${map_['map']['max_players']}
+            </td>
+            <td>
+              ${map_['map']['prefered_mod']}
+            </td>
+            <td>
+              ${map_['map']['likes'] if 'like' in map_['map'] else '0'}
+            </td>
+            <td>
+              <a href="/admin/map/edit/${map_['name']}">Edit</a>
+            </td>
+            <td class="last">
+              <a href="/admin/map/delete/${map_['_id']}">Delete</a>
+            </td>
+          </tr>
+      % endfor
+      <tr>
+        <td colspan="9" class="last">
+          <a href="/admin/map/edit">New map</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 

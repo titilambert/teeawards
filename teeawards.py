@@ -12,7 +12,7 @@ from controllers.ladder import ladder
 from controllers.item_stats import item_stats
 from controllers.player_stats import player_stats
 from controllers.ranks import ranks
-from controllers.admin import admin, conf_edit, conf_delete
+from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delete
 from controllers.achievements import achievements
 from libs.teeworldsserver import twms
 
@@ -32,10 +32,14 @@ def setup_routing(app):
     app.route('/index', method=['GET', 'POST'], callback=index)
     app.route('/ladder', method=['GET', 'POST'], callback=ladder)
     app.route('/ranks', method=['GET', 'POST'], callback=ranks)
+    app.route('/admin/map/edit', method=['GET', 'POST'], callback=map_edit)
+    app.route('/admin/map/edit/', method=['GET', 'POST'], callback=map_edit)
+    app.route('/admin/map/edit/<id_>', method=['GET', 'POST'], callback=map_edit)
+    app.route('/admin/map/delete/<id_>', method=['GET', 'POST'], callback=map_delete)
     app.route('/admin', method=['GET', 'POST'], callback=admin)
     app.route('/achievements', method=['GET', 'POST'], callback=achievements)
     app.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
-    app.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
+#    app.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
     app.route('/admin/conf/edit', method=['GET', 'POST'], callback=conf_edit)
     app.route('/admin/conf/edit/', method=['GET', 'POST'], callback=conf_edit)
     app.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)

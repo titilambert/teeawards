@@ -1,9 +1,13 @@
+import os
+import sys
+
 from pymongo import Connection
 
 con = Connection()
 tee_db = con['teeworlds']
 conf_table = tee_db['config']
 
+maps_table = tee_db['maps']
 join_table = tee_db['join']
 changeteam_table = tee_db['changeteam']
 round_table = tee_db['round']
@@ -15,6 +19,27 @@ pickup_table = tee_db['pickup']
 kill_table = tee_db['kill']
 flaggrab_table = tee_db['flaggrab']
 flagreturn_table = tee_db['flagreturn']
+
+
+# DATA FOLDER (maps, daemon, ...)
+data_folder = os.path.join(os.path.dirname(__file__), "..", "server_data")
+map_folder = os.path.join(data_folder, 'maps')
+demo_folder = os.path.join(data_folder, 'demo')
+skin_folder = os.path.join(data_folder, 'skin')
+map_screenshot_folder = os.path.join(data_folder, 'map_screenshot')
+folders = [
+    data_folder,
+    map_folder,
+    demo_folder,
+    skin_folder,
+    map_screenshot_folder,
+]
+for folder in folders:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    if not os.path.isdir(folder):
+        print "ERROR: ", folder," must be a folder and writable"
+        sys.exit(1)
 
 
 #Team score

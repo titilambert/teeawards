@@ -12,7 +12,7 @@ import re
 from datetime import datetime
 import select
 
-from libs.lib import conf_table
+from libs.lib import conf_table, data_folder
 from socket import *
 
 TIMEOUT = 2
@@ -38,6 +38,7 @@ class TeeWorldsManagerServer(object):
         self.flaggrab_table = tee_db['flaggrab']
         self.flagreturn_table = tee_db['flagreturn']
         self.flagcapture_table = tee_db['flagcapture']
+        self.server_executable = None
         self.conf = conf
         self.process = None
         #import pdb;pdb.set_trace()
@@ -108,8 +109,12 @@ class TeeWorldsManagerServer(object):
         self.conf = get_config(conf_name)
         filename = export_conf(self.conf)
         # Prepare server
+        ## Prepare storage file
+        f = open(os.path.join(data_folder,'storage.cfg'), 'w')
+        f.write('add_path .')
+        f.close()
         # Server Command
-        self.command = '/usr/games/teeworlds-server -f ' + filename
+        self.command = 'cd %s && /usr/games/teeworlds-server -f %s' % (data_folder, filename)
         # Open pty
         master, slave = pty.openpty()
         # Launch server
@@ -294,8 +299,13 @@ game_settings = [
     ('sv_inactivekick_time', 'Time in minutes after an inactive player will be taken care of', '3'),
     ('sv_inactivekick', 'How to deal with inactive players (0 = move to spectator, 1 = move to free spectator slot/kick, 2 = kick)', '1'),
 ]
+other_settings = [
+    ('server_binary', 'Server Binary (empty means use system binary)', ''),
+]
 
-def save_conf(params):
+def save_conf(request):
+    params = request.params
+    files = request.files
     name = params['sv_name']
     conf = dict([x for x in params.items()])
     data = conf_table.find_one({'name': name})
