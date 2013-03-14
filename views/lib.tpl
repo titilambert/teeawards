@@ -66,7 +66,7 @@
     <div id="menu_mid">
       <div id="menu">
         <ul>
-          % for tab in ['admin', 'achievements', 'ranks', 'items', 'ladder', 'home']:
+          % for tab in ['admin', 'maps', 'achievements', 'ranks', 'items', 'ladder', 'home']:
             % if tab == selected_tab:
               <li id="current">
             % else:

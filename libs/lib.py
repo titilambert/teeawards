@@ -26,7 +26,7 @@ data_folder = os.path.join(os.path.dirname(__file__), "..", "server_data")
 map_folder = os.path.join(data_folder, 'maps')
 demo_folder = os.path.join(data_folder, 'demo')
 skin_folder = os.path.join(data_folder, 'skin')
-map_screenshot_folder = os.path.join(data_folder, 'map_screenshot')
+map_screenshot_folder = os.path.join(data_folder, 'map_screenshots')
 folders = [
     data_folder,
     map_folder,

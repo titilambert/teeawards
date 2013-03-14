@@ -14,6 +14,7 @@ from controllers.player_stats import player_stats
 from controllers.ranks import ranks
 from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delete
 from controllers.achievements import achievements
+from controllers.maps import maps
 from libs.teeworldsserver import twms
 
 def server_css(filepath):
@@ -21,6 +22,9 @@ def server_css(filepath):
 
 def server_images(filepath):
     return static_file(filepath, root='static/images/')
+
+def server_map_screenshots(filepath):
+    return static_file(filepath, root='server_data/map_screenshots/')
 
 def server_js(filepath):
     return static_file(filepath, root='static/js/')
@@ -32,6 +36,8 @@ def setup_routing(app):
     app.route('/index', method=['GET', 'POST'], callback=index)
     app.route('/ladder', method=['GET', 'POST'], callback=ladder)
     app.route('/ranks', method=['GET', 'POST'], callback=ranks)
+    app.route('/maps', method=['GET', 'POST'], callback=maps)
+    app.route('/map/<id>', method=['GET', 'POST'], callback=maps)
     app.route('/admin/map/edit', method=['GET', 'POST'], callback=map_edit)
     app.route('/admin/map/edit/', method=['GET', 'POST'], callback=map_edit)
     app.route('/admin/map/edit/<id_>', method=['GET', 'POST'], callback=map_edit)
@@ -51,6 +57,7 @@ def setup_routing(app):
     app.route('/css/:filepath#.+#', method=['GET', 'POST'], callback=server_css)
     app.route('/images/:filepath#.+#', method=['GET', 'POST'], callback=server_images)
     app.route('/js/:filepath#.+#', method=['GET', 'POST'], callback=server_js)
+    app.route('/map_screenshots/:filepath#.+#', method=['GET', 'POST'], callback=server_map_screenshots)
 
 
 app = Bottle()

@@ -14,7 +14,6 @@ def ladder(sort='score'):
         context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
         context['gametype'] = context['fullserverstatus']['gametype']
 
-
     if sort not in ['kills', 'suicides', 'deaths', 'score', 'ratio', 'nickname']:
         redirect("/ladder")
 
@@ -30,7 +29,6 @@ def ladder(sort='score'):
                         )
                         for p, data in stats_by_players.items()]
 
-
     if sort == 'nickname':
         context['stats_by_players'] = sorted([x for x in stats_by_players],
                                          key=lambda x: x[0])
@@ -38,7 +36,6 @@ def ladder(sort='score'):
         context['stats_by_players'] = sorted([x for x in stats_by_players],
                                          key=lambda x: x[1][sort],
                                          reverse=True)
-
 
     return context
 

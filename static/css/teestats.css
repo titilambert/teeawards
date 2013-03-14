@@ -564,4 +564,38 @@ table.configlist td {
     border-right: 1px solid #CCCCCC;
 }
 
+table.configlist {
+    margin-bottom: 30px;
+}
 
+table.maplist tr.subhead th{
+    font-weight: normal;
+}
+
+table.maplist td{
+    text-align: center;
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+}
+
+/* Maps */
+table.maps td {
+    padding: 20px 20px;
+}
+
+table.maps td.info {
+    width: 200px;
+    vertical-align: top;
+    font-size: 15px;
+}
+
+table.maps td.info div.title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+table.maps td.map_screenshot img{
+    max-width: 760px;
+}

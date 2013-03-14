@@ -108,7 +108,7 @@
 
 
 <div>
-    <table class="configlist">
+    <table class="maplist">
     <thead>
         <tr>
           <th colspan="20">

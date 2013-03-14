@@ -111,7 +111,12 @@ class TeeWorldsManagerServer(object):
         # Prepare server
         ## Prepare storage file
         f = open(os.path.join(data_folder,'storage.cfg'), 'w')
-        f.write('add_path .')
+        # USELESS
+        #f.write('add_path .')
+        #f.write('add_path $USERDIR')
+        #f.write('add_path $DATADIR')
+        # END USELESS
+        f.write('add_path $CURRENTDIR')
         f.close()
         # Server Command
         self.command = 'cd %s && /usr/games/teeworlds-server -f %s' % (data_folder, filename)
@@ -321,7 +326,7 @@ def delete_conf(id_):
     conf_table.remove(ObjectId(id_))
 
 def export_conf(conf):
-    filename = '/tmp/teeworlds.conf'
+    filename = data_folder + '/teeworlds.conf'
     f = open(filename, 'w')
     for setting, value in conf['conf'].items():
         f.write("%s %s\n" % (setting, value))

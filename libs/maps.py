@@ -40,6 +40,7 @@ def save_map(request):
         if os.path.exists(os.path.join(map_screenshot_folder, filename)):
             os.remove(os.path.join(map_screenshot_folder, filename))
         request.files['screenshot'].save(map_screenshot_folder)
+        data['map']['screenshot'] = filename
 
     prefered_mod = request.params['prefered_mod']
     min_players = request.params['min_players']
