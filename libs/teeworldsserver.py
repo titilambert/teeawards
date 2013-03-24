@@ -175,6 +175,8 @@ class TeeWorldsServer(threading.Thread):
             if not ready:
                 continue
             line = os.read(self.master, 512)
+            if getattr(self.conf, 'record_stats', '1') == '0':
+                continue
 
             # Join team:
             if re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
@@ -273,8 +275,8 @@ engine_settings = [
     ('sv_external_port', 'Port to report to the master servers (e.g. in case of a firewall rename)','0'),
     ('sv_max_clients', 'Number of clients that can be connected to the server at the same time', '12'),
     ('sv_max_clients_per_ip', 'Number of clients with the same ip that can be connected to the server at the same time', '12'),
-    ('sv_high_bandwidth', 'Use high bandwidth mode, for LAN servers only', '0'),
-    ('sv_register', 'Register on the master servers', '1'),
+    ('sv_high_bandwidth', 'Use high bandwidth mode, for LAN servers only', '1'),
+    ('sv_register', 'Register on the master servers', '0'),
     ('sv_map', 'Map to use', 'dm1'),
     ('sv_rcon_password', 'Password to access the remote console (if not set, rcon is disabled)', ''),
     ('password', 'Password to connect to the server', ''),
@@ -293,10 +295,10 @@ game_settings = [
     ('sv_motd', ' Message of the day, shown in server info and when joining a server', ''),
     ('sv_spectator_slots', 'Number of clients that can only be spectators', '0'),
     ('sv_teambalance_time', 'Time in minutes after the teams are uneven, to auto balance', '1'),
-    ('sv_spamprotection', 'Enable spam filter', '1'),
+    ('sv_spamprotection', 'Enable spam filter', 'False'),
     ('sv_tournament_mode', 'Players will automatically join as spectator', '0'),
     ('sv_respawn_delay_tdm', 'Time in seconds needed to respawn in the tdm gametype', '3'),
-    ('sv_teamdamage', 'Enable friendly fire', '0'),
+    ('sv_teamdamage', 'Enable friendly fire', '1'),
     ('sv_powerups', 'Enable powerups (katana)', '1'),
     ('sv_vote_kick', 'Enable kick voting', '1'),
     ('sv_vote_kick_bantime', 'Time in minutes to ban a player if kicked by voting (0 equals only kick)', '5'),
@@ -306,6 +308,7 @@ game_settings = [
 ]
 other_settings = [
     ('server_binary', 'Server Binary (empty means use system binary)', ''),
+    ('record_stats', 'Records stats', '1'),
 ]
 
 def save_conf(request):
