@@ -27,12 +27,14 @@ map_folder = os.path.join(data_folder, 'maps')
 demo_folder = os.path.join(data_folder, 'demo')
 skin_folder = os.path.join(data_folder, 'skin')
 map_screenshot_folder = os.path.join(data_folder, 'map_screenshots')
+server_folder = os.path.join(data_folder, 'servers')
 folders = [
     data_folder,
     map_folder,
     demo_folder,
     skin_folder,
     map_screenshot_folder,
+    server_folder,
 ]
 for folder in folders:
     if not os.path.exists(folder):

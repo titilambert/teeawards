@@ -12,7 +12,7 @@ import re
 from datetime import datetime
 import select
 
-from libs.lib import conf_table, data_folder
+from libs.lib import conf_table, data_folder, server_folder
 from socket import *
 
 TIMEOUT = 2
@@ -119,7 +119,11 @@ class TeeWorldsManagerServer(object):
         f.write('add_path $CURRENTDIR')
         f.close()
         # Server Command
-        self.command = 'cd %s && /usr/games/teeworlds-server -f %s' % (data_folder, filename)
+        if self.conf['conf'].get('server', ''):
+            server_bin = self.conf['conf']['server']
+        else:
+            server_bin = "`which teeworlds-server`"
+        self.command = 'cd %s && %s -f %s' % (data_folder, server_bin, filename)
         # Open pty
         master, slave = pty.openpty()
         # Launch server
@@ -175,7 +179,7 @@ class TeeWorldsServer(threading.Thread):
             if not ready:
                 continue
             line = os.read(self.master, 512)
-            if getattr(self.conf, 'record_stats', '1') == '0':
+            if getattr(self.manager.conf['conf'], 'record_stats', '1') == '0':
                 continue
 
             # Join team:
@@ -308,14 +312,28 @@ game_settings = [
 ]
 other_settings = [
     ('server_binary', 'Server Binary (empty means use system binary)', ''),
+    ('server', 'old server binary', ''),
     ('record_stats', 'Records stats', '1'),
 ]
 
 def save_conf(request):
     params = request.params
     files = request.files
+    if 'server_binary' in files:
+        params['server'] = os.path.join(server_folder,
+                     files['server_binary'].filename)
+        if os.path.exists(params['server']):
+            os.remove(params['server'])
+        files['server_binary'].save(server_folder)
+        os.chmod(params['server'], 755)
+    elif params.get('server', ''):
+        # don't change the server
+        pass
+    else:
+        params['server'] = ""
+        
     name = params['sv_name']
-    conf = dict([x for x in params.items()])
+    conf = dict([x for x in params.items()])        
     data = conf_table.find_one({'name': name})
     if data:
         # Config exists

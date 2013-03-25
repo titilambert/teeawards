@@ -64,12 +64,20 @@
           <input name="${other_settings[0][0]}" type="file" value="${other_settings[0][2]}" />
         </td>
       </tr>
+        <td colspan="2">
+          % if other_settings[1][2]:
+              Current server : ${other_settings[1][2]}
+          % endif
+          <input name="${other_settings[1][0]}" type="hidden" value="${other_settings[1][2]}" />
+        </td>
+      <tr>
+      </tr>
       <tr>
         <td>
-          ${other_settings[1][1]}
+          ${other_settings[2][1]}
         </td>
         <td>
-          <input name="${other_settings[1][0]}" type="text" value="${other_settings[1][2]}" />
+          <input name="${other_settings[2][0]}" type="text" value="${other_settings[2][2]}" />
         </td>
       </tr>
     </table>

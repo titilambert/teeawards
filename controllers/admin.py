@@ -56,7 +56,7 @@ def conf_edit(id_=None):
         context['game_settings'] = game_settings
     # Create new conf
     elif not id_ and request.method == 'POST':
-        save_conf(request.params)
+        save_conf(request)
         redirect("/admin")
     # Show edit conf
     elif id_ and request.method == 'GET':
