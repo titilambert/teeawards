@@ -43,7 +43,9 @@ Launch your clients !
 Go see your stats !
 http://127.0.0.1:8081
 
-TODO :
+TODOs
+-----
+
  -  Add fedora and others distributions more compatible
  -  Add authentification for admin page
  -  Finish to convert achievements
@@ -54,6 +56,11 @@ TODO :
  -  Any idea ???
  -  Reset stats button ??
 
-BIG THANKS : ALL FANS WHO MADE ART on the forum !!!!
+BIG THANKS
+----------
+ -  ALL FANS WHO MADE ART on the forum !!!!
+ -  My colleagues
 
-[forum] https://www.teeworlds.com/forum/viewtopic.php?pid=105386#p105386
+LINKS
+-----
+ -  Teeworlds thread: https://www.teeworlds.com/forum/viewtopic.php?pid=105386#p105386
