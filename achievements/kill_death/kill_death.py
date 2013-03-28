@@ -1,6 +1,6 @@
 from libs.lib import tee_db
 from datetime import datetime, timedelta
-from libs.achievement import Achievement, achievement_list
+from libs.achievement import Achievement, achievement_desc_list
 
 def kill_death_fct(self, player):
     def map_data(x, y):
@@ -20,6 +20,6 @@ def kill_death_fct(self, player):
     return {0: ('Kill Death', sum(ret))}
 
 
-kill_death = Achievement('Kill Death', 'killdeath.png', 'Description', kill_death_fct)
+#kill_death = Achievement('Kill Death', 'killdeath.png', 'Description', kill_death_fct)
 
-achievement_list['kill_death'] = kill_death
+#achievement_list['kill_death'] = kill_death

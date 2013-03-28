@@ -1,6 +1,6 @@
 from libs.lib import tee_db
 from datetime import datetime, timedelta
-from libs.achievement import Achievement, achievement_list
+from libs.achievement import Achievement, achievement_desc_list
 
 def time_fct(self, player):
     def map_data(x, y):

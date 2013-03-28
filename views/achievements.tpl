@@ -7,7 +7,9 @@
 </div>
 
 <ul>
-% for a in achievement_list:
-<li>${a}</li>
+% for name, data in achievement_desc_list.items():
+<li>
+  ${data}
+</li>
 % endfor
 </ul>

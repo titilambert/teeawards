@@ -9,11 +9,10 @@ def achievements(achievement_name=None,player_name=None):
     context = {}
     context['page'] = 'achievements'
     context['server_alive'] = twms.is_alive()
-    context['achievement_list'] = achievement_list
-    if not achievement_name is None:
-        if achievement_name in achievement_list:
-            ok = achievement_list[achievement_name].has_achievements(player_name)
-            return str(ok)
-
+    context['achievement_desc_list'] = {}
+    print achievement_desc_list
+    
+    for name, fct in achievement_desc_list.items():
+        context['achievement_desc_list'][name] = fct()
 
     return context

@@ -26,6 +26,7 @@ class Achievement():
         return self.condition(self, player)
 
 
-achievement_list = {}
+achievement_desc_list = {}
+achievement_player_list = {}
 for a in achievements.__all__:
     __import__('achievements.' + a.replace("/", "."))

@@ -512,6 +512,8 @@ table.ranklist td.requirements {
 
 table.achievements td {
     text-align: center;
+    padding: 3px 15px 3px 20px;
+    border-top: 1px solid #CCCCCC;
 }
 
 /* Item */
@@ -598,4 +600,13 @@ table.maps td.info div.title {
 
 table.maps td.map_screenshot img{
     max-width: 760px;
+}
+
+/* Achievements */
+div.achievement_div_title {
+    width: 100%;
+}
+table.achievement_title {
+    margin: 50px 10% 15px 10%;
+    width: 80%;
 }
