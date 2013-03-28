@@ -16,32 +16,39 @@
       <div id="top_left">
         <div id="top_right">
           <div id="top_mid">
-            <div style="float: right; margin-right: -8px; margin-top: 5px;">
-% if fullserverstatus:
-         <div style="color:#7fd538">
-             <span title='${playernames}'>
-             % if fullserverstatus['num_players'] > 1:
-                 ${fullserverstatus['num_players']} players online
-             % else:
-                 ${fullserverstatus['num_players']} player online
-             % endif
-            </span>
-               <img class="logo"  src="/images/greendot.png" alt="online"><br/>
-               Game: ${gametype}<br/>
-        </div>
-% else:
-         <div style="color:#fd778a">
-         Server offline <img class="logo"  src="/images/reddot.png" alt="online">
-        </div>
-% endif
+            <div class="teeawards_title">
+              <a href="/">
+                <img class="logo"  src="/images/teeawards-logo.png" alt="tee-awards logo">
+              </a>
+            </div>
+            <div class="serverstatus" >
+              % if fullserverstatus:
+                <div style="color:#7fd538">
+                  Server ONLINE
+                  <br/>
+                  <img class="logo"  src="/images/greendot.png" alt="online"><br/>
+                  Game: ${gametype}
+                  <br/>
+                  <span title='${playernames}'>
+                    % if fullserverstatus['num_players'] > 1:
+                      ${fullserverstatus['num_players']} players online
+                    % else:
+                      ${fullserverstatus['num_players']} player online
+                    % endif
+                  </span>
+                </div>
+              % else:
+                <div style="color:#fd778a">
+                  Server offline
+                  <br/>
+                  <img class="logo"  src="/images/reddot.png" alt="offline">
+                </div>
+              % endif
+            </div>
 
           </div>
-          <a href="/">
-            <img class="logo"  src="/images/teeawards-logo.png" alt="tee-awards logo">
-          </a>
         </div>
       </div>
-    </div>
 
 </%def>
 
