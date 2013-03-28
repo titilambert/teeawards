@@ -1,4 +1,4 @@
-teeawards
+Teeawards
 =========
 
 I made a small tool/server manager called TeeAwards
@@ -11,27 +11,33 @@ Tested on ubuntu and Debian
 
 You can get it here : https://github.com/titilambert/teeawards
 
+Installation
+------------
+
 You need python-pymongo, mongodb and teeworlds-server
+
 `sudo apt-get install python-pymongo mongodb teeworlds-server`
 
 How to install:
+
 `cd myfolder
+
 git clone https://github.com/titilambert/teeawards.git
+
 cd teeawards`
 
 Then start it :
+
 `python teeawards.py`
 
-Then go on it:
-http://127.0.0.1:8081
+Then go on it: http://127.0.0.1:8081
 
-Upload maps
-http://127.0.0.1:8081/admin
+Upload maps: http://127.0.0.1:8081/admin
 
-Create configs
-http://127.0.0.1:8081/admin
+Create configs: http://127.0.0.1:8081/admin
 
 PLAY !!!!!
+
 Launch your clients !
 
 Go see your stats !
