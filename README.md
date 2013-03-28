@@ -49,7 +49,7 @@ TODOs
  -  Add fedora and others distributions more compatible
  -  Add authentification for admin page
  -  Finish to convert achievements
- -  Find a best formula to get score
+ -  Find a better formula to get score
  -  Add "mode filter" in stats views
  -  Add sample config and maps
  -  Add more achievements
