@@ -2,7 +2,7 @@ from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs.rank import get_rank, ranks
 from libs.teeworldsserver import twms
-from libs.achievement import achievement_list
+from libs.achievement import achievement_player_list
 
 
 @mako_view('player_stats')
@@ -49,8 +49,8 @@ def player_stats(player=None):
         context['favorite_victim'] = ("No data", 0)
 
     context['achievement_list'] = {}
-    for achievement in achievement_list.items():
-        context['achievement_list'][achievement[0]] = achievement[1].has_achievements(player)
+    for achievement in achievement_player_list.items():
+        context['achievement_list'][achievement[0]] = achievement[1](player)
 
     return context
 

@@ -2,6 +2,7 @@
 import sys
 import time
 import signal
+import glob
 
 import bottle
 from bottle import Bottle, run, mako_template, TEMPLATE_PATH
@@ -60,7 +61,11 @@ def setup_routing(app):
     app.route('/map_screenshots/:filepath#.+#', method=['GET', 'POST'], callback=server_map_screenshots)
 
 
-app = Bottle()
+achvmts = glob.glob("achievements/*/views/")
+for a in achvmts:
+    bottle.TEMPLATE_PATH.append(a)
+
+app = bottle.app()
 
 setup_routing(app)
 

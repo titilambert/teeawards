@@ -221,6 +221,7 @@ def get_player_stats(player, with_warmup=False):
 
         weapon_key = r_kill_mapping[data['weapon']]
         killer_key = data['killer']
+
         if data['weapon'] == '-3':
             # Handle exit
             return ret
@@ -233,6 +234,10 @@ def get_player_stats(player, with_warmup=False):
             ret['killer'] [killer_key] += 1
         else:
             ret['suicide'] += 1
+            if weapon_key == 'death fall':
+                if not weapon_key in ret['weapon']:
+                    ret['weapon'][weapon_key] = 0
+                ret['weapon'][weapon_key] += 1
 
         return ret
 

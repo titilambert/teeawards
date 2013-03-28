@@ -173,13 +173,14 @@ class TeeWorldsServer(threading.Thread):
 
         timeout = 2
         round_ = None
+
         while not self.stopped():
 #            print "read"
             ready, _, _ = select.select([self.master], [], [], timeout)
             if not ready:
                 continue
             line = os.read(self.master, 512)
-            if getattr(self.manager.conf['conf'], 'record_stats', '1') == '0':
+            if self.manager.conf['conf'].get('record_stats', '1') == '0':
                 continue
 
             # Join team:

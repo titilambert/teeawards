@@ -8,6 +8,7 @@ def item_stats():
     #if not item in kill_mapping.keys() + pickup_mapping.keys():
     #    return "bad item"
 
+    context['page'] = 'items'
     context['items'] = []
     context['fullserverstatus'] = twms.get_server_info()
     if context['fullserverstatus']:

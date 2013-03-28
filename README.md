@@ -64,3 +64,12 @@ BIG THANKS
 LINKS
 -----
  -  Teeworlds thread: https://www.teeworlds.com/forum/viewtopic.php?pid=105386#p105386
+
+SCREENSHOTS
+-----------
+ - https://github.com/titilambert/teeawards/blob/master/screenshots/admin.png
+ - https://github.com/titilambert/teeawards/blob/master/screenshots/home.png
+ - https://github.com/titilambert/teeawards/blob/master/screenshots/items.png
+ - https://github.com/titilambert/teeawards/blob/master/screenshots/ladder.png
+ - https://github.com/titilambert/teeawards/blob/master/screenshots/maps.png
+ - https://github.com/titilambert/teeawards/blob/master/screenshots/player.png

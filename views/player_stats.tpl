@@ -94,7 +94,7 @@ ${lib.search_player()}
   <tbody>
     <tr>
       %for w in kill_mapping:
-        % if w != 'exit':
+        % if w != 'exit' and w != 'death fall':
         <td>
           <a href="/items#${w}">${w}</a>
         </td>
@@ -103,7 +103,7 @@ ${lib.search_player()}
     </tr>
     <tr>
       %for w in kill_mapping:
-        % if w != 'exit':
+        % if w != 'exit' and w != 'death fall':
           <td>
             % if w in kstats['weapon']:
               ${kstats['weapon'][w]}
@@ -288,8 +288,8 @@ ${lib.search_player()}
 
 <div style="clear: both">
 
-<div class="statscard">
-<table class="achievements">
+<div class="statscard achievement_div_title">
+<table class="achievement_title">
   <thead>
     <tr>
       <th colspan="10">
@@ -297,40 +297,16 @@ ${lib.search_player()}
       </th>
     </tr>
   </thead>
-  <tbody>
-    % for a, data in achievement_list.items():
-      <tr>
-        <td>
-          <table>
-            <thead>
-              <tr>
-               <% data = sorted([x for x in data.items()], key=lambda x: x[0]) %>
-                % for k in data:
-                   <th>
-                    ${k[1][0]}
-                  </th>
-                  % endfor
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  % for k in data:
-                    <td>
-                      ${k[1][1]}
-                    </td>
-                  % endfor
-                </tr>
-              </tbody>
-            </table>
-        </td>
-      </tr>
-    % endfor
-  </tbody>
 </table>
 </div>
 
 <div style="clear: both">
 
+% for a, data in achievement_list.items():
+    ${data}
+% endfor
 
-</div>
+<div style="clear: both">
+<div style="clear: both">
+
 % endif
