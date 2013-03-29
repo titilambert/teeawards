@@ -1,7 +1,7 @@
 from libs.lib import tee_db
 from bottle import mako_view
 from datetime import datetime, timedelta
-from libs.achievement import achievement_desc_list, achievement_player_list
+from libs.achievement import achievement_desc_list, achievement_player_list, achievement_livestat_list
 from libs.lib import kill_table
 
 
@@ -63,6 +63,31 @@ def player_multi_kill(player):
     return {'multikill_list': multikill_list}
 
 
+def livestat_multi_kill(live_stat, new_data):
+    def reduce_data(ret, data):
+        if data['killer'] != data['victim'] and \
+                not ret is None:
+            return ret + 1
+        return None
+    player = new_data['killer']
+    round_ = new_data['round']
+    data = kill_table.find({ "$and": [{ "$or": [{'killer': player},
+                                                {'victim': player},
+                                               ]
+                                      },
+                                      {'round': round_},
+                                     ]
+                           }
+                          ).sort('when')
+    
+    multi_level = reduce(reduce_data, data, 0)
+    multikill_name = multikill_list.get(multi_level, None)
+    if multikill_name:
+        msg = "!!! %s !!! (%s)" % (multikill_name[0].upper(), player)
+        live_stat.communicate({'type': 'broadcast', 'msg': msg})
+
+
+
 multikill_list = {
         3: ('Triple Kill', 0),
         5: ('Multi Kill', 0),
@@ -85,4 +110,4 @@ multikill_list = {
 
 achievement_desc_list['desc_multi_kill'] = desc_multi_kill
 achievement_player_list['player_multi_kill'] = player_multi_kill
-
+achievement_livestat_list['livestat_multi_kill'] = livestat_multi_kill

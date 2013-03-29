@@ -1,5 +1,6 @@
 import os
 import sys
+import Queue
 
 from pymongo import Connection
 
@@ -20,6 +21,7 @@ kill_table = tee_db['kill']
 flaggrab_table = tee_db['flaggrab']
 flagreturn_table = tee_db['flagreturn']
 
+live_status_queue = Queue.Queue()
 
 # DATA FOLDER (maps, daemon, ...)
 data_folder = os.path.join(os.path.dirname(__file__), "..", "server_data")
@@ -249,6 +251,26 @@ def get_player_stats(player, with_warmup=False):
     pstats = reduce(compute_item_stats, raw_pickup_stats, {})
 
     return kstats, vstats, pstats
+
+
+
+def get_player_score(player, data=None):
+    if data is None:
+        data = {}
+        data['kstats'], data['vstats'], data['pstats'] = get_player_stats(player)
+    kills = sum(data['kstats']['victim'].values())
+    suicides = data['vstats']['suicide']
+
+    score = kills - suicides
+
+    return score
+
+
+
+
+
+
+
 
 
 

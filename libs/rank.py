@@ -1,7 +1,7 @@
 from libs.lib import *
 
-def get_rank(player, data):
-    score = data['kills'] - data['suicides']
+def get_rank(player, data=None):
+    score = get_player_score(player, data)
     player_rank = 0
     for i, rank in enumerate(ranks):
         if score < rank[1]:

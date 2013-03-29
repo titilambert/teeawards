@@ -1,8 +1,6 @@
 #!/usr/bin/python
 import time
-from pymongo import Connection
-from bson.objectid import ObjectId
-
+from socket import *
 from subprocess import Popen, PIPE, STDOUT
 import pty
 import threading
@@ -12,8 +10,12 @@ import re
 from datetime import datetime
 import select
 
+from pymongo import Connection
+from bson.objectid import ObjectId
+
 from libs.lib import conf_table, data_folder, server_folder
-from socket import *
+from libs.livestats import LiveStats
+from libs.lib import live_status_queue
 
 TIMEOUT = 2
 PACKET_GETINFO3 = "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xffgie3" + "\x00"
@@ -131,12 +133,15 @@ class TeeWorldsManagerServer(object):
 
         # Init thread
         self.server = TeeWorldsServer(self, master)
+        self.live_stats = LiveStats(self)
         # Start Server
         self.server.start()
+        self.live_stats.start()
 
     def stop(self):
         if self.process:
             # Stop thread
+            self.live_stats.stop_server()
             self.server.stop_server()
             # Kill  childs
             ps_command = Popen("ps -o pid --ppid %d --noheaders" % self.process.pid, shell=True, stdout=PIPE)
@@ -190,6 +195,7 @@ class TeeWorldsServer(threading.Thread):
                 when = datetime.fromtimestamp(int(when, 16))
                 data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': round_}
                 self.manager.join_table.save(data)
+                live_status_queue.put({'type': 'join', 'data': data})
             # Change team
             elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line):
                 when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line).groups()
@@ -248,6 +254,7 @@ class TeeWorldsServer(threading.Thread):
                 print when, killer, "KILL", victim, "with", weapon, "and special", special
                 data = {'when': when, 'killer': killer.strip(), 'victim': victim.strip(), 'weapon': weapon.strip(), 'special': special.strip(), 'round': round_}
                 self.manager.kill_table.save(data)
+                live_status_queue.put({'type': 'kill', 'data': data})
             # Get Flag
             elif re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line):
                 when, player = re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line).groups()
@@ -353,6 +360,11 @@ def export_conf(conf):
     for setting, value in conf['conf'].items():
         f.write("%s %s\n" % (setting, value))
         
+    # export external commands
+    f.write("ec_port 9999\n")
+    f.write("ec_password teeawards\n")
+    f.write("ec_auth_timeout 10\n")
+    f.write("ec_bantime 0\n")
     f.close()
     return filename
 

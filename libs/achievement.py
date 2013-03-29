@@ -28,5 +28,6 @@ class Achievement():
 
 achievement_desc_list = {}
 achievement_player_list = {}
+achievement_livestat_list = {}
 for a in achievements.__all__:
     __import__('achievements.' + a.replace("/", "."))
