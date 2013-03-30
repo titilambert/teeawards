@@ -1,3 +1,5 @@
+from pymongo import DESCENDING
+
 from libs.lib import tee_db
 from bottle import mako_view
 from datetime import datetime, timedelta
@@ -65,10 +67,9 @@ def player_multi_kill(player):
 
 def livestat_multi_kill(live_stat, new_data):
     def reduce_data(ret, data):
-        if data['killer'] != data['victim'] and \
-                not ret is None:
-            return ret + 1
-        return None
+        if data['killer'] != data['victim'] and ret[1]:
+            return (ret[0] + 1, True)
+        return (ret[0], False)
     player = new_data['killer']
     round_ = new_data['round']
     data = kill_table.find({ "$and": [{ "$or": [{'killer': player},
@@ -78,10 +79,10 @@ def livestat_multi_kill(live_stat, new_data):
                                       {'round': round_},
                                      ]
                            }
-                          ).sort('when')
+                          ).sort('when', DESCENDING)
     
-    multi_level = reduce(reduce_data, data, 0)
-    multikill_name = multikill_list.get(multi_level, None)
+    multi_level = reduce(reduce_data, data, (0, True))
+    multikill_name = multikill_list.get(multi_level[0], None)
     if multikill_name:
         msg = "!!! %s !!! (%s)" % (multikill_name[0].upper(), player)
         live_stat.communicate({'type': 'broadcast', 'msg': msg})
