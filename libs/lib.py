@@ -258,8 +258,14 @@ def get_player_score(player, data=None):
     if data is None:
         data = {}
         data['kstats'], data['vstats'], data['pstats'] = get_player_stats(player)
-    kills = sum(data['kstats']['victim'].values())
-    suicides = data['vstats']['suicide']
+    if 'kills' in data:
+        kills = data['kills']
+    else:
+        kills = sum(data['kstats']['victim'].values())
+    if 'suicides' in data:
+        suicides = data['suicides']
+    else:
+        suicides = data['vstats']['suicide']
 
     score = kills - suicides
 

@@ -67,7 +67,7 @@ def player_multi_kill(player):
 
 def livestat_multi_kill(live_stat, new_data):
     def reduce_data(ret, data):
-        if data['killer'] != data['victim'] and ret[1]:
+        if data['killer'] != data['victim'] and ret[1] and data['killer'] == player:
             return (ret[0] + 1, True)
         return (ret[0], False)
     player = new_data['killer']
@@ -84,28 +84,46 @@ def livestat_multi_kill(live_stat, new_data):
     multi_level = reduce(reduce_data, data, (0, True))
     multikill_name = multikill_list.get(multi_level[0], None)
     if multikill_name:
-        msg = "!!! %s !!! (%s)" % (multikill_name[0].upper(), player)
+        msg = "(%s) !!! %s !!! (%s kills)" % (player, multikill_name[0].upper(), multi_level[0])
         live_stat.communicate({'type': 'broadcast', 'msg': msg})
 
 
+#multikill_list = {
+#        3: ('Triple Kill', 0),
+#        5: ('Multi Kill', 0),
+#        6: ('Rampage', 0),
+#        7: ('Killing Spree', 0),
+#        9: ('Dominating', 0),
+#        11: ('Unstoppable', 0),
+#        13: ('Mega Kill', 0),
+#        15: ('Ultra Kill', 0),
+#        16: ('Eagle Eye', 0),
+#        17: ('Ownage', 0),
+#        18: ('Ludicrouskill', 0),
+#        19: ('Head Hunter', 0),
+#        20: ('Whicked Sick', 0),
+#        21: ('Monster Kill', 0),
+#        23: ('Holy Shit', 0),
+#        24: ('God Like', 0),
+#        }
 
 multikill_list = {
         3: ('Triple Kill', 0),
-        5: ('Multi Kill', 0),
-        6: ('Rampage', 0),
-        7: ('Killing Spree', 0),
-        9: ('Dominating', 0),
-        11: ('Unstoppable', 0),
-        13: ('Mega Kill', 0),
-        15: ('Ultra Kill', 0),
-        16: ('Eagle Eye', 0),
-        17: ('Ownage', 0),
-        18: ('Ludicrouskill', 0),
-        19: ('Head Hunter', 0),
-        20: ('Whicked Sick', 0),
-        21: ('Monster Kill', 0),
-        23: ('Holy Shit', 0),
-        24: ('God Like', 0),
+        4: ('Multi Kill', 0),
+        5: ('Rampage', 0),
+        6: ('Killing Spree', 0),
+        7: ('Dominating', 0),
+        8: ('Unstoppable', 0),
+        9: ('Mega Kill', 0),
+        10: ('Ultra Kill', 0),
+        11: ('Eagle Eye', 0),
+        12: ('Ownage', 0),
+        13: ('Ludicrouskill', 0),
+        14: ('Head Hunter', 0),
+        15: ('Whicked Sick', 0),
+        16: ('Monster Kill', 0),
+        17: ('Holy Shit', 0),
+        18: ('God Like', 0),
         }
 
 
