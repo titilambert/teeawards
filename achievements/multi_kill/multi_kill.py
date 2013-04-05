@@ -120,7 +120,7 @@ multikill_list = {
         12: ('Ownage', 0),
         13: ('Ludicrouskill', 0),
         14: ('Head Hunter', 0),
-        15: ('Whicked Sick', 0),
+        15: ('Wicked Sick', 0),
         16: ('Monster Kill', 0),
         17: ('Holy Shit', 0),
         18: ('God Like', 0),
