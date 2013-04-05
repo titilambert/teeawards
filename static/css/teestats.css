@@ -623,6 +623,11 @@ table.achievement_title {
     width: 80%;
 }
 
+div.achievement {
+    float: left;
+    margin: 20px;
+}
+
 div.achievements_list {
     text-align: center;
     width: 100%;

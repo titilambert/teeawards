@@ -303,7 +303,9 @@ ${lib.search_player()}
 <div style="clear: both">
 
 % for a, data in achievement_list.items():
+  <div class="achievement">
     ${data}
+  </div>
 % endfor
 
 <div style="clear: both">
