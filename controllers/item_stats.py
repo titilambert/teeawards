@@ -16,8 +16,8 @@ def item_stats():
         context['gametype'] = context['fullserverstatus']['gametype']
 
 
-    context['itemlist'] = ['hearth', 'shield', 'hammer', 'gun', 
-             'shutgun', 'grenade', 'laser', 'ninja',]
+    context['itemlist'] = ['heart', 'shield', 'hammer', 'gun', 
+             'shotgun', 'grenade', 'laser', 'ninja',]
     for item in context['itemlist']:
         context['items'].append(get_item_stats(item))
     return context
