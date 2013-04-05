@@ -8,11 +8,12 @@ table.multikill_achievement img.multikill_icon {
     max-width: 150px;
     max-height: 150px;
     padding: 5px;
+    border: 1px solid #CCCCCC;
+    margin: 5px;
 }
 
 table.multikill_achievement th.multikill_description {
     font-size: 18px;
-    text-align: left;
 }
 
 table.multikill_achievement th.last {
