@@ -1,0 +1,36 @@
+table.multikill_achievement th.multikill_title {
+    text-align: center;
+    font-size: 26px;
+    text-decoration: underline;
+}
+
+table.multikill_achievement img.multikill_icon {
+    max-width: 150px;
+    max-height: 150px;
+    padding: 5px;
+}
+
+table.multikill_achievement th.multikill_description {
+    font-size: 18px;
+    text-align: left;
+}
+
+table.multikill_achievement th.last {
+    border-right: 1px solid #918F61;
+}
+
+table.multikill_achievement td {
+    border-right: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    padding: 5px 25px 5px 25px;
+}
+
+table.multikill_achievement td.last {
+    border-right: 1px solid #918F61;
+}
+
+
+table.multikill_achievement span.multikill_subtitle {
+    font-weight: bold;
+    text-decoration: underline;
+}

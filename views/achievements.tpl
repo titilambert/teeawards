@@ -6,10 +6,7 @@
     Achievements
 </div>
 
-<ul>
 % for name, data in achievement_desc_list.items():
-<li>
   ${data}
-</li>
+    <br/>
 % endfor
-</ul>

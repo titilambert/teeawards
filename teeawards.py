@@ -21,6 +21,14 @@ from libs.teeworldsserver import twms
 def server_css(filepath):
     return static_file(filepath, root='static/css/')
 
+def server_css_achievements(name, filepath):
+    path = 'achievements/%s/static/css/' % name
+    return static_file(filepath, root=path)
+
+def server_images_achievements(name, filepath):
+    path = 'achievements/%s/static/images/' % name
+    return static_file(filepath, root=path)
+
 def server_images(filepath):
     return static_file(filepath, root='static/images/')
 
@@ -55,7 +63,9 @@ def setup_routing(app):
     app.route('/items', method=['GET', 'POST'], callback=item_stats)
     app.route('/player_stats/<player>', method=['GET'], callback=player_stats)
     app.route('/player_stats', method=['POST'], callback=player_stats)
+    app.route('/css/achievements/<name>/:filepath#.+#', method=['GET', 'POST'], callback=server_css_achievements)
     app.route('/css/:filepath#.+#', method=['GET', 'POST'], callback=server_css)
+    app.route('/images/achievements/<name>/:filepath#.+#', method=['GET', 'POST'], callback=server_images_achievements)
     app.route('/images/:filepath#.+#', method=['GET', 'POST'], callback=server_images)
     app.route('/js/:filepath#.+#', method=['GET', 'POST'], callback=server_js)
     app.route('/map_screenshots/:filepath#.+#', method=['GET', 'POST'], callback=server_map_screenshots)

@@ -1,4 +1,4 @@
-<table class="achievements">
+<table class="multikill_achievement achievements">
   <thead>
     <tr>
       <th colspan="10">
@@ -15,7 +15,7 @@
           <br/>
           <span style="font-size: 8px;">${number} kills without dead</span>
         </td>
-        <td>
+        <td class="last">
           ${data[1]}
         </td>
       </tr>

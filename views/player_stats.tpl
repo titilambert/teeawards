@@ -308,5 +308,6 @@ ${lib.search_player()}
 
 <div style="clear: both">
 <div style="clear: both">
+<br/>
 
 % endif
