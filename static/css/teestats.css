@@ -622,3 +622,24 @@ table.achievement_title {
     margin: 50px 10% 15px 10%;
     width: 80%;
 }
+
+div.achievements_list {
+    text-align: center;
+    width: 100%;
+}
+
+div.achievements_title {
+    padding: 10px 20px ;
+    background: #A5CF4A;
+    border: 1px solid #918F61;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+div.achievements_title label {
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 35px;
+}
+
+

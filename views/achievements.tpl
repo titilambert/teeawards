@@ -2,11 +2,15 @@
 
 <%inherit file="base.tpl" />
 
-<div>
+<div class="achievements_title">
+    <label>
     Achievements
+    </label>
 </div>
 
-% for name, data in achievement_desc_list.items():
-  ${data}
+<div class="achievements_list">
+  % for name, data in achievement_desc_list.items():
+   ${data}
     <br/>
-% endfor
+  % endfor
+</div>
