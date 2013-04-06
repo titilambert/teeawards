@@ -1,40 +1,38 @@
-<link rel="stylesheet" type="text/css" href="/css/achievements/multi_kill/multi_kill.css"/>
-<table class="multikill_achievement achievements">
+<link rel="stylesheet" type="text/css" href="/css/achievements/badges/badges.css"/>
+<table class="badges_desc_achievement achievements">
   <thead>
     <tr>
-      <th rowspan="2">
-        <img class="multikill_icon" src="/images/achievements/multi_kill/multikill_image.png" />
-      </th>
-      <th colspan="7" class="multikill_title">
-        Multi Kill
-      </th>
-    </tr>
-    <tr>
-
-      <th colspan="7" class="multikill_description last">
-        Number of kills with dead in a round
+      <th class="badges_title" colspan="10">
+        Badges
       </th>
     </tr>
   </thead>
   <tbody>
-    % for i, item in enumerate(multikill_list.items()):
-      <% k, v = item %>
-      % if i % 8 == 0:
+    % for i, t in enumerate(badge_list):
+      <% badge, limits = t %>
+      % if i % 3 == 0:
         <tr>
       % endif
-      % if i % 8 == 7:
-        <td class="last">
+        <td class="badge_image">
+            <img class="badge" src="/images/achievements/badges/${badge}_3.png" >
+        </td>
+      % if i % 3 == 2:
+        <td class="last descr">
       % else:
-        <td>
+        <td class="descr">
       % endif
-      <span class="multikill_subtitle">${v[0]}</span>
-      <br/>
-      ${k} kills
-      </td>
-      % if i % 8 == 7:
+          <br/>
+          <span class="badge_name">${badge.capitalize()}</span>
+          <ul>
+          % for i, metal in enumerate(['bronze', 'silver', 'gold']):
+            <li>${metal}: ${limits[i]}</li>
+          % endfor
+          </ul>
+        </td>
+      % if i % 3 == 1:
         </tr>
       % endif
+
     % endfor
   </tbody>
 </table>
-

@@ -9,8 +9,11 @@ from libs.lib import kill_table
 
 @mako_view("desc_badges")
 def desc_badges():
-    return {}
-    
+    ordered_list = ['winner', 'heart', 'shield', 'hammer', 'gun',
+                    'shotgun', 'grenade', 'laser', 'ninja']
+    badges = [(i, badge_list[i]) for i in ordered_list]
+
+    return {'badge_list': badges}
 
 @mako_view("player_badges")
 def player_badges(player):

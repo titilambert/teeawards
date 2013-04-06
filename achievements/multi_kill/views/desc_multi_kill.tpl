@@ -2,16 +2,16 @@
 <table class="multikill_achievement achievements">
   <thead>
     <tr>
-      <th rowspan="2">
+      <th rowspan="2" colspan="2">
         <img class="multikill_icon" src="/images/achievements/multi_kill/multikill_image.png" />
       </th>
-      <th colspan="7" class="multikill_title">
+      <th colspan="6" class="multikill_title">
         Multi Kill
       </th>
     </tr>
     <tr>
 
-      <th colspan="7" class="multikill_description last">
+      <th colspan="6" class="multikill_description last">
         Number of kills with dead in a round
       </th>
     </tr>
