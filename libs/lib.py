@@ -6,9 +6,11 @@ from pymongo import Connection
 
 con = Connection()
 tee_db = con['teeworlds']
+# CONFIG TABLES DONT EMPTY IT !!!
 conf_table = tee_db['config']
-
 maps_table = tee_db['maps']
+
+# DATA TABLES
 join_table = tee_db['join']
 changeteam_table = tee_db['changeteam']
 round_table = tee_db['round']
@@ -20,6 +22,26 @@ pickup_table = tee_db['pickup']
 kill_table = tee_db['kill']
 flaggrab_table = tee_db['flaggrab']
 flagreturn_table = tee_db['flagreturn']
+flagcapture_table = tee_db['flagcapture']
+servershutdown_table = tee_db['servershutdown']
+
+def empty_db(self):
+    join_table.drop()
+    changeteam_table.drop()
+    round_table.drop()
+    map_table.drop()
+    kick_table.drop()
+    timeout_table.drop()
+    leave_table.drop()
+    servershutdown_table.drop()
+    pickup_table.drop()
+    kill_table.drop()
+    flaggrab_table.drop()
+    flagreturn_table.drop()
+    flagcapture_table.drop()
+
+
+
 
 live_status_queue = Queue.Queue()
 
@@ -253,7 +275,16 @@ def get_player_stats(player, with_warmup=False):
     return kstats, vstats, pstats
 
 
+# NEED REFACTORING !!!=
+# +1 : kill
+# -1 : autokill
 
+# -1 : last player IAR
+# playernumbers*2 : first IAR
+# playernumbers : second IAR
+# playernumbers/2 or 1 : third IAR
+#######
+# -1 : team kill
 def get_player_score(player, data=None):
     if data is None:
         data = {}
@@ -268,8 +299,180 @@ def get_player_score(player, data=None):
         suicides = data['vstats']['suicide']
 
     score = kills - suicides
+    get_round_classement(player)
 
     return score
+
+
+
+def get_round_classement(player):
+    def reducer(ret, data):
+        ret, type_ = ret  
+        data['type'] = type_
+        if type_ == 'round':
+            # ROUND start
+            if not data['_id'] in ret:
+                ret[data['_id']] = []
+            ret[data['_id']].append(data)
+            ret[data['_id']].sort(key=lambda x: x['when'])
+        else:   
+#            if not 'round' in data:
+#                import pdb;pdb.set_trace()
+#                sd
+#            if str(data['round']) == '514ba5120182b00618001cf5':
+#                import pdb;pdb.set_trace()
+            if 'round' in data and not data['round'] is None:
+                if not data['round'] in ret:
+                    ret[data['round']] = []
+                ret[data['round']].append(data)
+                ret[data['round']].sort(key=lambda x: x['when'])
+        return ret, type_
+    events_by_round, _ = reduce(reducer, kill_table.find(), ({}, 'kill'))
+    events_by_round, _ = reduce(reducer, join_table.find(), (events_by_round, 'join'))
+    events_by_round, _ = reduce(reducer, changeteam_table.find(), (events_by_round, 'changeteam'))
+    events_by_round, _ = reduce(reducer, round_table.find(), (events_by_round, 'round'))
+    events_by_round, _ = reduce(reducer, kick_table.find(), (events_by_round, 'kick'))
+    events_by_round, _ = reduce(reducer, timeout_table.find(), (events_by_round, 'timeout'))
+    events_by_round, _ = reduce(reducer, leave_table.find(), (events_by_round, 'leave'))
+    events_by_round, _ = reduce(reducer, servershutdown_table.find(), (events_by_round, 'servershutdown'))
+
+    def join_none_reducer(ret, data):
+        data['type'] = 'join'
+        if 'map' in data and data['round'] is None:
+            if not data['map'] in ret:
+                ret[data['map']] = []
+            ret[data['map']].append(data)
+            ret[data['map']].sort(key=lambda x: x['when'])
+        return ret
+    join_by_map = reduce(join_none_reducer, join_table.find(), {})
+
+    def round_reducer(ret, data):
+        if not data['map'] in ret:
+            ret[data['map']] = []
+        ret[data['map']].append(data)
+
+        return ret
+    rounds = reduce(round_reducer, round_table.find(), {})
+
+    maps = dict([(x['_id'], x) for x in map_table.find()])
+
+    for map_, round_in_a_map in rounds.items():
+        # SET INITIAL DATA
+        print "================================================================="
+        map_data = {}
+        map_data['map'] = map_
+        map_data['players'] = {}
+        map_data['rounds'] = {}
+        # GET JOINs DURING WARMUP
+        for join in join_by_map.get(map_, []):
+            map_data['players'][join['player']] = {} 
+            map_data['players'][join['player']]['team'] = join['team']
+            map_data['players'][join['player']]['score'] = 0
+        # ITER on rounds in a map
+        for i, round_ in enumerate(round_in_a_map):
+            ### NEW ROUND ###
+            print "-----------------------------------"
+            end_of_round = False
+            map_data['rounds'][i] = {}
+            map_data['rounds'][i]['gametype'] = round_['gametype']
+            map_data['rounds'][i]['teamplay'] = round_['teamplay']
+            # SET PLAYERS A round start
+            if i == 0:
+                map_data['rounds'][i]['players'] = map_data['players'].copy()
+            else:
+                map_data['rounds'][i]['players'] = map_data['rounds'][i - 1]['players'].copy()
+            # Check if there are any events in a round
+            if not round_['_id'] in events_by_round:
+                print "NOTFOUND !!!!!!!!!!!!", round_['_id']
+#                import pdb;pdb.set_trace()
+                # POSSIBLE ?????
+                continue
+            # ITER ON Events in a round
+            print [(x['player'], x['type']) for x in events_by_round[round_['_id']] if 'player' in x]
+            for event in events_by_round[round_['_id']]:
+                if event['type'] == 'join':
+                    map_data['rounds'][i]['players'][event['player']] = {}
+                    map_data['rounds'][i]['players'][event['player']]['team'] = event['team']
+                    map_data['rounds'][i]['players'][event['player']]['score'] = 0
+#                    print event
+                if event['type'] == 'kill':
+#                    import pdb;pdb.set_trace()
+                    if not event['killer'] in map_data['rounds'][i]['players']:
+#                        print "NOTFOUND !!!!!!!!!!!!k", event['killer'], event['when'], event
+#                        import pdb;pdb.set_trace()
+                         # POSSIBLE ????? rename ??
+                        continue
+                    if not event['victim'] in map_data['rounds'][i]['players']:
+#                        print "NOTFOUND !!!!!!!!!!!!v", event['victim'], event['when'], event
+#                        import pdb;pdb.set_trace()
+                         # POSSIBLE ????? rename ??
+                        continue
+                    if event['killer'] == event['victim']:
+                        map_data['rounds'][i]['players'][event['killer']]['score'] -= 1
+                    elif round_['teamplay'] and map_data['rounds'][i]['players'][event['killer']]['team'] == map_data['rounds'][i]['players'][event['victim']]:
+                        map_data['rounds'][i]['players'][event['killer']]['score'] -= 1
+                    else:
+                        map_data['rounds'][i]['players'][event['killer']]['score'] += 1
+                if event['type'] == 'changeteam':
+                    import pdb;pdb.set_trace()
+                    print event
+                if event['type'] == 'kick':
+                    import pdb;pdb.set_trace()
+                    print event
+                if event['type'] == 'timeout':
+                    import pdb;pdb.set_trace()
+                    print event
+                if event['type'] == 'leave':
+                    map_data['rounds'][i]['players'][event['player']]['status'] = 'offline'
+                    import pdb;pdb.set_trace()
+                    print event
+                if event['type'] == 'servershutdown':
+                    import pdb;pdb.set_trace()
+                    # END OF ROUND
+                    end_of_round = True
+                    break
+                    print event
+
+        print map_data
+
+
+
+    return
+
+    # ##
+    data_tables =[
+    join_table,
+    changeteam_table,
+    kick_table,
+    timeout_table,
+    leave_table,
+#    servershutdown_table,
+    pickup_table,
+    kill_table,
+    flaggrab_table,
+    flagreturn_table,
+    flagcapture_table,
+    ]
+
+    for t in data_tables:
+        datas = [x for x in t.find()]
+        rounds = [x for x in round_table.find()]
+        #maps = [x for x in map_table.find()]
+        events = sorted(rounds + datas, key=lambda x: x['when'])
+        map_id = None
+
+        for event in events:
+            if 'map' in event:
+                map_id = event['map']
+                round_id = event['_id']
+            elif map_id:
+                event['map'] = map_id
+                event['round'] = round_id
+  #              print event
+#                t.save(event)
+            else:
+                print "DELETE", event
+#                t.remove(event)
 
 
 
