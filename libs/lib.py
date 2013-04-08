@@ -1,6 +1,7 @@
 import os
 import sys
 import Queue
+import copy
 
 from pymongo import Connection
 
@@ -25,7 +26,7 @@ flagreturn_table = tee_db['flagreturn']
 flagcapture_table = tee_db['flagcapture']
 servershutdown_table = tee_db['servershutdown']
 
-def empty_db(self):
+def empty_db():
     join_table.drop()
     changeteam_table.drop()
     round_table.drop()
@@ -347,20 +348,23 @@ def get_round_classement(player):
     join_by_map = reduce(join_none_reducer, join_table.find(), {})
 
     def round_reducer(ret, data):
+        print data
         if not data['map'] in ret:
             ret[data['map']] = []
         ret[data['map']].append(data)
-
         return ret
     rounds = reduce(round_reducer, round_table.find(), {})
 
     maps = dict([(x['_id'], x) for x in map_table.find()])
 
+#    import pdb;pdb.set_trace()
+    results = {} 
     for map_, round_in_a_map in rounds.items():
         # SET INITIAL DATA
         print "================================================================="
         map_data = {}
-        map_data['map'] = map_
+        map_data['map'] = maps[map_]
+        current_map = maps[map_]['map']
         map_data['players'] = {}
         map_data['rounds'] = {}
         # GET JOINs DURING WARMUP
@@ -368,6 +372,23 @@ def get_round_classement(player):
             map_data['players'][join['player']] = {} 
             map_data['players'][join['player']]['team'] = join['team']
             map_data['players'][join['player']]['score'] = 0
+            map_data['players'][join['player']]['status'] = 'online'
+            # prepare final results
+            if not join['player'] in results:
+                results[join['player']] = {}
+                results[join['player']]['score'] = 0
+                results[join['player']]['kills'] = {}
+                results[join['player']]['suicides'] = 0
+                results[join['player']]['teamkills'] = 0
+                results[join['player']]['gametype'] = {}
+                results[join['player']]['team'] = {}
+                results[join['player']]['maps'] = {}
+            if not current_map in results[join['player']]['maps']:
+                results[join['player']]['maps'][current_map] = 0
+            results[join['player']]['maps'][current_map] += 1
+            if not join['team'] in results[join['player']]:
+                results[join['player']]['team'][join['team']] = 0
+            results[join['player']]['team'][join['team']] += 1
         # ITER on rounds in a map
         for i, round_ in enumerate(round_in_a_map):
             ### NEW ROUND ###
@@ -378,9 +399,22 @@ def get_round_classement(player):
             map_data['rounds'][i]['teamplay'] = round_['teamplay']
             # SET PLAYERS A round start
             if i == 0:
-                map_data['rounds'][i]['players'] = map_data['players'].copy()
+                map_data['rounds'][i]['players'] = copy.copy(map_data['players'])
             else:
-                map_data['rounds'][i]['players'] = map_data['rounds'][i - 1]['players'].copy()
+                map_data['rounds'][i]['players'] = {}
+                for player_name, player in map_data['rounds'][i - 1]['players'].items():
+                    if player['status'] == 'online':
+                        map_data['rounds'][i]['players'][player_name] = copy.copy(player)
+                        map_data['rounds'][i]['players'][player_name]['score'] = 0
+#                map_data['rounds'][i]['players'] = copy.copy(map_data['rounds'][i - 1]['players'])
+#            print "ROUNDS PLAYER STATA", map_data['rounds'][i]['players']
+            # Delete offline players
+#            for player in map_data['rounds'][i]['players']:
+#                if map_data['rounds'][i]['players'][player]['status'] != 'online':
+#                    map_data['rounds'][i]['players'].pop(player)
+            # set score to 0
+#            for player in map_data['rounds'][i]['players']:
+#                map_data['rounds'][i]['players'][player]['score'] = 0
             # Check if there are any events in a round
             if not round_['_id'] in events_by_round:
                 print "NOTFOUND !!!!!!!!!!!!", round_['_id']
@@ -388,54 +422,108 @@ def get_round_classement(player):
                 # POSSIBLE ?????
                 continue
             # ITER ON Events in a round
-            print [(x['player'], x['type']) for x in events_by_round[round_['_id']] if 'player' in x]
             for event in events_by_round[round_['_id']]:
+                print "__________"
                 if event['type'] == 'join':
                     map_data['rounds'][i]['players'][event['player']] = {}
                     map_data['rounds'][i]['players'][event['player']]['team'] = event['team']
                     map_data['rounds'][i]['players'][event['player']]['score'] = 0
+                    map_data['rounds'][i]['players'][event['player']]['status'] = 'online'
+                    
+                    results[event['player']] = {}
+                    results[event['player']]['score'] = 0
+                    results[event['player']]['kills'] = {}
+                    results[event['player']]['suicides'] = 0
+                    results[event['player']]['teamkills'] = 0
+                    results[event['player']]['gametype'] = {}
+                    results[event['player']]['team'] = {}
+                    results[event['player']]['maps'] = {}
+                    if not current_map in results[join['player']]['maps']:
+                        results[event['player']]['maps'][current_map] = 0
+                    results[event['player']]['maps'][current_map] += 1
+                    if not event['team'] in results[join['player']]:
+                        results[event['player']]['team'][join['team']] = 0
+                    results[event['player']]['team'][join['team']] += 1
+                    if not event['team'] in results[event['player']]['team']:
+                        results[event['player']]['team'][event['team']] = 0
+                    results[event['player']]['team'][event['team']] += 1
+                    if not round_['gametype'] in results[event['player']]['gametype']:
+                        results[event['player']]['gametype'][round_['gametype']] = 0
+                    results[event['player']]['gametype'][round_['gametype']] += 1
+
 #                    print event
-                if event['type'] == 'kill':
-#                    import pdb;pdb.set_trace()
-                    if not event['killer'] in map_data['rounds'][i]['players']:
-#                        print "NOTFOUND !!!!!!!!!!!!k", event['killer'], event['when'], event
-#                        import pdb;pdb.set_trace()
-                         # POSSIBLE ????? rename ??
+                elif event['type'] == 'kill':
+                    # Exit
+                    if event['weapon'] == -3:
                         continue
-                    if not event['victim'] in map_data['rounds'][i]['players']:
-#                        print "NOTFOUND !!!!!!!!!!!!v", event['victim'], event['when'], event
-#                        import pdb;pdb.set_trace()
-                         # POSSIBLE ????? rename ??
-                        continue
+                    # Is it Auto kill ?
                     if event['killer'] == event['victim']:
                         map_data['rounds'][i]['players'][event['killer']]['score'] -= 1
+                        results[event['killer']]['score'] -= 1
+                        results[event['killer']]['suicides'] += 1
+                    # Is it Team kill ?
                     elif round_['teamplay'] and map_data['rounds'][i]['players'][event['killer']]['team'] == map_data['rounds'][i]['players'][event['victim']]:
                         map_data['rounds'][i]['players'][event['killer']]['score'] -= 1
+                        if not event['victim'] in results[event['killer']]['teamkills']:
+                            results[event['killer']]['teamkills'][event['victim']] = 0
+                        if not event['victim'] in results[event['killer']]['teamkills']:
+                            results[event['killer']]['teamkills'][event['victim']] = 0
+                        results[event['killer']]['teamkills'][event['victim']] += 1
+                        results[event['killer']]['score'] -= 1
                     else:
+                        # normal kill
                         map_data['rounds'][i]['players'][event['killer']]['score'] += 1
-                if event['type'] == 'changeteam':
+                        if not event['victim'] in results[event['killer']]['kills']:
+                            results[event['killer']]['kills'][event['victim']] = 0
+                        results[event['killer']]['kills'][event['victim']] += 1
+                        if not event['killer'] in results[event['victim']]['victims']:
+                            results[event['victim']]['victims'][event['killer']] = 0
+                        results[event['victim']]['victims'][event['killer']] += 1
+                        results[event['killer']]['score'] += 1
+
+                elif event['type'] == 'changeteam':
                     import pdb;pdb.set_trace()
                     print event
-                if event['type'] == 'kick':
-                    import pdb;pdb.set_trace()
-                    print event
-                if event['type'] == 'timeout':
-                    import pdb;pdb.set_trace()
-                    print event
-                if event['type'] == 'leave':
-                    map_data['rounds'][i]['players'][event['player']]['status'] = 'offline'
-                    import pdb;pdb.set_trace()
-                    print event
-                if event['type'] == 'servershutdown':
-                    import pdb;pdb.set_trace()
+                elif event['type'] == 'kick':
+                    map_data['rounds'][i]['players'][event['player']]['status'] = 'kicked'
+                elif event['type'] == 'timeout':
+                    map_data['rounds'][i]['players'][event['player']]['status'] = 'timeout'
+                elif event['type'] == 'leave':
+                    map_data['rounds'][i]['players'][event['player']]['status'] = 'left'
+                elif event['type'] == 'servershutdown':
+                    for p in map_data['rounds'][i]['players'].values():
+                        p['status'] = 'servershutdown'
                     # END OF ROUND
                     end_of_round = True
                     break
-                    print event
+            # ADD round points
+            nb_players = len(map_data['rounds'][i]['players'])
+            # GET ONLINE PLAYERS ROUND CLASSEMENT
+#            online_classement = sorted([(k, v) for k, v in map_data['rounds'][i]['players'].items() if v['status'] == 'online'], key=lambda x: x[1]['score'], reverse=True)
+            # GET PLAYERS ROUND CLASSEMENT
+            classement = sorted([(k, v) for k, v in map_data['rounds'][i]['players'].items()], key=lambda x: x[1]['score'], reverse=True)
+            if nb_players <= 1:
+                # One player or less
+                # Do thing
+                pass
+            else:
+                # Two players or more
+                ## First
+                map_data['rounds'][i]['players'][classement[0][0]]['score'] += nb_players * 2
+                ## Last on for online player
+                map_data['rounds'][i]['players'][classement[-1][0]]['score'] -= 1
+                if nb_players >= 3:
+                    # Three players or more
+                    ## Second
+                    map_data['rounds'][i]['players'][classement[1][0]]['score'] += nb_players
+                if nb_players >= 4:
+                    # Four players or more
+                    ## Third
+                    map_data['rounds'][i]['players'][classement[2][0]]['score'] += nb_players / 2
 
-        print map_data
+  #      results.append(map_data)
 
-
+    import pdb;pdb.set_trace()
 
     return
 

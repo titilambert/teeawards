@@ -153,9 +153,9 @@ class TeeWorldsManagerServer(object):
                 os.kill(int(pid_str), 15)
             # Kill teeworlds server !!
             self.process.terminate()
-            self.process = None
-            data = {'when': datetime.now(), 'round': self.round_, 'map': self.map_}
+            data = {'when': datetime.now(), 'round': self.server.round_, 'map': self.server.map_}
             self.servershutdown_table.save(data)
+            self.process = None
             return True
         return False
 
@@ -187,103 +187,107 @@ class TeeWorldsServer(threading.Thread):
             ready, _, _ = select.select([self.master], [], [], timeout)
             if not ready:
                 continue
-            line = os.read(self.master, 512)
+            lines = os.read(self.master, 512)
             if self.manager.conf['conf'].get('record_stats', '1') == '0':
                 continue
 
-            # Join team:
-            if re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
-                when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line).groups()
-                print "JOIN: ", player, team
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_} 
-                self.manager.join_table.save(data)
-                live_status_queue.put({'type': 'join', 'data': data})
-            # Change team
-            elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line):
-                when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line).groups()
-                print "Change: ", player, team
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_}
-                self.manager.changeteam_table.save(data)
-            # Start round
-            elif re.match("\[(.*)\]\[game\]: start round type='(.*)' teamplay='([0-9]*)'", line):
-                when, gametype, teamplay = re.match("\[(.*)\]\[game\]: start round type='(.*)' teamplay='([0-9]*)'", line).groups()
-                print "START ROUND:", gametype, "TEAMPLAY", teamplay
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when,  'gametype': gametype.strip(), 'teamplay': teamplay.strip(), 'map': self.map_}
-                self.round_ = self.manager.round_table.save(data)
-            # Change map
-            elif re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line):
-                when, raw_map = re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line).groups()
-                when = datetime.fromtimestamp(int(when, 16))
-                map_name = os.path.basename(raw_map)
-                print "CHANGE MAP", map_name
-                data = {'when': when,  'map': map_name.strip()}
-                self.map_ = self.manager.map_table.save(data)
-                self.round_ = None
-            # Kick
-            elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Kicked for inactivity\)", line):
-                when, player = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Kicked for inactivity\)", line).groups()
-                print "KICKED", player
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
-                self.manager.kick_table.save(data)
-            # Timeout
-            elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Timeout\)", line):
-                when, player = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Timeout\)", line).groups()
-                print "TIMEOUT", player
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
-                self.manager.timeout_table.save(data)
-            # Leave game
-            elif re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'", line):
-                when, player = re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'", line).groups()
-                print "LEAVE", player
-                print line
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
-                self.manager.leave_table.save(data)
-            # Pickup
-            elif re.match("\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*)$", line):
-                when, player, item = re.match("\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*\/.*)$", line).groups()
-                when = datetime.fromtimestamp(int(when, 16))
-                print "PICKUP: ", when, player, item
-                data = {'when': when,  'player': player.strip(), 'item': item.strip(), 'round': self.round_}
-                self.manager.pickup_table.save(data)
-            # Kill
-            elif re.match("\[(.*)\]\[game\]: kill killer='.*:(.*)' victim='.*:(.*)' weapon=(.*) special=(.*)", line):
-                when, killer, victim, weapon, special = re.match("\[(.*)\]\[game\]: kill killer='.*:(.*)' victim='.*:(.*)' weapon=(.*) special=(.*)", line).groups()
-                when = datetime.fromtimestamp(int(when, 16))
-                print when, killer, "KILL", victim, "with", weapon, "and special", special
-                data = {'when': when, 'killer': killer.strip(), 'victim': victim.strip(), 'weapon': weapon.strip(), 'special': special.strip(), 'round': self.round_, 'map': self.map_}
-                self.manager.kill_table.save(data)
-                live_status_queue.put({'type': 'kill', 'data': data})
-            # Get Flag
-            elif re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line):
-                when, player = re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line).groups()
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
-                print when, player, "GET FLAG"
-                self.manager.flaggrab_table.save(data)
-            # Return Flag
-            elif re.match("\[(.*)\]\[game\]: flag_return player='.*:(.*)'", line):
-                when, player = re.match("\[(.*)\]\[game\]: flag_return player='.*:(.*)'", line).groups()
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
-                print when, player, "RETURN FLAG"
-                self.manager.flagreturn_table.save(data)
-            # Capture Flag
-            elif re.match("\[(.*)\]\[game\]: flag_capture player='.*:(.*)'", line):
-                when, player = re.match("\[(.*)\]\[game\]: flag_capture player='.*:(.*)'", line).groups()
-                when = datetime.fromtimestamp(int(when, 16))
-                data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
-                print when, player, "CAPTURE FLAG"
-                self.manager.flagcapture_table.save(data)
-            # Other
-            else:
-                 print re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'.*", line)
-                 print line
+            for line in lines.splitlines():
+                # Join team:
+                if re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
+                    when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line).groups()
+                    print "JOIN: ", player, team
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_} 
+                    self.manager.join_table.save(data)
+                    live_status_queue.put({'type': 'join', 'data': data})
+                # Change team
+                elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line):
+                    when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line).groups()
+                    print "Change: ", player, team
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_}
+                    self.manager.changeteam_table.save(data)
+                # Start round
+                elif re.match("\[(.*)\]\[game\]: start round type='(.*)' teamplay='([0-9]*)'", line):
+                    when, gametype, teamplay = re.match("\[(.*)\]\[game\]: start round type='(.*)' teamplay='([0-9]*)'", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'gametype': gametype.strip(), 'teamplay': teamplay.strip(), 'map': self.map_}
+                    # NEED TO BE SURE THAT IS NOT A STARTROUND JUST BEFORE A CHANGE MAP .... 
+                    print "START ROUNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaaaaaaa:", gametype, "TEAMPLAY", teamplay, self.map_
+                    self.round_ = self.manager.round_table.save(data)
+                # Change map
+                elif re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line):
+                    when, raw_map = re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    map_name = os.path.basename(raw_map)
+                    data = {'when': when,  'map': map_name.strip()}
+                    self.map_ = self.manager.map_table.save(data)
+                    # DELETE BAD LAST ROUND
+                    self.manager.round_table.remove(self.round_)
+                    print "CHANGE MAP", map_name, self.map_
+                    self.round_ = None
+                # Kick
+                elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Kicked for inactivity\)", line):
+                    when, player = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Kicked for inactivity\)", line).groups()
+                    print "KICKED", player
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
+                    self.manager.kick_table.save(data)
+                # Timeout
+                elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Timeout\)", line):
+                    when, player = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Timeout\)", line).groups()
+                    print "TIMEOUT", player
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
+                    self.manager.timeout_table.save(data)
+                # Leave game
+                elif re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'", line):
+                    when, player = re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'", line).groups()
+                    print "LEAVE", player
+                    print line
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
+                    self.manager.leave_table.save(data)
+                # Pickup
+                elif re.match("\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*)$", line):
+                    when, player, item = re.match("\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*\/.*)$", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    print "PICKUP: ", when, player, item
+                    data = {'when': when,  'player': player.strip(), 'item': item.strip(), 'round': self.round_}
+                    self.manager.pickup_table.save(data)
+                # Kill
+                elif re.match("\[(.*)\]\[game\]: kill killer='.*:(.*)' victim='.*:(.*)' weapon=(.*) special=(.*)", line):
+                    when, killer, victim, weapon, special = re.match("\[(.*)\]\[game\]: kill killer='.*:(.*)' victim='.*:(.*)' weapon=(.*) special=(.*)", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    print when, killer, "KILL", victim, "with", weapon, "and special", special
+                    data = {'when': when, 'killer': killer.strip(), 'victim': victim.strip(), 'weapon': weapon.strip(), 'special': special.strip(), 'round': self.round_, 'map': self.map_}
+                    self.manager.kill_table.save(data)
+                    live_status_queue.put({'type': 'kill', 'data': data})
+                # Get Flag
+                elif re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line):
+                    when, player = re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
+                    print when, player, "GET FLAG"
+                    self.manager.flaggrab_table.save(data)
+                # Return Flag
+                elif re.match("\[(.*)\]\[game\]: flag_return player='.*:(.*)'", line):
+                    when, player = re.match("\[(.*)\]\[game\]: flag_return player='.*:(.*)'", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
+                    print when, player, "RETURN FLAG"
+                    self.manager.flagreturn_table.save(data)
+                # Capture Flag
+                elif re.match("\[(.*)\]\[game\]: flag_capture player='.*:(.*)'", line):
+                    when, player = re.match("\[(.*)\]\[game\]: flag_capture player='.*:(.*)'", line).groups()
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
+                    print when, player, "CAPTURE FLAG"
+                    self.manager.flagcapture_table.save(data)
+                # Other
+                else:
+                     print re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'.*", line)
+                     print line
 
 engine_settings = [
     ('sv_name', 'Name of the server', 'unnamed server'),
