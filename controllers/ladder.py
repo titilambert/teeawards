@@ -17,14 +17,14 @@ def ladder(sort='score'):
     if sort not in ['kills', 'suicides', 'deaths', 'score', 'ratio', 'nickname']:
         redirect("/ladder")
 
-    stats_by_players = get_general_players_stats()
+    stats_by_players = get_stats()
 
-    stats_by_players = [(p, {'kills': data['kills'],
+    stats_by_players = [(p, {'kills': sum(data['kills'].values()),
                              'suicides': data['suicides'],
                              'deaths': data['deaths'],
-                             'rank': get_rank(p, data),
-                             'score': data['kills'] - data['suicides'],
-                             'ratio': data['kills'] / float(data['deaths']),
+                             'rank': get_rank(p,  data['score']),
+                             'score': data['score'],
+                             'ratio': sum(data['kills'].values()) / float(data['deaths']),
                               }
                         )
                         for p, data in stats_by_players.items()]

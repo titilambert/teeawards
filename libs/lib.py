@@ -305,7 +305,7 @@ def get_player_score(player, data=None):
 
 
 
-def get_stats(player):
+def get_stats(player=None):
     def reducer(ret, data):
         ret, type_ = ret  
         data['type'] = type_
@@ -380,6 +380,7 @@ def get_stats(player):
                 results[player_name] = {}
                 results[player_name]['score'] = 0
                 results[player_name]['kills'] = {}
+                results[player_name]['deaths'] = 0
                 results[player_name]['victims'] = {}
                 results[player_name]['suicides'] = 0
                 results[player_name]['teamkills'] = {}
@@ -466,6 +467,7 @@ def get_stats(player):
                             results[new_player_name] = {}
                             results[new_player_name]['score'] = 0
                             results[new_player_name]['kills'] = {}
+                            results[player_name]['deaths'] = 0
                             results[new_player_name]['victims'] = {}
                             results[new_player_name]['suicides'] = 0
                             results[new_player_name]['teamkills'] = {}
@@ -501,6 +503,7 @@ def get_stats(player):
                         live_data['rounds'][round_id]['players'][killer]['score'] -= 1
                         results[killer]['score'] -= 1
                         results[killer]['suicides'] += 1
+                        results[killer]['deaths'] += 1
                     # Is it Team kill ?
                     elif current_teamplay and killer_team == victim_team:
                         # +1 team kill for the killer
@@ -514,6 +517,7 @@ def get_stats(player):
                         # -1 score ...
                         live_data['rounds'][round_id]['players'][killer]['score'] -= 1
                         results[killer]['score'] -= 1
+                        results[victim]['deaths'] += 1
                     else:
                         # Normal kill
                         # +1 kill for the killer
@@ -527,6 +531,7 @@ def get_stats(player):
                         # +1 score ...
                         live_data['rounds'][round_id]['players'][killer]['score'] += 1
                         results[killer]['score'] += 1
+                        results[victim]['deaths'] += 1
 
                 elif event['type'] == 'changeteam':
                     #import pdb;pdb.set_trace()
@@ -589,7 +594,11 @@ def get_stats(player):
                     results[last_player]['third_place'] += 1
                     results[last_player]['score'] += nb_players / 2
 
-    return results
+
+    if player:
+        return results[player]
+    else:
+        return results
 
 def toto():
     # ##
