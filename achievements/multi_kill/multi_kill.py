@@ -63,7 +63,7 @@ def player_multi_kill(player):
             ret_multikill[mk] = (ret_multikill[mk][0], value)
 
     # TODO RETURN THIS
-    max_multikill = max(ret.keys())
+#    max_multikill = max(ret.keys())
 
     return {'multikill_list': ret_multikill}
 

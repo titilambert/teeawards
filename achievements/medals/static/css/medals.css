@@ -1,0 +1,49 @@
+table.medals_desc_achievement, table.medals_achievement {
+    background: #474642;
+}
+
+table.medals_achievement th.medals_title {
+    font-size: 20px;
+}
+
+table.medals_achievement td.medal_title {
+    color: #E7E5BE;
+    line-height: 30px;
+}
+
+table.medals_achievement img.medal_notok {
+    opacity: 0.20;
+    filter: alpha(opacity=20); /* For IE8 and earlier */
+}
+
+table.medals_desc_achievement {
+    color: #E7E5BE;
+}
+
+table.medals_desc_achievement ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+table.medals_desc_achievement td.descr {
+    padding: 5px 50px 5px 10px;
+    border-right: 1px solid #CCCCCC;
+}
+
+table.medals_achievement td.medal_title span.title {
+    text-decoration: underline;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+table.medals_achievement td.medal_title span.desc {
+    font-weight: normal;
+    font-size: 8px;
+    text-decoration: none;
+}
+
+
+table.medals_achievement td.medal_title span.nb_medals {
+    font-size: 18px;
+
+}

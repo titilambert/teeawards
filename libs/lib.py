@@ -204,6 +204,8 @@ def get_stats(selected_player=None):
             live_data['players'][player_name]['team'] = current_team
             live_data['players'][player_name]['score'] = 0
             live_data['players'][player_name]['status'] = 'online'
+            live_data['players'][player_name]['kills'] = 0
+            live_data['players'][player_name]['deaths'] = 0
             # prepare final results
             if not player_name in results:
                 # if its a total new player
@@ -292,12 +294,14 @@ def get_stats(selected_player=None):
                         live_data['rounds'][round_id]['players'][new_player_name]['team'] = current_team
                         live_data['rounds'][round_id]['players'][new_player_name]['score'] = 0
                         live_data['rounds'][round_id]['players'][new_player_name]['status'] = 'online'
+                        live_data['rounds'][round_id]['players'][new_player_name]['kills'] = 0
+                        live_data['rounds'][round_id]['players'][new_player_name]['deaths'] = 0
                         if not new_player_name in results:
                             # if its a total new player
                             results[new_player_name] = {}
                             results[new_player_name]['score'] = 0
                             results[new_player_name]['kills'] = {}
-                            results[player_name]['deaths'] = 0
+                            results[new_player_name]['deaths'] = 0
                             results[new_player_name]['victims'] = {}
                             results[new_player_name]['suicides'] = 0
                             results[new_player_name]['teamkills'] = {}
@@ -336,6 +340,7 @@ def get_stats(selected_player=None):
                         if not 'deaths' in results[killer]:
                             results[killer]['deaths'] = 0
                         results[killer]['deaths'] += 1
+                        live_data['rounds'][round_id]['players'][killer]['deaths'] += 1
                     # Is it Team kill ?
                     elif current_teamplay and killer_team == victim_team:
                         # +1 team kill for the killer
@@ -352,12 +357,15 @@ def get_stats(selected_player=None):
                         if not 'deaths' in results[victim]:
                             results[victim]['deaths'] = 0
                         results[victim]['deaths'] += 1
+                        live_data['rounds'][round_id]['players'][victim]['deaths'] += 1
                     else:
                         # Normal kill
                         # +1 kill for the killer
                         if not victim in results[killer]['kills']:
                             results[killer]['kills'][victim] = 0
                         results[killer]['kills'][victim] += 1
+                        live_data['rounds'][round_id]['players'][killer]['kills'] += 1
+                        live_data['rounds'][round_id]['players'][victim]['deaths'] += 1
                         # +1 victim(death) for the victim
                         if not killer in results[victim]['victims']:
                             results[victim]['victims'][killer] = 0
@@ -388,6 +396,23 @@ def get_stats(selected_player=None):
                         # TODO add this in stats
                     # END OF ROUND
                     break
+
+            # MEDALS TODO must be in achievements ...
+            for player_name, player in live_data['rounds'][round_id]['players'].items():
+                # purple
+                if player['deaths'] != 0:
+                    ratio = player['kills'] / float(player['deaths'])
+                    if ratio <= 0.2:
+                        if not'purple' in results[player_name]:
+                            results[player_name]['purple'] = 0
+                        results[player_name]['purple'] += 1
+                # no death
+                if player['deaths'] == 0:
+                    if not'no death' in results[player_name]:
+                        results[player_name]['no death'] = 0
+                    results[player_name]['no death'] += 1
+
+
 
             # ADD round points
             nb_players = len(live_data['rounds'][round_id]['players'])
@@ -607,11 +632,8 @@ def get_player_stats(player, with_warmup=False):
     raw_victim_stats = kill_table.find({'victim' : player})
     vstats = reduce(compute_victim_stats, raw_victim_stats, {'weapon': {}, 'killer': {}, 'suicide': 0})
     raw_pickup_stats = pickup_table.find({'player': player})
-    print [x for x in pickup_table.find({'player': player})]
-    print pickup_table.find({'player': player}).count()
     pstats = reduce(compute_item_stats, raw_pickup_stats, {})
 
-    print pstats
     return kstats, vstats, pstats
 
 def get_player_score(player, data=None):

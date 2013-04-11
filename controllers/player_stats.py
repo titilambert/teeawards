@@ -34,7 +34,6 @@ def player_stats(player=None):
         context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
         context['gametype'] = context['fullserverstatus']['gametype']
 
-
     context['score'] = player_stats['score']
     context['deaths'] = player_stats['deaths']
     context['ratio'] = context['kills'] / float(context['deaths'])
@@ -63,6 +62,11 @@ def player_stats(player=None):
                                  reverse=True)[0]
     except:
         context['favorite_weapon'] = ("No data", 0)
+    # Places
+    context['first_place'] = player_stats.get('first_place', 0)
+    context['second_place'] = player_stats.get('second_place', 0)
+    context['third_place'] = player_stats.get('third_place', 0)
+    context['last_place'] = player_stats.get('last_place', 0)
 
     context['achievement_list'] = {}
     for achievement in achievement_player_list.items():

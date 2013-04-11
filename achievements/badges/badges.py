@@ -1,6 +1,6 @@
 from pymongo import DESCENDING
 
-from libs.lib import tee_db, get_player_stats
+from libs.lib import tee_db, get_stats, get_player_stats
 from bottle import mako_view
 from datetime import datetime, timedelta
 from libs.achievement import achievement_desc_list, achievement_player_list, achievement_livestat_list
@@ -17,6 +17,7 @@ def desc_badges():
 
 @mako_view("player_badges")
 def player_badges(player):
+    player_stats = get_stats(player)
     kills, _, items = get_player_stats(player)
 
     badge_result = dict([(x, 0) for x in badge_list])
@@ -31,6 +32,11 @@ def player_badges(player):
             for i, l in enumerate(limits):
                 if items[badge] > l:
                     badge_result[badge] = i + 1
+        elif badge == 'winner':
+            badge_result[badge] = 0
+            for i, l in enumerate(limits):
+                if player_stats.get('first', 0) > l:
+                    badge_result[badge] = i + 1
 
     return {'results': badge_result}
 
@@ -38,24 +44,6 @@ def player_badges(player):
 def livestat_badges(live_stat, new_data):
     return None
 
-#multikill_list = {
-#        3: ('Triple Kill', 0),
-#        5: ('Multi Kill', 0),
-#        6: ('Rampage', 0),
-#        7: ('Killing Spree', 0),
-#        9: ('Dominating', 0),
-#        11: ('Unstoppable', 0),
-#        13: ('Mega Kill', 0),
-#        15: ('Ultra Kill', 0),
-#        16: ('Eagle Eye', 0),
-#        17: ('Ownage', 0),
-#        18: ('Ludicrouskill', 0),
-#        19: ('Head Hunter', 0),
-#        20: ('Whicked Sick', 0),
-#        21: ('Monster Kill', 0),
-#        23: ('Holy Shit', 0),
-#        24: ('God Like', 0),
-#        }
 
 badge_list = {
         'hammer': [100, 400, 1000],
