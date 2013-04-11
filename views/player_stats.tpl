@@ -216,6 +216,20 @@ ${lib.search_player()}
         </td>
       </tr>
       % endif
+      % if favorite_map:
+      <tr>
+        <% map_name = favorite_map[0].split(".", 1)[0] %>
+        <td class="dataname">
+          Map
+        </td>
+        <td class="image">
+          <img src="/map_screenshots/${map_list[map_name]['screenshot']}" alt="${map_name}" />
+        </td>
+        <td class="datavalue">
+          You played ${favorite_map[1]} rounds on ${map_name}
+        </td>
+      </tr>
+      % endif
     </body>
   </table>
 </div>

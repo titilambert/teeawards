@@ -1,3 +1,5 @@
+import copy
+
 from pymongo import DESCENDING
 
 from libs.lib import tee_db
@@ -5,6 +7,7 @@ from bottle import mako_view
 from datetime import datetime, timedelta
 from libs.achievement import achievement_desc_list, achievement_player_list, achievement_livestat_list
 from libs.lib import kill_table
+
 
 
 @mako_view("desc_multi_kill")
@@ -54,15 +57,15 @@ def player_multi_kill(player):
         ret[ret['tmp'] + 1] += 1
     del(ret['tmp'])
 
-    
+    ret_multikill = copy.copy(multikill_list)
     for mk, value in ret.items():
-        if mk in multikill_list:
-            multikill_list[mk] = (multikill_list[mk][0], value)
+        if mk in ret_multikill:
+            ret_multikill[mk] = (ret_multikill[mk][0], value)
 
     # TODO RETURN THIS
     max_multikill = max(ret.keys())
 
-    return {'multikill_list': multikill_list}
+    return {'multikill_list': ret_multikill}
 
 
 def livestat_multi_kill(live_stat, new_data):

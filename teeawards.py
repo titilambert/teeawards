@@ -13,7 +13,7 @@ from controllers.ladder import ladder
 from controllers.item_stats import item_stats
 from controllers.player_stats import player_stats
 from controllers.ranks import ranks
-from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delete
+from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delete, reset_data
 from controllers.achievements import achievements
 from controllers.maps import maps
 from libs.teeworldsserver import twms
@@ -46,6 +46,7 @@ def setup_routing(app):
     app.route('/ladder', method=['GET', 'POST'], callback=ladder)
     app.route('/ranks', method=['GET', 'POST'], callback=ranks)
     app.route('/maps', method=['GET', 'POST'], callback=maps)
+    app.route('/maps/<gametype>', method=['GET', 'POST'], callback=maps)
     app.route('/map/<id>', method=['GET', 'POST'], callback=maps)
     app.route('/admin/map/edit', method=['GET', 'POST'], callback=map_edit)
     app.route('/admin/map/edit/', method=['GET', 'POST'], callback=map_edit)
@@ -53,12 +54,13 @@ def setup_routing(app):
     app.route('/admin/map/delete/<id_>', method=['GET', 'POST'], callback=map_delete)
     app.route('/admin', method=['GET', 'POST'], callback=admin)
     app.route('/achievements', method=['GET', 'POST'], callback=achievements)
-    app.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
+    app.route('/admin/reset_data', method=['GET', 'POST'], callback=reset_data)
 #    app.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
     app.route('/admin/conf/edit', method=['GET', 'POST'], callback=conf_edit)
     app.route('/admin/conf/edit/', method=['GET', 'POST'], callback=conf_edit)
     app.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)
     app.route('/admin/conf/delete/<id_>', method=['GET', 'POST'], callback=conf_delete)
+    app.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
     app.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
     app.route('/items', method=['GET', 'POST'], callback=item_stats)
     app.route('/player_stats/<player>', method=['GET'], callback=player_stats)

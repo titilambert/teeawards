@@ -116,3 +116,8 @@ def map_edit(id_=None):
 def map_delete(id_):
     delete_map(id_)
     redirect("/admin")
+
+
+def reset_data():
+    empty_db()
+    redirect("/admin")

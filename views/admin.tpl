@@ -169,5 +169,10 @@
       </tr>
     </tbody>
   </table>
+  <div>
+    <form action="/admin/reset_data">
+    <button >Reset data</button>
+    </form>
+  </div>
 </div>
 

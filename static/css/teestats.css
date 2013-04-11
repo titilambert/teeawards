@@ -593,6 +593,10 @@ table.maplist td{
 }
 
 /* Maps */
+table.maps th form label{
+    font-size: 16px;
+}
+
 table.maps td {
     padding: 20px 20px;
 }

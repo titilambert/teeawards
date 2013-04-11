@@ -9,8 +9,15 @@ def get_map(name):
     maps = maps_table.find_one({'name': name})
     return maps
 
-def get_maps():
-    return maps_table.find()
+def get_map_mods():
+    return set([x['map']['prefered_mod']
+                for x in maps_table.find({}, ['map.prefered_mod'])])
+
+def get_maps(gametype=None):
+    if gametype:
+        return maps_table.find({'map.prefered_mod': {"$regex": gametype}})
+    else:
+        return maps_table.find()
 
 def save_map(request):
     #params = [x for x in request.params.items()]

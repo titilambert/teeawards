@@ -213,7 +213,7 @@ class TeeWorldsServer(threading.Thread):
                     when = datetime.fromtimestamp(int(when, 16))
                     data = {'when': when,  'gametype': gametype.strip(), 'teamplay': teamplay.strip(), 'map': self.map_}
                     # NEED TO BE SURE THAT IS NOT A STARTROUND JUST BEFORE A CHANGE MAP .... 
-                    print "START ROUNDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDaaaaaaa:", gametype, "TEAMPLAY", teamplay, self.map_
+                    print "START ROUND:", gametype, "TEAMPLAY", teamplay, self.map_
                     self.round_ = self.manager.round_table.save(data)
                 # Change map
                 elif re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line):
@@ -286,7 +286,6 @@ class TeeWorldsServer(threading.Thread):
                     self.manager.flagcapture_table.save(data)
                 # Other
                 else:
-                     print re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'.*", line)
                      print line
 
 engine_settings = [

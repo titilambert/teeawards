@@ -2,7 +2,7 @@ from libs.lib import *
 
 def get_rank(player, score=None):
     if not score:
-        score = get_stats()[player]['score']
+        score = get_stats(player).get('score', 0)
     player_rank = 0
     for i, rank in enumerate(ranks):
         if score < rank[1]:

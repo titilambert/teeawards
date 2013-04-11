@@ -42,8 +42,6 @@ def empty_db():
     flagcapture_table.drop()
 
 
-
-
 live_status_queue = Queue.Queue()
 
 # DATA FOLDER (maps, daemon, ...)
@@ -122,161 +120,12 @@ r_kill_mapping = dict([(x[1], x[0]) for x in kill_mapping.items()])
 r_pickup_mapping = dict([(x[1], x[0]) for x in pickup_mapping.items()])
 
 
-def get_general_players_stats(with_warmup=False):
-    def get_stats_by_players(ret, data):
-        # warmup
-        if (not with_warmup) and data['round'] == None:
-            return ret
-        # Handle exit
-        if data['weapon'] == '-3':
-            return ret
-
-        if not data['victim'] in ret:
-            ret[data['victim']] = {'kills': 0,
-                                   'deaths': 0,
-                                   'suicides': 0,
-                                  }
-        ret[data['victim']]['deaths'] += 1
-
-        if data['killer'] != data['victim']:
-            if not data['killer'] in ret:
-                ret[data['killer']] = {'kills': 0,
-                                       'deaths': 0,
-                                       'suicides': 0,
-                                      }
-            ret[data['killer']]['kills'] += 1
-
-        if data['killer'] == data['victim']:
-            if not data['killer'] in ret:
-                ret[data['killer']] = {'kills': 0,
-                                       'deaths': 0,
-                                       'suicides': 0,
-                                      }
-            ret[data['killer']]['suicides'] += 1
-
-        return ret
-
-    raw_data = kill_table.find()
-    return reduce(get_stats_by_players, raw_data, {})
-
-
-def get_item_stats(item, with_warmup=False):
-    kill_with_key = 'kill with ' + item.capitalize()
-    dead_by_key = 'dead by ' + item.capitalize()
-    def compute_weapon_stats(ret, data):
-        # warmup
-        if (not with_warmup) and data['round'] == None:
-            return ret
-
-        if not data['killer'] in ret[kill_with_key]:
-            ret[kill_with_key][data['killer']] = 0
-        ret[kill_with_key][data['killer']] += 1
-        if not data['victim'] in ret[dead_by_key]:
-            ret[dead_by_key][data['victim']] = 0
-        ret[dead_by_key][data['victim']] += 1
-        return ret
-
-    def compute_item_stats(ret, data):
-        # warmup
-        if (not with_warmup) and data['round'] == None:
-            return ret
-
-        if not data['player'] in ret:
-            ret[data['player']] = 0
-        ret[data['player']] += 1
-        return ret
-
-    item = item.lower()
-
-    stats = {}
-    if item in kill_mapping:
-        kitem = kill_mapping[item]
-        kraw_data = kill_table.find({'weapon' : kitem})
-        stats = reduce(compute_weapon_stats,
-                       kraw_data,
-                       {kill_with_key: {}, dead_by_key: {}})
-    if item in pickup_mapping:
-        pitem = pickup_mapping[item]
-        praw_data = pickup_table.find({'item': pitem})
-        pstats = reduce(compute_item_stats, praw_data, {})
-        stats.update({'pick up': pstats})
-
-
-    return stats
-
 def get_player_list():
     player_list = set([x['player'] for x in pickup_table.find(fields=['player'])])
     return player_list
 
-def get_player_stats(player, with_warmup=False):
-    def compute_item_stats(ret, data):
-        # warmup
-        if (not with_warmup) and data['round'] == None:
-            return ret
 
-        key = r_pickup_mapping[data['item']]
-        if not key in ret:
-            ret[key] = 0
-        ret[key] += 1
-        return ret
-
-    def compute_kill_stats(ret, data):
-        # warmup
-        if (not with_warmup) and data['round'] == None:
-            return ret
-
-        weapon_key = r_kill_mapping[data['weapon']]
-        victim_key = data['victim']
-        if data['weapon'] == '-3':
-            # Handle exit
-            return ret
-        if data['killer'] != data['victim']:
-            if not weapon_key in ret['weapon']:
-                ret['weapon'][weapon_key] = 0
-            ret['weapon'][weapon_key] += 1
-            if not victim_key in ret['victim']:
-                ret['victim'][victim_key] = 0
-            ret['victim'][victim_key] += 1
-        return ret
-        
-    def compute_victim_stats(ret, data):
-        # warmup
-        if (not with_warmup) and data['round'] == None:
-            return ret
-
-        weapon_key = r_kill_mapping[data['weapon']]
-        killer_key = data['killer']
-
-        if data['weapon'] == '-3':
-            # Handle exit
-            return ret
-        if data['killer'] != data['victim']:
-            if not weapon_key in ret['weapon']:
-                ret['weapon'][weapon_key] = 0
-            ret['weapon'][weapon_key] += 1
-            if not killer_key in ret['killer'] :
-                ret['killer'] [killer_key] = 0
-            ret['killer'] [killer_key] += 1
-        else:
-            ret['suicide'] += 1
-            if weapon_key == 'death fall':
-                if not weapon_key in ret['weapon']:
-                    ret['weapon'][weapon_key] = 0
-                ret['weapon'][weapon_key] += 1
-
-        return ret
-
-    raw_killer_stats = kill_table.find({'killer' : player})
-    kstats = reduce(compute_kill_stats, raw_killer_stats, {'weapon': {}, 'victim': {}})
-    raw_victim_stats = kill_table.find({'victim' : player})
-    vstats = reduce(compute_victim_stats, raw_victim_stats, {'weapon': {}, 'killer': {}, 'suicide': 0})
-    raw_pickup_stats = pickup_table.find({'player' : player})
-    pstats = reduce(compute_item_stats, raw_pickup_stats, {})
-
-    return kstats, vstats, pstats
-
-
-# NEED REFACTORING !!!=
+# Get stats and score
 # +1 : kill
 # -1 : autokill
 
@@ -286,26 +135,7 @@ def get_player_stats(player, with_warmup=False):
 # playernumbers/2 or 1 : third IAR
 #######
 # -1 : team kill
-def get_player_score(player, data=None):
-    if data is None:
-        data = {}
-        data['kstats'], data['vstats'], data['pstats'] = get_player_stats(player)
-    if 'kills' in data:
-        kills = data['kills']
-    else:
-        kills = sum(data['kstats']['victim'].values())
-    if 'suicides' in data:
-        suicides = data['suicides']
-    else:
-        suicides = data['vstats']['suicide']
-
-    score = kills - suicides
-
-    return score
-
-
-
-def get_stats(player=None):
+def get_stats(selected_player=None):
     def reducer(ret, data):
         ret, type_ = ret  
         data['type'] = type_
@@ -462,7 +292,7 @@ def get_stats(player=None):
                         live_data['rounds'][round_id]['players'][new_player_name]['team'] = current_team
                         live_data['rounds'][round_id]['players'][new_player_name]['score'] = 0
                         live_data['rounds'][round_id]['players'][new_player_name]['status'] = 'online'
-                        if not player_name in results:
+                        if not new_player_name in results:
                             # if its a total new player
                             results[new_player_name] = {}
                             results[new_player_name]['score'] = 0
@@ -503,6 +333,8 @@ def get_stats(player=None):
                         live_data['rounds'][round_id]['players'][killer]['score'] -= 1
                         results[killer]['score'] -= 1
                         results[killer]['suicides'] += 1
+                        if not 'deaths' in results[killer]:
+                            results[killer]['deaths'] = 0
                         results[killer]['deaths'] += 1
                     # Is it Team kill ?
                     elif current_teamplay and killer_team == victim_team:
@@ -517,6 +349,8 @@ def get_stats(player=None):
                         # -1 score ...
                         live_data['rounds'][round_id]['players'][killer]['score'] -= 1
                         results[killer]['score'] -= 1
+                        if not 'deaths' in results[victim]:
+                            results[victim]['deaths'] = 0
                         results[victim]['deaths'] += 1
                     else:
                         # Normal kill
@@ -531,6 +365,8 @@ def get_stats(player=None):
                         # +1 score ...
                         live_data['rounds'][round_id]['players'][killer]['score'] += 1
                         results[killer]['score'] += 1
+                        if not 'deaths' in results[victim]:
+                            results[victim]['deaths'] = 0
                         results[victim]['deaths'] += 1
 
                 elif event['type'] == 'changeteam':
@@ -594,47 +430,71 @@ def get_stats(player=None):
                     results[last_player]['third_place'] += 1
                     results[last_player]['score'] += nb_players / 2
 
-
-    if player:
-        return results[player]
+    if selected_player and selected_player in results:
+        return results[selected_player]
     else:
         return results
 
-def toto():
-    # ##
-    data_tables =[
-    join_table,
-    changeteam_table,
-    kick_table,
-    timeout_table,
-    leave_table,
-#    servershutdown_table,
-    pickup_table,
-    kill_table,
-    flaggrab_table,
-    flagreturn_table,
-    flagcapture_table,
-    ]
 
-    for t in data_tables:
-        datas = [x for x in t.find()]
-        rounds = [x for x in round_table.find()]
-        #maps = [x for x in map_table.find()]
-        events = sorted(rounds + datas, key=lambda x: x['when'])
-        map_id = None
+def get_item_stats(item, with_warmup=False):
+    kill_with_key = 'kill with ' + item.capitalize()
+    dead_by_key = 'dead by ' + item.capitalize()
+    def compute_weapon_stats(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
 
-        for event in events:
-            if 'map' in event:
-                map_id = event['map']
-                round_id = event['_id']
-            elif map_id:
-                event['map'] = map_id
-                event['round'] = round_id
-  #              print event
-#                t.save(event)
-            else:
-                print "DELETE", event
-#                t.remove(event)
+        if not data['killer'] in ret[kill_with_key]:
+            ret[kill_with_key][data['killer']] = 0
+        ret[kill_with_key][data['killer']] += 1
+        if not data['victim'] in ret[dead_by_key]:
+            ret[dead_by_key][data['victim']] = 0
+        ret[dead_by_key][data['victim']] += 1
+        return ret
+
+    def compute_item_stats(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
+
+        if not data['player'] in ret:
+            ret[data['player']] = 0
+        ret[data['player']] += 1
+        return ret
+
+    item = item.lower()
+
+    stats = {}
+    if item in kill_mapping:
+        kitem = kill_mapping[item]
+        kraw_data = kill_table.find({'weapon' : kitem})
+        stats = reduce(compute_weapon_stats,
+                       kraw_data,
+                       {kill_with_key: {}, dead_by_key: {}})
+    if item in pickup_mapping:
+        pitem = pickup_mapping[item]
+        praw_data = pickup_table.find({'item': pitem})
+        pstats = reduce(compute_item_stats, praw_data, {})
+        stats.update({'pick up': pstats})
+
+    return stats
+
+def get_player_items_stats(player, with_warmup=False):
+    def compute_item_stats(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
+
+        key = r_pickup_mapping[data['item']]
+        if not key in ret:
+            ret[key] = 0
+        ret[key] += 1
+        return ret
+
+    raw_pickup_stats = pickup_table.find({'player' : player})
+    pstats = reduce(compute_item_stats, raw_pickup_stats, {})
+
+    return pstats
 
 
 
@@ -644,9 +504,132 @@ def toto():
 
 
 
+##### USELESS ####
+
+def get_general_players_stats(with_warmup=False):
+    def get_stats_by_players(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
+        # Handle exit
+        if data['weapon'] == '-3':
+            return ret
+
+        if not data['victim'] in ret:
+            ret[data['victim']] = {'kills': 0,
+                                   'deaths': 0,
+                                   'suicides': 0,
+                                  }
+        ret[data['victim']]['deaths'] += 1
+
+        if data['killer'] != data['victim']:
+            if not data['killer'] in ret:
+                ret[data['killer']] = {'kills': 0,
+                                       'deaths': 0,
+                                       'suicides': 0,
+                                      }
+            ret[data['killer']]['kills'] += 1
+
+        if data['killer'] == data['victim']:
+            if not data['killer'] in ret:
+                ret[data['killer']] = {'kills': 0,
+                                       'deaths': 0,
+                                       'suicides': 0,
+                                      }
+            ret[data['killer']]['suicides'] += 1
+
+        return ret
+
+    raw_data = kill_table.find()
+    return reduce(get_stats_by_players, raw_data, {})
 
 
 
+def get_player_stats(player, with_warmup=False):
+    def compute_item_stats(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
+
+        key = r_pickup_mapping[data['item']]
+        if not key in ret:
+            ret[key] = 0
+        ret[key] += 1
+        return ret
+
+    def compute_kill_stats(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
+
+        weapon_key = r_kill_mapping[data['weapon']]
+        victim_key = data['victim']
+        if data['weapon'] == '-3':
+            # Handle exit
+            return ret
+        if data['killer'] != data['victim']:
+            if not weapon_key in ret['weapon']:
+                ret['weapon'][weapon_key] = 0
+            ret['weapon'][weapon_key] += 1
+            if not victim_key in ret['victim']:
+                ret['victim'][victim_key] = 0
+            ret['victim'][victim_key] += 1
+        return ret
+        
+    def compute_victim_stats(ret, data):
+        # warmup
+        if (not with_warmup) and data['round'] == None:
+            return ret
+
+        weapon_key = r_kill_mapping[data['weapon']]
+        killer_key = data['killer']
+
+        if data['weapon'] == '-3':
+            # Handle exit
+            return ret
+        if data['killer'] != data['victim']:
+            if not weapon_key in ret['weapon']:
+                ret['weapon'][weapon_key] = 0
+            ret['weapon'][weapon_key] += 1
+            if not killer_key in ret['killer'] :
+                ret['killer'] [killer_key] = 0
+            ret['killer'] [killer_key] += 1
+        else:
+            ret['suicide'] += 1
+            if weapon_key == 'death fall':
+                if not weapon_key in ret['weapon']:
+                    ret['weapon'][weapon_key] = 0
+                ret['weapon'][weapon_key] += 1
+        return ret
+
+    raw_killer_stats = kill_table.find({'killer' : player})
+    kstats = reduce(compute_kill_stats, raw_killer_stats, {'weapon': {}, 'victim': {}})
+    raw_victim_stats = kill_table.find({'victim' : player})
+    vstats = reduce(compute_victim_stats, raw_victim_stats, {'weapon': {}, 'killer': {}, 'suicide': 0})
+    raw_pickup_stats = pickup_table.find({'player': player})
+    print [x for x in pickup_table.find({'player': player})]
+    print pickup_table.find({'player': player}).count()
+    pstats = reduce(compute_item_stats, raw_pickup_stats, {})
+
+    print pstats
+    return kstats, vstats, pstats
+
+def get_player_score(player, data=None):
+    if data is None:
+        data = {}
+        data['kstats'], data['vstats'], data['pstats'] = get_player_stats(player)
+    if 'kills' in data:
+        kills = data['kills']
+    else:
+        kills = sum(data['kstats']['victim'].values())
+    if 'suicides' in data:
+        suicides = data['suicides']
+    else:
+        suicides = data['vstats']['suicide']
+
+    score = kills - suicides
+
+    return score
 
 ### MAYBE USELESS
 def get_players_kills(ret, data):

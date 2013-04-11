@@ -7,6 +7,15 @@
     <tr>
       <th colspan="5">
         Maps
+        <form method="post" action="/maps">
+        <label>Game type : </label>
+        <select onchange="submit();" name="gametype">
+            <option value="">All</option>
+          % for mod in mods:
+            <option ${'selected=selected' if selected_mod == mod else ''} value="${mod}">${mod}</option>
+          % endfor
+        </select>
+        </form>
       </th>
   </thead>
   <tbody>

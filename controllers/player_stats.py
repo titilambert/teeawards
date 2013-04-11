@@ -1,6 +1,7 @@
 from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs.rank import get_rank, ranks
+from libs.maps import get_maps
 from libs.teeworldsserver import twms
 from libs.achievement import achievement_player_list
 
@@ -18,29 +19,36 @@ def player_stats(player=None):
     context['player'] = player
     context['kill_mapping'] = kill_mapping
     context['pickup_mapping'] = pickup_mapping
+    context['pstats'] = get_player_items_stats(player)
+
+    player_stats = get_stats(player)
+#    context['kstats'] = player_stats['kills']
+#    context['vstats'] = player_stats['victims']
+    # TODO integrate weapon stats in get_stat function
     context['kstats'], context['vstats'], context['pstats'] = get_player_stats(player)
-    context['kills'] = sum(context['kstats']['victim'].values())
-    context['suicides'] = context['vstats']['suicide']
+    
+    context['kills'] = sum(player_stats['kills'].values())
+    context['suicides'] = player_stats['suicides']
     context['fullserverstatus'] = twms.get_server_info()
     if context['fullserverstatus']:
         context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
         context['gametype'] = context['fullserverstatus']['gametype']
 
-    try:
-        context['favorite_weapon'] = sorted([x for x in context['kstats']['weapon'].items()],
-                                 key=lambda x: x[1],
-                                 reverse=True)[0]
-    except:
-        context['favorite_weapon'] = ("No data", 0)
 
-    context['score'] = get_player_score(player, context)
-    context['deaths'] = context['suicides'] + sum(context['vstats']['weapon'].values())
+    context['score'] = player_stats['score']
+    context['deaths'] = player_stats['deaths']
     context['ratio'] = context['kills'] / float(context['deaths'])
 
-    rank_level = get_rank(player, context)
+    rank_level = get_rank(player, context['score'])
     context['rank'] = (rank_level, ranks[rank_level][0], ranks[rank_level][1])
     context['nextrank'] = (rank_level + 1, ranks[rank_level + 1][0], ranks[rank_level + 1][1])
 
+    context['map_list'] = dict([(x['name'], x['map']) for x in get_maps()])
+    # Favorite
+    try:
+        context['favorite_map'] = sorted([x for x in player_stats['maps'].items()], key=lambda x: x[1], reverse=True)[0]
+    except:
+        context['favorite_map'] = ("No data", 0)
     try:
         context['favorite_victim'] = sorted([x for x in context['kstats']['victim'].items()], key=lambda x: x[1], reverse=True)[0]
     except:
@@ -49,6 +57,12 @@ def player_stats(player=None):
         context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1], reverse=True)[0]
     except:
         context['favorite_victim'] = ("No data", 0)
+    try:
+        context['favorite_weapon'] = sorted([x for x in context['kstats']['weapon'].items()],
+                                 key=lambda x: x[1],
+                                 reverse=True)[0]
+    except:
+        context['favorite_weapon'] = ("No data", 0)
 
     context['achievement_list'] = {}
     for achievement in achievement_player_list.items():
