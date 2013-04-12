@@ -33,7 +33,7 @@
     <% player, stats = data %>
       <tr>
         <td>
-          #${i}
+          #${i+1}
         </td>
         <td class="nickname">
           <img src="/images/ranks/rank_${stats['rank']}.gif" />

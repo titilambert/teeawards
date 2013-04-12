@@ -9,11 +9,14 @@ def index():
     context['page'] = 'home'
     context['server_alive'] = twms.is_alive()
     context['fullserverstatus'] = twms.get_server_info()
+    
     if context['fullserverstatus']: 
         context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
         context['gametype'] = context['fullserverstatus']['gametype']
 
-
+    # Get score
+    stats = get_stats()
+    # Get old stats TODO use only get_stats
     stats_by_players = get_general_players_stats()
     stats_by_players = [(p, {'kills': data['kills'],
                              'suicides': data['suicides'],
@@ -31,7 +34,7 @@ def index():
         context['best_killer'] = ("Nostat", 0)
 
     try:
-        context['best_score'] = sorted([(x, data['score']) for x, data in stats_by_players],
+        context['best_score'] = sorted([(x, data['score']) for x, data in stats.items()],
                                    key=lambda x: x[1],
                                    reverse=True)[0]
     except:

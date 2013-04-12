@@ -12,7 +12,7 @@
       <% stat = results.get(medal, 0) %>
       <tr>
         <td class="medal_title">
-          <span class="title" >${medal.capitalize()}</span>
+          <span class="title" >${medal.title()}</span>
           <br/>
           <span class="nb_medals">${stat} medals</span>
           <br/>

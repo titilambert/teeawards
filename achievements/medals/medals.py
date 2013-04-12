@@ -21,12 +21,12 @@ def player_medals(player):
 
     medal_result = {}
 
-    medal_result['gold'] = player_stats.get('first_place', 0)
-    medal_result['silver'] = player_stats.get('silver_place', 0)
-    medal_result['bronze'] = player_stats.get('bronze_place', 0)
-    medal_result['fake gold'] = player_stats.get('last_place', 0)
-    medal_result['purple'] = player_stats.get('purple', 0)
-    medal_result['no death'] = player_stats.get('no death', 0)
+    medal_result['gold star'] = player_stats.get('first_place', 0)
+    medal_result['silver star'] = player_stats.get('silver_place', 0)
+    medal_result['bronze star'] = player_stats.get('bronze_place', 0)
+    medal_result['chocolate star'] = player_stats.get('last_place', 0)
+    medal_result['purple heart'] = player_stats.get('purple', 0)
+    medal_result['eternal heart'] = player_stats.get('no death', 0)
 
     return {'results': medal_result,
             'medals_list': medals_list}
@@ -38,12 +38,12 @@ def livestat_medals(live_stat, new_data):
 
 #
 medals_list = [
-        ('gold', 'First place IAR'),
-        ('silver', 'Second place IAR'),
-        ('bronze', 'Third place IAR'),
-        ('fake gold', 'Last place IAR'),
-        ('purple', 'Ratio < 1:4 IAR'),
-        ('no death', 'No death IAR'),
+        ('gold star', 'First place IAR'),
+        ('silver star', 'Second place IAR'),
+        ('bronze star', 'Third place IAR'),
+        ('chocolate star', 'Last place IAR'),
+        ('purple heart', 'Ratio < 1:4 IAR'),
+        ('eternal heart', 'No death IAR'),
         ]
 
 achievement_desc_list['desc_medals'] = desc_medals
