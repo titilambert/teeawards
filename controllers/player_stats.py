@@ -55,7 +55,7 @@ def player_stats(player=None):
     try:
         context['favorite_killer'] = sorted([x for x in context['vstats']['killer'].items()], key=lambda x: x[1], reverse=True)[0]
     except:
-        context['favorite_victim'] = ("No data", 0)
+        context['favorite_killer'] = ("No data", 0)
     try:
         context['favorite_weapon'] = sorted([x for x in context['kstats']['weapon'].items()],
                                  key=lambda x: x[1],

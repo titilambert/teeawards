@@ -163,17 +163,22 @@ def get_stats(selected_player=None):
     events_by_round, _ = reduce(reducer, leave_table.find(), (events_by_round, 'leave'))
     events_by_round, _ = reduce(reducer, servershutdown_table.find(), (events_by_round, 'servershutdown'))
 
-    def join_none_reducer(ret, data):
-        data['type'] = 'join'
+    def none_reducer(ret, data):
+        ret, type_ = ret
+        data['type'] = type_
         if 'map' in data and data['round'] is None:
             if not data['map'] in ret:
                 ret[data['map']] = []
             ret[data['map']].append(data)
             ret[data['map']].sort(key=lambda x: x['when'])
-        return ret
+        return ret, type_
     # Sort event by warmups
     # TODO MAKE mongo filters ('round' == NONE)
-    join_by_map = reduce(join_none_reducer, join_table.find(), {})
+    none_event_by_map, _ = reduce(none_reducer, join_table.find(), ({}, 'join'))
+    none_event_by_map, _ = reduce(none_reducer, kick_table.find(), (none_event_by_map, 'kick'))
+    none_event_by_map, _ = reduce(none_reducer, timeout_table.find(), (none_event_by_map, 'timeout'))
+    none_event_by_map, _ = reduce(none_reducer, leave_table.find(), (none_event_by_map, 'leave'))
+    none_event_by_map, _ = reduce(none_reducer, servershutdown_table.find(), (none_event_by_map, 'servershutdown'))
     # TODO with kick, timeout, leave and server shutdown
 
     def round_reducer(ret, data):
@@ -196,43 +201,52 @@ def get_stats(selected_player=None):
         current_map = maps[map_]['map']
         live_data['players'] = {}
         live_data['rounds'] = {}
-        # GET JOINs DURING WARMUP or at start
-        for join in join_by_map.get(map_, []):
-            player_name = join['player']
-            current_team = join['team']
-            live_data['players'][player_name] = {} 
-            live_data['players'][player_name]['team'] = current_team
-            live_data['players'][player_name]['score'] = 0
-            live_data['players'][player_name]['status'] = 'online'
-            live_data['players'][player_name]['kills'] = 0
-            live_data['players'][player_name]['deaths'] = 0
-            # prepare final results
-            if not player_name in results:
-                # if its a total new player
-                results[player_name] = {}
-                results[player_name]['score'] = 0
-                results[player_name]['kills'] = {}
-                results[player_name]['deaths'] = 0
-                results[player_name]['victims'] = {}
-                results[player_name]['suicides'] = 0
-                results[player_name]['teamkills'] = {}
-                results[player_name]['teamvictims'] = {}
-                results[player_name]['warmup'] = 0
-                results[player_name]['gametype'] = {}
-                results[player_name]['team'] = {}
-                results[player_name]['maps'] = {}
-            # +1 for this map
-            if not current_map in results[player_name]['maps']:
-                results[player_name]['maps'][current_map] = 0
-            results[player_name]['maps'][current_map] += 1
-            # +1 for this team
-            if not current_team in results[player_name]:
-                results[player_name]['team'][current_team] = 0
-            results[player_name]['team'][current_team] += 1
-            # +1 for warmup
-            if not 'warmup' in results[player_name]:
-                results[player_name]['warmup'] = 0
-            results[player_name]['warmup'] += 1
+        # EVENTS DURING WARMUP
+        for event in none_event_by_map.get(map_, []):
+            # GET JOINS
+            if event['type'] == 'join':
+                player_name = event['player']
+                current_team = event['team']
+                live_data['players'][player_name] = {} 
+                live_data['players'][player_name]['team'] = current_team
+                live_data['players'][player_name]['score'] = 0
+                live_data['players'][player_name]['status'] = 'online'
+                live_data['players'][player_name]['kills'] = 0
+                live_data['players'][player_name]['deaths'] = 0
+                # prepare final results
+                if not player_name in results:
+                    # if its a total new player
+                    results[player_name] = {}
+                    results[player_name]['score'] = 0
+                    results[player_name]['kills'] = {}
+                    results[player_name]['deaths'] = 0
+                    results[player_name]['victims'] = {}
+                    results[player_name]['suicides'] = 0
+                    results[player_name]['teamkills'] = {}
+                    results[player_name]['teamvictims'] = {}
+                    results[player_name]['warmup'] = 0
+                    results[player_name]['gametype'] = {}
+                    results[player_name]['team'] = {}
+                    results[player_name]['maps'] = {}
+                # +1 for this map
+                if not current_map in results[player_name]['maps']:
+                    results[player_name]['maps'][current_map] = 0
+                results[player_name]['maps'][current_map] += 1
+                # +1 for this team
+                if not current_team in results[player_name]:
+                    results[player_name]['team'][current_team] = 0
+                results[player_name]['team'][current_team] += 1
+                # +1 for warmup
+                if not 'warmup' in results[player_name]:
+                    results[player_name]['warmup'] = 0
+                results[player_name]['warmup'] += 1
+            elif event['type'] in ['leave', 'timeout', 'kick']:
+                player_name = event['player']
+                del(live_data['players'][player_name])
+            elif event['type'] == 'servershutdown':
+                # DO NOTHING ????
+                break
+
         # Iter on rounds in a map
         for round_id, round_ in enumerate(round_in_a_map):
             ### NEW ROUND ###
