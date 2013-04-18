@@ -16,8 +16,8 @@ def desc_badges():
     return {'badge_list': badges}
 
 @mako_view("player_badges")
-def player_badges(player):
-    player_stats = get_stats(player)
+def player_badges(player, gametype):
+    player_stats = get_stats(player, gametype)
     kills, _, items = get_player_stats(player)
 
     badge_result = dict([(x, 0) for x in badge_list])

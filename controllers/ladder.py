@@ -2,17 +2,14 @@ from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs.rank import get_rank
 from libs.teeworldsserver import twms
+from libs.hooks import *
 
 
 @mako_view('ladder')
-def ladder(sort='score'):
-    context = {}
+@prepare_context
+def ladder(sort='score', context={}, gametype=None):
     context['page'] = 'ladder'
     context['sort'] = sort
-    context['fullserverstatus'] = twms.get_server_info()
-    if context['fullserverstatus']:
-        context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
-        context['gametype'] = context['fullserverstatus']['gametype']
 
     if sort not in ['kills', 'suicides', 'deaths', 'score', 'ratio', 'nickname']:
         redirect("/ladder")

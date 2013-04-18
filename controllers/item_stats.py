@@ -1,10 +1,12 @@
 from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs.teeworldsserver import twms
+from libs.hooks import *
+
 
 @mako_view('item_stats')
-def item_stats():
-    context = {}
+@prepare_context
+def item_stats(context={}, gametype=None):
     #if not item in kill_mapping.keys() + pickup_mapping.keys():
     #    return "bad item"
 

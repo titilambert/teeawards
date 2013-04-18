@@ -4,11 +4,15 @@ from libs.rank import get_rank, ranks
 from libs.maps import get_maps
 from libs.teeworldsserver import twms
 from libs.achievement import achievement_player_list
+from libs.hooks import *
 
 
 @mako_view('player_stats')
-def player_stats(player=None):
-    context = {}
+@prepare_context
+def player_stats(player=None, context={}, gametype=None):
+#    session = request.environ.get('beaker.session')
+#    gametype = session.get('gametype', None)
+#    context['select_gametype'] = gametype
     if request.method == 'POST':
         player = request.params['player']
     # Test player exists
@@ -16,27 +20,34 @@ def player_stats(player=None):
         context["not_found"] = player
         return context
 
+#    context['fullserverstatus'] = twms.get_server_info()
+#    if context['fullserverstatus']:
+#        context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
+#        context['gametype'] = context['fullserverstatus']['gametype']
+
     context['player'] = player
     context['kill_mapping'] = kill_mapping
     context['pickup_mapping'] = pickup_mapping
     context['pstats'] = get_player_items_stats(player)
 
-    player_stats = get_stats(player)
+    player_stats = get_stats(player, gametype)
 #    context['kstats'] = player_stats['kills']
 #    context['vstats'] = player_stats['victims']
     # TODO integrate weapon stats in get_stat function
     context['kstats'], context['vstats'], context['pstats'] = get_player_stats(player)
     
-    context['kills'] = sum(player_stats['kills'].values())
-    context['suicides'] = player_stats['suicides']
-    context['fullserverstatus'] = twms.get_server_info()
-    if context['fullserverstatus']:
-        context['playernames'] = ", ".join([x['name'] for x in context['fullserverstatus']['players']])
-        context['gametype'] = context['fullserverstatus']['gametype']
+    context['kills'] = sum(player_stats.get('kills', {None: 0}).values())
+    context['suicides'] = player_stats.get('suicides', 0)
+    context['teamkills'] = sum(player_stats.get('teamkills', {None: 0}).values())
+    context['flaggrab'] = player_stats.get('flaggrab', 0)
+    context['flagreturn'] = player_stats.get('flagreturn', 0)
+    context['flagcapture'] = player_stats.get('flagcapture', 0)
+
 
     context['score'] = player_stats['score']
     context['deaths'] = player_stats['deaths']
-    context['ratio'] = context['kills'] / float(context['deaths'])
+
+    context['ratio'] = context['kills'] / float(context['deaths']) if context['deaths'] > 0 else 0
 
     rank_level = get_rank(player, context['score'])
     context['rank'] = (rank_level, ranks[rank_level][0], ranks[rank_level][1])
@@ -70,7 +81,7 @@ def player_stats(player=None):
 
     context['achievement_list'] = {}
     for achievement in achievement_player_list.items():
-        context['achievement_list'][achievement[0]] = achievement[1](player)
+        context['achievement_list'][achievement[0]] = achievement[1](player, gametype)
 
     return context
 

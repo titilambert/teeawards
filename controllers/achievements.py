@@ -3,10 +3,12 @@ from libs.lib import *
 from libs import rank
 from libs.teeworldsserver import twms
 from libs.achievement import *
+from libs.hooks import *
+
 
 @mako_view('achievements')
-def achievements(achievement_name=None,player_name=None):
-    context = {}
+@prepare_context
+def achievements(achievement_name=None, player_name=None, context={}, gametype=None):
     context['page'] = 'achievements'
     context['server_alive'] = twms.is_alive()
     context['achievement_desc_list'] = {}

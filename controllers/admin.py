@@ -1,13 +1,16 @@
+from time import sleep
+
 from bottle import mako_view, request, response, redirect
+
 from libs.lib import *
 from libs.rank import get_rank
 from libs.teeworldsserver import *
 from libs.maps import *
-from time import sleep
+from libs.hooks import *
 
 @mako_view('admin')
-def admin(action=None,id_=None):
-    context = {}
+@prepare_context
+def admin(action=None,id_=None, context={}, gametype=None):
     context['page'] = 'admin'
     context['engine_settings'] = None
     context['game_settings'] = None
@@ -41,8 +44,8 @@ def admin(action=None,id_=None):
     return context
 
 @mako_view('conf')
-def conf_edit(id_=None):
-    context = {}
+@prepare_context
+def conf_edit(id_=None, context={}, gametype=None):
     context['page'] = 'admin'
     context['other_settings'] = None
     context['engine_settings'] = None
@@ -89,8 +92,8 @@ def conf_delete(id_):
     redirect("/admin") 
 
 @mako_view('map')
-def map_edit(id_=None):
-    context = {}
+@prepare_context
+def map_edit(id_=None, context={}, gametype=None):
     context['page'] = 'admin'
     context['id'] = id_ if id_ else ''
 
@@ -119,5 +122,7 @@ def map_delete(id_):
 
 
 def reset_data():
-    empty_db()
+    print "RESET DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    if False:
+        empty_db()
     redirect("/admin")

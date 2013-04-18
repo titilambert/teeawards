@@ -179,6 +179,7 @@ class TeeWorldsServer(threading.Thread):
 
         timeout = 2
         self.round_ = None
+        self.gametype = None
         # Map is None at Starting then is it possible ???
         self.map_ = None
 
@@ -197,7 +198,7 @@ class TeeWorldsServer(threading.Thread):
                     when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line).groups()
                     print "JOIN: ", player, team
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_} 
+                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype} 
                     self.manager.join_table.save(data)
                     live_status_queue.put({'type': 'join', 'data': data})
                 # Change team
@@ -205,7 +206,7 @@ class TeeWorldsServer(threading.Thread):
                     when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line).groups()
                     print "Change: ", player, team
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_}
+                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.changeteam_table.save(data)
                 # Start round
                 elif re.match("\[(.*)\]\[game\]: start round type='(.*)' teamplay='([0-9]*)'", line):
@@ -215,6 +216,7 @@ class TeeWorldsServer(threading.Thread):
                     # NEED TO BE SURE THAT IS NOT A STARTROUND JUST BEFORE A CHANGE MAP .... 
                     print "START ROUND:", gametype, "TEAMPLAY", teamplay, self.map_
                     self.round_ = self.manager.round_table.save(data)
+                    self.gametype = gametype
                 # Change map
                 elif re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line):
                     when, raw_map = re.match("\[(.*)\]\[datafile\]: loading done. datafile='(.*)'", line).groups()
@@ -223,22 +225,25 @@ class TeeWorldsServer(threading.Thread):
                     data = {'when': when,  'map': map_name.strip()}
                     self.map_ = self.manager.map_table.save(data)
                     # DELETE BAD LAST ROUND
-                    self.manager.round_table.remove(self.round_)
+                    if self.round_:
+                        print "DELETE BAD LAST ROUND"
+                        self.manager.round_table.remove(self.round_)
                     print "CHANGE MAP", map_name, self.map_
                     self.round_ = None
+                    self.gametype = None
                 # Kick
                 elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Kicked for inactivity\)", line):
                     when, player = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Kicked for inactivity\)", line).groups()
                     print "KICKED", player
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
+                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.kick_table.save(data)
                 # Timeout
                 elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Timeout\)", line):
                     when, player = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' has left the game \(Timeout\)", line).groups()
                     print "TIMEOUT", player
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
+                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.timeout_table.save(data)
                 # Leave game
                 elif re.match("\[(.*)\]\[game\]: leave player='[0-9]*:(.*)'", line):
@@ -246,42 +251,43 @@ class TeeWorldsServer(threading.Thread):
                     print "LEAVE", player
                     print line
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_}
+                    data = {'when': when,  'player': player.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.leave_table.save(data)
                 # Pickup
                 elif re.match("\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*)$", line):
                     when, player, item = re.match("\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*\/.*)$", line).groups()
                     when = datetime.fromtimestamp(int(when, 16))
                     print "PICKUP: ", when, player, item
-                    data = {'when': when,  'player': player.strip(), 'item': item.strip(), 'round': self.round_}
+                    data = {'when': when,  'player': player.strip(), 'item': item.strip(), 'round': self.round_, 'gametype': self.gametype}
                     self.manager.pickup_table.save(data)
                 # Kill
                 elif re.match("\[(.*)\]\[game\]: kill killer='.*:(.*)' victim='.*:(.*)' weapon=(.*) special=(.*)", line):
                     when, killer, victim, weapon, special = re.match("\[(.*)\]\[game\]: kill killer='.*:(.*)' victim='.*:(.*)' weapon=(.*) special=(.*)", line).groups()
                     when = datetime.fromtimestamp(int(when, 16))
                     print when, killer, "KILL", victim, "with", weapon, "and special", special
-                    data = {'when': when, 'killer': killer.strip(), 'victim': victim.strip(), 'weapon': weapon.strip(), 'special': special.strip(), 'round': self.round_, 'map': self.map_}
+                    data = {'when': when, 'killer': killer.strip(), 'victim': victim.strip(),
+                            'weapon': weapon.strip(), 'special': special.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.kill_table.save(data)
                     live_status_queue.put({'type': 'kill', 'data': data})
                 # Get Flag
                 elif re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line):
                     when, player = re.match("\[(.*)\]\[game\]: flag_grab player='.*:(.*)'", line).groups()
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
+                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     print when, player, "GET FLAG"
                     self.manager.flaggrab_table.save(data)
                 # Return Flag
                 elif re.match("\[(.*)\]\[game\]: flag_return player='.*:(.*)'", line):
                     when, player = re.match("\[(.*)\]\[game\]: flag_return player='.*:(.*)'", line).groups()
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
+                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     print when, player, "RETURN FLAG"
                     self.manager.flagreturn_table.save(data)
                 # Capture Flag
                 elif re.match("\[(.*)\]\[game\]: flag_capture player='.*:(.*)'", line):
                     when, player = re.match("\[(.*)\]\[game\]: flag_capture player='.*:(.*)'", line).groups()
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_}
+                    data = {'when': when, 'player': player, 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     print when, player, "CAPTURE FLAG"
                     self.manager.flagcapture_table.save(data)
                 # Other

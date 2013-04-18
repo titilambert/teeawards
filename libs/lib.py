@@ -26,6 +26,7 @@ flagreturn_table = tee_db['flagreturn']
 flagcapture_table = tee_db['flagcapture']
 servershutdown_table = tee_db['servershutdown']
 
+
 def empty_db():
     join_table.drop()
     changeteam_table.drop()
@@ -133,9 +134,12 @@ def get_player_list():
 # playernumbers*2 : first IAR
 # playernumbers : second IAR
 # playernumbers/2 or 1 : third IAR
-#######
 # -1 : team kill
-def get_stats(selected_player=None):
+
+# +1 : Grab flag
+# +1 : Return flag
+# +5 : Capture flag
+def get_stats(selected_player=None, selected_gametype=None):
     def reducer(ret, data):
         ret, type_ = ret  
         data['type'] = type_
@@ -155,6 +159,9 @@ def get_stats(selected_player=None):
     # Sort all events by rounds
     # TODO MAKE mongo filters ('round' != NONE)
     events_by_round, _ = reduce(reducer, kill_table.find(), ({}, 'kill'))
+    events_by_round, _ = reduce(reducer, flaggrab_table.find(), (events_by_round, 'flaggrab'))
+    events_by_round, _ = reduce(reducer, flagreturn_table.find(), (events_by_round, 'flagreturn'))
+    events_by_round, _ = reduce(reducer, flagcapture_table.find(), (events_by_round, 'flagcapture'))
     events_by_round, _ = reduce(reducer, join_table.find(), (events_by_round, 'join'))
     events_by_round, _ = reduce(reducer, changeteam_table.find(), (events_by_round, 'changeteam'))
     events_by_round, _ = reduce(reducer, round_table.find(), (events_by_round, 'round'))
@@ -184,7 +191,11 @@ def get_stats(selected_player=None):
     def round_reducer(ret, data):
         if not data['map'] in ret:
             ret[data['map']] = []
-        ret[data['map']].append(data)
+        if selected_gametype:
+            if data['gametype'].upper() == selected_gametype.upper():
+                ret[data['map']].append(data)
+        else:
+            ret[data['map']].append(data)
         return ret
     # Sort rounds by map
     rounds = reduce(round_reducer, round_table.find(), {})
@@ -228,6 +239,7 @@ def get_stats(selected_player=None):
                     results[player_name]['gametype'] = {}
                     results[player_name]['team'] = {}
                     results[player_name]['maps'] = {}
+                    results[player_name]['rounds'] = 0
                 # +1 for this map
                 if not current_map in results[player_name]['maps']:
                     results[player_name]['maps'][current_map] = 0
@@ -323,6 +335,7 @@ def get_stats(selected_player=None):
                             results[new_player_name]['gametype'] = {}
                             results[new_player_name]['team'] = {}
                             results[new_player_name]['maps'] = {}
+                            results[new_player_name]['rounds'] = 0
                         # +1 for this maps
                         if not current_map in results[new_player_name]['maps']:
                             results[new_player_name]['maps'][current_map] = 0
@@ -335,6 +348,7 @@ def get_stats(selected_player=None):
                         if not round_['gametype'] in results[new_player_name]['gametype']:
                             results[new_player_name]['gametype'][round_['gametype']] = 0
                         results[new_player_name]['gametype'][round_['gametype']] += 1
+                        results[new_player_name]['rounds'] += 1
                 # A tee kills a tee
                 elif event['type'] == 'kill':
                     weapon = event['weapon']
@@ -390,11 +404,37 @@ def get_stats(selected_player=None):
                         if not 'deaths' in results[victim]:
                             results[victim]['deaths'] = 0
                         results[victim]['deaths'] += 1
-
+                elif event['type'] == 'flaggrab':
+                    player_name = event['player']
+                    if not 'flaggrab' in live_data['rounds'][round_id]['players'][player_name]:
+                        live_data['rounds'][round_id]['players'][player_name]['flaggrab'] = 0
+                    live_data['rounds'][round_id]['players'][player_name]['flaggrab'] += 1
+                    if not 'flaggrab' in results[player_name]:
+                        results[player_name]['flaggrab'] = 0
+                    results[player_name]['flaggrab'] += 1
+                    results[player_name]['score'] += 1
+                elif event['type'] == 'flagreturn':
+                    player_name = event['player']
+                    if not 'flagreturn' in live_data['rounds'][round_id]['players'][player_name]:
+                        live_data['rounds'][round_id]['players'][player_name]['flagreturn'] = 0
+                    live_data['rounds'][round_id]['players'][player_name]['flagreturn'] += 1
+                    if not 'flagreturn' in results[player_name]:
+                        results[player_name]['flagreturn'] = 0
+                    results[player_name]['flagreturn'] += 1
+                    results[player_name]['score'] += 1
+                elif event['type'] == 'flagcapture':
+                    player_name = event['player']
+                    if not 'flagcapture' in live_data['rounds'][round_id]['players'][player_name]:
+                        live_data['rounds'][round_id]['players'][player_name]['flagcapture'] = 0
+                    live_data['rounds'][round_id]['players'][player_name]['flagcapture'] += 1
+                    if not 'flagcapture' in results[player_name]:
+                        results[player_name]['flagcapture'] = 0
+                    results[player_name]['flagcapture'] += 1
+                    results[player_name]['score'] += 5
                 elif event['type'] == 'changeteam':
                     #import pdb;pdb.set_trace()
                     # TODO handle this
-                    print event
+                    pass
                 elif event['type'] == 'kick':
                     live_data['rounds'][round_id]['players'][event['player']]['status'] = 'kicked'
                     # TODO add this in stats
@@ -456,18 +496,18 @@ def get_stats(selected_player=None):
                     # Three players or more
                     ## Second
                     second_player = classement[1][0]
-                    if not 'second_place' in results[last_player]:
-                        results[last_player]['second_place'] = 0
-                    results[last_player]['second_place'] += 1
-                    results[last_player]['score'] += nb_players
+                    if not 'second_place' in results[second_player]:
+                        results[second_player]['second_place'] = 0
+                    results[second_player]['second_place'] += 1
+                    results[second_player]['score'] += nb_players
                 if nb_players >= 4:
                     # Four players or more
                     ## Third
                     third_player = classement[2][0]
-                    if not 'third_place' in results[last_player]:
-                        results[last_player]['third_place'] = 0
-                    results[last_player]['third_place'] += 1
-                    results[last_player]['score'] += nb_players / 2
+                    if not 'third_place' in results[third_player]:
+                        results[third_player]['third_place'] = 0
+                    results[third_player]['third_place'] += 1
+                    results[third_player]['score'] += nb_players / 2
 
     if selected_player and selected_player in results:
         return results[selected_player]
@@ -475,7 +515,7 @@ def get_stats(selected_player=None):
         return results
 
 
-def get_item_stats(item, with_warmup=False):
+def get_item_stats(item, gametype=None, with_warmup=False):
     kill_with_key = 'kill with ' + item.capitalize()
     dead_by_key = 'dead by ' + item.capitalize()
     def compute_weapon_stats(ret, data):
@@ -506,19 +546,25 @@ def get_item_stats(item, with_warmup=False):
     stats = {}
     if item in kill_mapping:
         kitem = kill_mapping[item]
-        kraw_data = kill_table.find({'weapon' : kitem})
+        if gametype:
+            kraw_data = kill_table.find({"$and" :[{'weapon' : kitem}, {'gametype': gametype.upper()}]})
+        else:
+            kraw_data = kill_table.find({'weapon' : kitem})
         stats = reduce(compute_weapon_stats,
                        kraw_data,
                        {kill_with_key: {}, dead_by_key: {}})
     if item in pickup_mapping:
         pitem = pickup_mapping[item]
-        praw_data = pickup_table.find({'item': pitem})
+        if gametype:
+            praw_data = pickup_table.find({"$and": [{'item': pitem}, {'gametype': gametype.upper()}] })
+        else:
+            praw_data = pickup_table.find({'item': pitem})
         pstats = reduce(compute_item_stats, praw_data, {})
         stats.update({'pick up': pstats})
 
     return stats
 
-def get_player_items_stats(player, with_warmup=False):
+def get_player_items_stats(player, gametype=None, with_warmup=False):
     def compute_item_stats(ret, data):
         # warmup
         if (not with_warmup) and data['round'] == None:
@@ -536,16 +582,7 @@ def get_player_items_stats(player, with_warmup=False):
     return pstats
 
 
-
-
-
-
-
-
-
-##### USELESS ####
-
-def get_general_players_stats(with_warmup=False):
+def get_general_players_stats(gametype=None, with_warmup=False):
     def get_stats_by_players(ret, data):
         # warmup
         if (not with_warmup) and data['round'] == None:
@@ -583,8 +620,7 @@ def get_general_players_stats(with_warmup=False):
     return reduce(get_stats_by_players, raw_data, {})
 
 
-
-def get_player_stats(player, with_warmup=False):
+def get_player_stats(player, gametype=None, with_warmup=False):
     def compute_item_stats(ret, data):
         # warmup
         if (not with_warmup) and data['round'] == None:
@@ -650,6 +686,10 @@ def get_player_stats(player, with_warmup=False):
 
     return kstats, vstats, pstats
 
+
+
+
+##### USELESS ####
 def get_player_score(player, data=None):
     if data is None:
         data = {}
@@ -667,7 +707,6 @@ def get_player_score(player, data=None):
 
     return score
 
-### MAYBE USELESS
 def get_players_kills(ret, data):
     if data['killer'] != data['victim']:
         if not data['killer'] in ret:

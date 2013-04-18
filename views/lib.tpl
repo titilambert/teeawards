@@ -16,11 +16,7 @@
       <div id="top_left">
         <div id="top_right">
           <div id="top_mid">
-            <div class="teeawards_title">
-              <a href="/">
-                <img class="logo"  src="/images/teeawards-logo.png" alt="tee-awards logo">
-              </a>
-            </div>
+
             <div class="serverstatus" >
               % if fullserverstatus:
                 <div style="color:#7fd538">
@@ -44,6 +40,29 @@
                   <img class="logo"  src="/images/reddot.png" alt="offline">
                 </div>
               % endif
+            </div>
+
+            <div class="teeawards_title">
+              <a href="/">
+                <img class="logo"  src="/images/teeawards-logo.png" alt="tee-awards logo">
+              </a>
+            </div>
+
+            <div class="select_gametype">
+              <form action="/set_gametype" method="post" id="set_gametype">
+                <div>
+                  <label>Gametype</label>
+                </div>
+                <select name="gametype" onchange="this.form.submit()">
+                % for k, v in [('', 'All'), ('dm', 'Death Match'), ('tdm', 'Team Death Match'), ('ctf', 'Capture The Flag'), ('fb', 'FlagBall')]:
+                  % if selected_gametype == k:
+                    <option selected="selected" value="${k}">${v}</option>
+                  % else:
+                    <option value="${k}">${v}</option>
+                  % endif
+                % endfor
+                </select>
+              </form>
             </div>
 
           </div>

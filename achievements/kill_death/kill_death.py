@@ -2,7 +2,7 @@ from libs.lib import tee_db
 from datetime import datetime, timedelta
 from libs.achievement import Achievement, achievement_desc_list
 
-def kill_death_fct(self, player):
+def kill_death_fct(player, gametype):
     def map_data(x, y):
         if not y:
             return 0

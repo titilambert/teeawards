@@ -78,15 +78,29 @@ div#top_left img.logo {
 div.teeawards_title{
     padding-top: 30px;
     text-align: center;
-    width: 100%;
+    width: 77%;
     float: left; 
 }
 
 div.serverstatus {
     text-align: center;
     float: left; 
-    position: absolute;
+    width: 10%;
     margin-top: 3px;
+}
+
+
+div.select_gametype {
+    padding-top: 30px;
+    float: left;
+    text-align: center;
+    width: 13%;
+}
+
+div.select_gametype label {
+    font-size: 20px;
+    color: #E7E5BE;
+    line-height: 30px;
 }
 
 /* main menu */
@@ -629,7 +643,7 @@ table.achievement_title {
 
 div.achievement {
     float: left;
-    margin: 20px;
+    margin: 10px;
 }
 
 div.achievements_list {

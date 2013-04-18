@@ -8,7 +8,9 @@ import bottle
 from bottle import Bottle, run, mako_template, TEMPLATE_PATH
 from bottle import static_file, route
 
-from controllers.index import index
+from beaker.middleware import SessionMiddleware
+
+from controllers.index import index, set_gametype
 from controllers.ladder import ladder
 from controllers.item_stats import item_stats
 from controllers.player_stats import player_stats
@@ -17,6 +19,9 @@ from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delet
 from controllers.achievements import achievements
 from controllers.maps import maps
 from libs.teeworldsserver import twms
+
+from libs import hooks
+
 
 def server_css(filepath):
     return static_file(filepath, root='static/css/')
@@ -39,38 +44,40 @@ def server_js(filepath):
     return static_file(filepath, root='static/js/')
 
 def setup_routing(app):
-#    app.route('/edit', method=['GET', 'POST'], callback=form_edit)
-    app.route('/', method=['GET', 'POST'], callback=index)
-    app.route('/home', method=['GET', 'POST'], callback=index)
-    app.route('/index', method=['GET', 'POST'], callback=index)
-    app.route('/ladder', method=['GET', 'POST'], callback=ladder)
-    app.route('/ranks', method=['GET', 'POST'], callback=ranks)
-    app.route('/maps', method=['GET', 'POST'], callback=maps)
-    app.route('/maps/<gametype>', method=['GET', 'POST'], callback=maps)
-    app.route('/map/<id>', method=['GET', 'POST'], callback=maps)
-    app.route('/admin/map/edit', method=['GET', 'POST'], callback=map_edit)
-    app.route('/admin/map/edit/', method=['GET', 'POST'], callback=map_edit)
-    app.route('/admin/map/edit/<id_>', method=['GET', 'POST'], callback=map_edit)
-    app.route('/admin/map/delete/<id_>', method=['GET', 'POST'], callback=map_delete)
-    app.route('/admin', method=['GET', 'POST'], callback=admin)
-    app.route('/achievements', method=['GET', 'POST'], callback=achievements)
-    app.route('/admin/reset_data', method=['GET', 'POST'], callback=reset_data)
-#    app.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
-    app.route('/admin/conf/edit', method=['GET', 'POST'], callback=conf_edit)
-    app.route('/admin/conf/edit/', method=['GET', 'POST'], callback=conf_edit)
-    app.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)
-    app.route('/admin/conf/delete/<id_>', method=['GET', 'POST'], callback=conf_delete)
-    app.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
-    app.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
-    app.route('/items', method=['GET', 'POST'], callback=item_stats)
-    app.route('/player_stats/<player>', method=['GET'], callback=player_stats)
-    app.route('/player_stats', method=['POST'], callback=player_stats)
-    app.route('/css/achievements/<name>/:filepath#.+#', method=['GET', 'POST'], callback=server_css_achievements)
-    app.route('/css/:filepath#.+#', method=['GET', 'POST'], callback=server_css)
-    app.route('/images/achievements/<name>/:filepath#.+#', method=['GET', 'POST'], callback=server_images_achievements)
-    app.route('/images/:filepath#.+#', method=['GET', 'POST'], callback=server_images)
-    app.route('/js/:filepath#.+#', method=['GET', 'POST'], callback=server_js)
-    app.route('/map_screenshots/:filepath#.+#', method=['GET', 'POST'], callback=server_map_screenshots)
+#    bottle.route('/edit', method=['GET', 'POST'], callback=form_edit)
+    bottle.route('/', method=['GET', 'POST'], callback=index)
+    bottle.route('/home', method=['GET', 'POST'], callback=index)
+    bottle.route('/index', method=['GET', 'POST'], callback=index)
+    bottle.route('/ladder', method=['GET', 'POST'], callback=ladder)
+    bottle.route('/ranks', method=['GET', 'POST'], callback=ranks)
+    bottle.route('/maps', method=['GET', 'POST'], callback=maps)
+    bottle.route('/maps/<gametype>', method=['GET', 'POST'], callback=maps)
+    bottle.route('/map/<id>', method=['GET', 'POST'], callback=maps)
+    bottle.route('/admin/map/edit', method=['GET', 'POST'], callback=map_edit)
+    bottle.route('/admin/map/edit/', method=['GET', 'POST'], callback=map_edit)
+    bottle.route('/admin/map/edit/<id_>', method=['GET', 'POST'], callback=map_edit)
+    bottle.route('/admin/map/delete/<id_>', method=['GET', 'POST'], callback=map_delete)
+    bottle.route('/admin', method=['GET', 'POST'], callback=admin)
+    bottle.route('/achievements', method=['GET', 'POST'], callback=achievements)
+    bottle.route('/admin/reset_data', method=['GET', 'POST'], callback=reset_data)
+#    bottle.route('/admin/conf/<id>', method=['GET', 'POST'], callback=admin)
+    bottle.route('/admin/conf/edit', method=['GET', 'POST'], callback=conf_edit)
+    bottle.route('/admin/conf/edit/', method=['GET', 'POST'], callback=conf_edit)
+    bottle.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)
+    bottle.route('/admin/conf/delete/<id_>', method=['GET', 'POST'], callback=conf_delete)
+    bottle.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
+    bottle.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
+    bottle.route('/items', method=['GET', 'POST'], callback=item_stats)
+    bottle.route('/player_stats/<player>/<gametype>', method=['GET'], callback=player_stats)
+    bottle.route('/player_stats/<player>', method=['GET'], callback=player_stats)
+    bottle.route('/player_stats', method=['POST'], callback=player_stats)
+    bottle.route('/css/achievements/<name>/:filepath#.+#', method=['GET', 'POST'], callback=server_css_achievements)
+    bottle.route('/css/:filepath#.+#', method=['GET', 'POST'], callback=server_css)
+    bottle.route('/images/achievements/<name>/:filepath#.+#', method=['GET', 'POST'], callback=server_images_achievements)
+    bottle.route('/images/:filepath#.+#', method=['GET', 'POST'], callback=server_images)
+    bottle.route('/js/:filepath#.+#', method=['GET', 'POST'], callback=server_js)
+    bottle.route('/map_screenshots/:filepath#.+#', method=['GET', 'POST'], callback=server_map_screenshots)
+    bottle.route('/set_gametype', method=['POST'], callback=set_gametype)
 
 
 achvmts = glob.glob("achievements/*/views/")
@@ -79,6 +86,14 @@ for a in achvmts:
 
 app = bottle.app()
 
+session_opts = {
+    'session.type': 'file',
+    'session.data_dir': './session_data',
+    'session.secret': 'Ki2ho0zeeghiemie9eengaxu7zaung1aico2shee7aechei7moozumuisae1',
+    'session.auto': True,
+    'session.key': 'teeaward',
+}
+app = SessionMiddleware(app, session_opts)
 setup_routing(app)
 
 def signal_handler(signal, frame):

@@ -2,9 +2,12 @@ from bottle import mako_view, request, response, redirect
 from libs.lib import *
 from libs import rank
 from libs.teeworldsserver import twms
+from libs.hooks import *
+
 
 @mako_view('ranks')
-def ranks():
+@prepare_context
+def ranks(context={}, gametype=None):
     context = {}
     context['page'] = 'ranks'
     context['ranks'] = rank.ranks

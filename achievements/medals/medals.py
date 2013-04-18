@@ -16,14 +16,14 @@ def desc_medals():
     return {'badge_list': badges}
 
 @mako_view("player_medals")
-def player_medals(player):
-    player_stats = get_stats(player)
+def player_medals(player, gametype):
+    player_stats = get_stats(player, gametype)
 
     medal_result = {}
 
     medal_result['gold star'] = player_stats.get('first_place', 0)
-    medal_result['silver star'] = player_stats.get('silver_place', 0)
-    medal_result['bronze star'] = player_stats.get('bronze_place', 0)
+    medal_result['silver star'] = player_stats.get('second_place', 0)
+    medal_result['bronze star'] = player_stats.get('third_place', 0)
     medal_result['chocolate star'] = player_stats.get('last_place', 0)
     medal_result['purple heart'] = player_stats.get('purple', 0)
     medal_result['eternal heart'] = player_stats.get('no death', 0)

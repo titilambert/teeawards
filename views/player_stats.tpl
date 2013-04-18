@@ -76,6 +76,14 @@ ${lib.search_player()}
           ${suicides} suicides
         </td>
       </tr>
+      <tr>
+        <td class="dataname">
+          TeamKills
+        </td>
+        <td class="datavalue">
+          ${teamkills} teamkills
+        </td>
+      </tr>
     </body>
   </table>
 </div>
@@ -157,6 +165,7 @@ ${lib.search_player()}
 </div>
 % endif
 
+
 <div style="clear: both">
 </div>
 
@@ -234,6 +243,49 @@ ${lib.search_player()}
   </table>
 </div>
 </div>
+
+<div class="statscard">
+<div class="profilecard">
+  <table>
+    <thead>
+      <tr>
+        <th colspan="2">
+          CTF Statistics
+        </th>
+      </tr>
+    </thead>
+    <body>
+      <tr>
+        <td class="dataname">
+          Flag grabs
+        </td>
+        <td class="datavalue">
+          ${flaggrab} flag grab
+        </td>
+      </tr>
+      <tr>
+        <td class="dataname">
+          Flag return
+        </td>
+        <td class="datavalue">
+          ${flagreturn} flag return
+        </td>
+      </tr>
+      <tr>
+        <td class="dataname">
+          Flag capture
+        </td>
+        <td class="datavalue">
+          ${flagcapture} flag capture
+        </td>
+      </tr>
+    </body>
+  </table>
+</div>
+</div>
+
+
+
 
 % if pstats:
 <div class="statscard">

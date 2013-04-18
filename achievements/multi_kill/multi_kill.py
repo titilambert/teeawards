@@ -16,7 +16,7 @@ def desc_multi_kill():
     
 
 @mako_view("player_multi_kill")
-def player_multi_kill(player):
+def player_multi_kill(player, gametype):
     def map_data(x, y):
         if not y:
             return 0
