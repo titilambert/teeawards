@@ -62,7 +62,12 @@
         </td>
         <td class="last">
         % if k == 'players':
-          ${"<br/>".join([p['name'] for p in v])}
+          % for player in v:
+            <form action="/admin/kick/${player['name']}" method="post">
+              ${player['name']}
+              <button>Kick</button>
+            </form>
+          % endfor
         % else:
           ${v}
         % endif
@@ -171,7 +176,23 @@
   </table>
   <div>
     <form action="/admin/reset_data">
-    <button >Reset data</button>
+    <button onclick='return reset_confirm();' >Reset data</button>
+    <script type'text/javascript'>
+function reset_confirm() {
+    var r = confirm("You're going to RESET ALL STATS !\nAre you sure ?")
+    if ( r == true ) {
+        var c = confirm("Are you really really sure to RESET ALL STATS !?")
+        if ( c == true ) {
+            alert("OK, OK...  ALL STATS WILL BE DELETE ...");
+            return true;
+        }
+        return false;
+    }
+    else {
+        return false;
+    }
+}
+    </script>
     </form>
   </div>
 </div>

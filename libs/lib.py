@@ -7,6 +7,13 @@ from pymongo import Connection
 
 con = Connection()
 tee_db = con['teeworlds']
+
+
+# Queues
+## live stats
+live_stats_queue = Queue.Queue()
+econ_command_queue = Queue.Queue()
+
 # CONFIG TABLES DONT EMPTY IT !!!
 conf_table = tee_db['config']
 maps_table = tee_db['maps']
@@ -14,6 +21,7 @@ maps_table = tee_db['maps']
 # DATA TABLES
 join_table = tee_db['join']
 changeteam_table = tee_db['changeteam']
+changename_table = tee_db['changename']
 round_table = tee_db['round']
 map_table = tee_db['map']
 kick_table = tee_db['kick']
@@ -27,9 +35,11 @@ flagcapture_table = tee_db['flagcapture']
 servershutdown_table = tee_db['servershutdown']
 
 
+# Empty log tables to reset stats
 def empty_db():
     join_table.drop()
     changeteam_table.drop()
+    changename_table.drop()
     round_table.drop()
     map_table.drop()
     kick_table.drop()
@@ -41,9 +51,6 @@ def empty_db():
     flaggrab_table.drop()
     flagreturn_table.drop()
     flagcapture_table.drop()
-
-
-live_status_queue = Queue.Queue()
 
 # DATA FOLDER (maps, daemon, ...)
 data_folder = os.path.join(os.path.dirname(__file__), "..", "server_data")
@@ -203,6 +210,82 @@ def get_stats(selected_player=None, selected_gametype=None):
     # Prepare maps to get map name
     maps = dict([(x['_id'], x) for x in map_table.find()])
 
+
+    def new_player_join_a_new_round(player, team, current_map, live_data, results, round_id=None):
+        if not round_id is None:
+            if not new_player_name in live_data['rounds'][round_id]['players']:
+                live_data['rounds'][round_id]['players'][new_player_name] = {}
+                live_data['rounds'][round_id]['players'][new_player_name]['team'] = current_team
+                live_data['rounds'][round_id]['players'][new_player_name]['score'] = 0
+                live_data['rounds'][round_id]['players'][new_player_name]['status'] = 'online'
+                live_data['rounds'][round_id]['players'][new_player_name]['kills'] = 0
+                live_data['rounds'][round_id]['players'][new_player_name]['deaths'] = 0
+                if not new_player_name in results:
+                    # if its a total new player
+                    results[new_player_name] = {}
+                    results[new_player_name]['score'] = 0
+                    results[new_player_name]['kills'] = {}
+                    results[new_player_name]['deaths'] = 0
+                    results[new_player_name]['victims'] = {}
+                    results[new_player_name]['suicides'] = 0
+                    results[new_player_name]['teamkills'] = {}
+                    results[new_player_name]['teamvictims'] = {}
+                    results[new_player_name]['gametype'] = {}
+                    results[new_player_name]['team'] = {}
+                    results[new_player_name]['maps'] = {}
+                    results[new_player_name]['rounds'] = 0
+                # +1 for this maps
+                if not current_map in results[new_player_name]['maps']:
+                    results[new_player_name]['maps'][current_map] = 0
+                results[new_player_name]['maps'][current_map] += 1
+                # +1 for this team
+                if not current_team in results[new_player_name]:
+                    results[new_player_name]['team'][current_team] = 0
+                results[new_player_name]['team'][current_team] += 1
+                # +1 for this game type
+                if not round_['gametype'] in results[new_player_name]['gametype']:
+                    results[new_player_name]['gametype'][round_['gametype']] = 0
+                results[new_player_name]['gametype'][round_['gametype']] += 1
+                results[new_player_name]['rounds'] += 1
+        else:
+            live_data['players'][player_name] = {} 
+            live_data['players'][player_name]['team'] = current_team
+            live_data['players'][player_name]['score'] = 0
+            live_data['players'][player_name]['status'] = 'online'
+            live_data['players'][player_name]['kills'] = 0
+            live_data['players'][player_name]['deaths'] = 0
+            # prepare final results
+            if not player_name in results:
+                # if its a total new player
+                results[player_name] = {}
+                results[player_name]['score'] = 0
+                results[player_name]['kills'] = {}
+                results[player_name]['deaths'] = 0
+                results[player_name]['victims'] = {}
+                results[player_name]['suicides'] = 0
+                results[player_name]['teamkills'] = {}
+                results[player_name]['teamvictims'] = {}
+                results[player_name]['warmup'] = 0
+                results[player_name]['gametype'] = {}
+                results[player_name]['team'] = {}
+                results[player_name]['maps'] = {}
+                results[player_name]['rounds'] = 0
+            # +1 for this map
+            if not current_map in results[player_name]['maps']:
+                results[player_name]['maps'][current_map] = 0
+            results[player_name]['maps'][current_map] += 1
+            # +1 for this team
+            if not current_team in results[player_name]:
+                results[player_name]['team'][current_team] = 0
+            results[player_name]['team'][current_team] += 1
+            # +1 for warmup
+            if not 'warmup' in results[player_name]:
+                results[player_name]['warmup'] = 0
+            results[player_name]['warmup'] += 1
+
+        return live_data, results
+
+
     # Get STATS !!!!
     results = {} 
     for map_, round_in_a_map in rounds.items():
@@ -218,40 +301,7 @@ def get_stats(selected_player=None, selected_gametype=None):
             if event['type'] == 'join':
                 player_name = event['player']
                 current_team = event['team']
-                live_data['players'][player_name] = {} 
-                live_data['players'][player_name]['team'] = current_team
-                live_data['players'][player_name]['score'] = 0
-                live_data['players'][player_name]['status'] = 'online'
-                live_data['players'][player_name]['kills'] = 0
-                live_data['players'][player_name]['deaths'] = 0
-                # prepare final results
-                if not player_name in results:
-                    # if its a total new player
-                    results[player_name] = {}
-                    results[player_name]['score'] = 0
-                    results[player_name]['kills'] = {}
-                    results[player_name]['deaths'] = 0
-                    results[player_name]['victims'] = {}
-                    results[player_name]['suicides'] = 0
-                    results[player_name]['teamkills'] = {}
-                    results[player_name]['teamvictims'] = {}
-                    results[player_name]['warmup'] = 0
-                    results[player_name]['gametype'] = {}
-                    results[player_name]['team'] = {}
-                    results[player_name]['maps'] = {}
-                    results[player_name]['rounds'] = 0
-                # +1 for this map
-                if not current_map in results[player_name]['maps']:
-                    results[player_name]['maps'][current_map] = 0
-                results[player_name]['maps'][current_map] += 1
-                # +1 for this team
-                if not current_team in results[player_name]:
-                    results[player_name]['team'][current_team] = 0
-                results[player_name]['team'][current_team] += 1
-                # +1 for warmup
-                if not 'warmup' in results[player_name]:
-                    results[player_name]['warmup'] = 0
-                results[player_name]['warmup'] += 1
+                live_data, results = new_player_join_a_new_round(player_name, current_team, current_map, live_data, results)
             elif event['type'] in ['leave', 'timeout', 'kick']:
                 player_name = event['player']
                 del(live_data['players'][player_name])
@@ -259,10 +309,13 @@ def get_stats(selected_player=None, selected_gametype=None):
                 # DO NOTHING ????
                 break
 
+#        print "### NEW MAP ###"
         # Iter on rounds in a map
         for round_id, round_ in enumerate(round_in_a_map):
             ### NEW ROUND ###
+#            print "### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###"
             live_data['rounds'][round_id] = {}
+#            print live_data['players']
             # which game type : DM, TDM, CTF, ...
             live_data['rounds'][round_id]['gametype'] = round_['gametype']
             # Is it a team game ?
@@ -281,10 +334,12 @@ def get_stats(selected_player=None, selected_gametype=None):
                 # Not first round on the map
                 live_data['rounds'][round_id]['players'] = {}
                 # For each player from the previous round
+#                print "FFFF", live_data['rounds'][round_id - 1]['players'].keys()
                 for player_name, player in live_data['rounds'][round_id - 1]['players'].items():
                     # Get only which are still online !
                     if player['status'] == 'online':
                         # Copy data from last round
+ #                       print live_data['rounds'][round_id]['players']
                         live_data['rounds'][round_id]['players'][player_name] = copy.copy(player)
                         # Reset score
                         live_data['rounds'][round_id]['players'][player_name]['score'] = 0
@@ -309,48 +364,32 @@ def get_stats(selected_player=None, selected_gametype=None):
                 continue
             # Iter on events in a round
             for event in events_by_round[round_['_id']]:
+                if 'player' in event:
+                    new_player_name = event['player']
+                    if not new_player_name in live_data['rounds'][round_id]['players']:
+                        current_team = event['team']
+                        live_data, results = new_player_join_a_new_round(new_player_name, current_team, current_map, live_data, results, round_id)
+                elif 'killer' in event:
+                    killer = event['killer']
+                    victim = event['victim']
+                    if not killer in live_data['rounds'][round_id]['players']:
+                        current_team = event['team'] # I don't I have this ...
+                        live_data, results = new_player_join_a_new_round(killer, current_team, current_map, live_data, results, round_id)
+                    if not victim in live_data['rounds'][round_id]['players']:
+                        current_team = event['team'] # I don't I have this ...
+                        live_data, results = new_player_join_a_new_round(victim, current_team, current_map, live_data, results, round_id)
+
                 # Some tee join the game
                 if event['type'] == 'join':
                     # Set is 
                     new_player_name = event['player']
                     current_team = event['team']
                     # If not a new player in this round, we NOT reset its score ... :)
-                    if not new_player_name in live_data['rounds'][round_id]['players']:
-                        live_data['rounds'][round_id]['players'][new_player_name] = {}
-                        live_data['rounds'][round_id]['players'][new_player_name]['team'] = current_team
-                        live_data['rounds'][round_id]['players'][new_player_name]['score'] = 0
-                        live_data['rounds'][round_id]['players'][new_player_name]['status'] = 'online'
-                        live_data['rounds'][round_id]['players'][new_player_name]['kills'] = 0
-                        live_data['rounds'][round_id]['players'][new_player_name]['deaths'] = 0
-                        if not new_player_name in results:
-                            # if its a total new player
-                            results[new_player_name] = {}
-                            results[new_player_name]['score'] = 0
-                            results[new_player_name]['kills'] = {}
-                            results[new_player_name]['deaths'] = 0
-                            results[new_player_name]['victims'] = {}
-                            results[new_player_name]['suicides'] = 0
-                            results[new_player_name]['teamkills'] = {}
-                            results[new_player_name]['teamvictims'] = {}
-                            results[new_player_name]['gametype'] = {}
-                            results[new_player_name]['team'] = {}
-                            results[new_player_name]['maps'] = {}
-                            results[new_player_name]['rounds'] = 0
-                        # +1 for this maps
-                        if not current_map in results[new_player_name]['maps']:
-                            results[new_player_name]['maps'][current_map] = 0
-                        results[new_player_name]['maps'][current_map] += 1
-                        # +1 for this team
-                        if not current_team in results[new_player_name]:
-                            results[new_player_name]['team'][current_team] = 0
-                        results[new_player_name]['team'][current_team] += 1
-                        # +1 for this game type
-                        if not round_['gametype'] in results[new_player_name]['gametype']:
-                            results[new_player_name]['gametype'][round_['gametype']] = 0
-                        results[new_player_name]['gametype'][round_['gametype']] += 1
-                        results[new_player_name]['rounds'] += 1
+                    live_data, results = new_player_join_a_new_round(new_player_name, current_team, current_map, live_data, results, round_id)
+
                 # A tee kills a tee
                 elif event['type'] == 'kill':
+#                    print event
                     weapon = event['weapon']
                     # Exit kill ... just pass
                     if event['weapon'] == -3:
@@ -434,6 +473,7 @@ def get_stats(selected_player=None, selected_gametype=None):
                 elif event['type'] == 'changeteam':
                     #import pdb;pdb.set_trace()
                     # TODO handle this
+                    print "changeteam", event
                     pass
                 elif event['type'] == 'kick':
                     live_data['rounds'][round_id]['players'][event['player']]['status'] = 'kicked'

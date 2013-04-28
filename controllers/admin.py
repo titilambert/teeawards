@@ -122,7 +122,14 @@ def map_delete(id_):
 
 
 def reset_data():
-    print "RESET DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    if False:
-        empty_db()
+    #empty_db()
+    redirect("/admin")
+
+
+def kick(player):
+    econ_command_queue.put({'type': 'kick',
+                            'data': {'player': player,
+                                     'message': 'Kicked from website'
+                                    }
+                          })
     redirect("/admin")
