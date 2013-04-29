@@ -15,24 +15,42 @@ live_stats_queue = Queue.Queue()
 econ_command_queue = Queue.Queue()
 
 # CONFIG TABLES DONT EMPTY IT !!!
+no_stats_tables = []
 conf_table = tee_db['config']
+no_stats_tables.append(conf_table)
 maps_table = tee_db['maps']
+no_stats_tables.append(maps_table)
 
 # DATA TABLES
+tables = []
 join_table = tee_db['join']
+tables.append(join_table)
 changeteam_table = tee_db['changeteam']
+tables.append(changeteam_table)
 changename_table = tee_db['changename']
+tables.append(changename_table)
 round_table = tee_db['round']
+tables.append(round_table)
 map_table = tee_db['map']
+tables.append(map_table)
 kick_table = tee_db['kick']
+tables.append(kick_table)
 timeout_table = tee_db['timeout']
+tables.append(timeout_table)
 leave_table = tee_db['leave']
+tables.append(leave_table)
 pickup_table = tee_db['pickup']
+tables.append(pickup_table)
 kill_table = tee_db['kill']
+tables.append(kill_table)
 flaggrab_table = tee_db['flaggrab']
+tables.append(flaggrab_table)
 flagreturn_table = tee_db['flagreturn']
+tables.append(flagreturn_table)
 flagcapture_table = tee_db['flagcapture']
+tables.append(flagcapture_table)
 servershutdown_table = tee_db['servershutdown']
+tables.append(servershutdown_table)
 
 
 # Empty log tables to reset stats
@@ -122,6 +140,7 @@ special = {
     'die_with_flag': '1',
     'your_killer_have_flag': '2',
     'suicide_with_flag': '3',
+    # TODO: FIND KILLED WITH FLAG BY FLAG ?????
     }
 
 r_kill_mapping = dict([(x[1], x[0]) for x in kill_mapping.items()])
@@ -147,6 +166,7 @@ def get_player_list():
 # +1 : Return flag
 # +5 : Capture flag
 def get_stats(selected_player=None, selected_gametype=None):
+    # Sort all events by rounds
     def reducer(ret, data):
         ret, type_ = ret  
         data['type'] = type_
@@ -163,8 +183,7 @@ def get_stats(selected_player=None, selected_gametype=None):
                 ret[data['round']].append(data)
                 ret[data['round']].sort(key=lambda x: x['when'])
         return ret, type_
-    # Sort all events by rounds
-    # TODO MAKE mongo filters ('round' != NONE)
+    # TODO MAKE mongo filters ('round' != NONE) and selected_gametype
     events_by_round, _ = reduce(reducer, kill_table.find(), ({}, 'kill'))
     events_by_round, _ = reduce(reducer, flaggrab_table.find(), (events_by_round, 'flaggrab'))
     events_by_round, _ = reduce(reducer, flagreturn_table.find(), (events_by_round, 'flagreturn'))
@@ -177,6 +196,7 @@ def get_stats(selected_player=None, selected_gametype=None):
     events_by_round, _ = reduce(reducer, leave_table.find(), (events_by_round, 'leave'))
     events_by_round, _ = reduce(reducer, servershutdown_table.find(), (events_by_round, 'servershutdown'))
 
+    # Sort event by warmups
     def none_reducer(ret, data):
         ret, type_ = ret
         data['type'] = type_
@@ -186,15 +206,14 @@ def get_stats(selected_player=None, selected_gametype=None):
             ret[data['map']].append(data)
             ret[data['map']].sort(key=lambda x: x['when'])
         return ret, type_
-    # Sort event by warmups
-    # TODO MAKE mongo filters ('round' == NONE)
+    # TODO MAKE mongo filters ('round' == NONE) and selected_gametype
     none_event_by_map, _ = reduce(none_reducer, join_table.find(), ({}, 'join'))
     none_event_by_map, _ = reduce(none_reducer, kick_table.find(), (none_event_by_map, 'kick'))
     none_event_by_map, _ = reduce(none_reducer, timeout_table.find(), (none_event_by_map, 'timeout'))
     none_event_by_map, _ = reduce(none_reducer, leave_table.find(), (none_event_by_map, 'leave'))
     none_event_by_map, _ = reduce(none_reducer, servershutdown_table.find(), (none_event_by_map, 'servershutdown'))
-    # TODO with kick, timeout, leave and server shutdown
 
+    # Sort rounds by map
     def round_reducer(ret, data):
         if not data['map'] in ret:
             ret[data['map']] = []
@@ -204,7 +223,7 @@ def get_stats(selected_player=None, selected_gametype=None):
         else:
             ret[data['map']].append(data)
         return ret
-    # Sort rounds by map
+    # TODO MAKE mongo filters ('round' == NONE) and selected_gametype
     rounds = reduce(round_reducer, round_table.find(), {})
 
     # Prepare maps to get map name
@@ -246,7 +265,14 @@ def get_stats(selected_player=None, selected_gametype=None):
                 if not round_['gametype'] in results[new_player_name]['gametype']:
                     results[new_player_name]['gametype'][round_['gametype']] = 0
                 results[new_player_name]['gametype'][round_['gametype']] += 1
+                # Count round played
+                if not 'rounds' in results[new_player_name]:
+                    results[new_player_name]['rounds'] = 0
                 results[new_player_name]['rounds'] += 1
+            else:
+                # this is not a real new player, he left then he came back ...
+                # We just need to change his status
+                live_data['rounds'][round_id]['players'][new_player_name]['status'] = 'online'
         else:
             live_data['players'][player_name] = {} 
             live_data['players'][player_name]['team'] = current_team
@@ -309,13 +335,11 @@ def get_stats(selected_player=None, selected_gametype=None):
                 # DO NOTHING ????
                 break
 
-#        print "### NEW MAP ###"
+        ### NEW MAP ###
         # Iter on rounds in a map
         for round_id, round_ in enumerate(round_in_a_map):
             ### NEW ROUND ###
-#            print "### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###### NEW ROUND ###"
             live_data['rounds'][round_id] = {}
-#            print live_data['players']
             # which game type : DM, TDM, CTF, ...
             live_data['rounds'][round_id]['gametype'] = round_['gametype']
             # Is it a team game ?
@@ -330,16 +354,18 @@ def get_stats(selected_player=None, selected_gametype=None):
                     if not round_['gametype'] in results[player_name]['gametype']:
                         results[player_name]['gametype'][round_['gametype']] = 0
                     results[player_name]['gametype'][round_['gametype']] += 1
+                    # Count round played
+                    if not 'rounds' in results[player_name]:
+                        results[player_name]['rounds'] = 0
+                    results[player_name]['rounds'] += 1
             else:
                 # Not first round on the map
                 live_data['rounds'][round_id]['players'] = {}
                 # For each player from the previous round
-#                print "FFFF", live_data['rounds'][round_id - 1]['players'].keys()
                 for player_name, player in live_data['rounds'][round_id - 1]['players'].items():
                     # Get only which are still online !
                     if player['status'] == 'online':
                         # Copy data from last round
- #                       print live_data['rounds'][round_id]['players']
                         live_data['rounds'][round_id]['players'][player_name] = copy.copy(player)
                         # Reset score
                         live_data['rounds'][round_id]['players'][player_name]['score'] = 0
@@ -351,6 +377,10 @@ def get_stats(selected_player=None, selected_gametype=None):
                         if not round_['gametype'] in results[player_name]['gametype']:
                             results[player_name]['gametype'][round_['gametype']] = 0
                         results[player_name]['gametype'][round_['gametype']] += 1
+                        # Count round played
+                        if not 'rounds' in results[player_name]:
+                            results[player_name]['rounds'] = 0
+                        results[player_name]['rounds'] += 1
                         # +1 for this team
                         current_team = live_data['rounds'][round_id]['players'][player_name]['team']
                         if not current_team in results[player_name]['team']:
@@ -364,20 +394,23 @@ def get_stats(selected_player=None, selected_gametype=None):
                 continue
             # Iter on events in a round
             for event in events_by_round[round_['_id']]:
-                if 'player' in event:
-                    new_player_name = event['player']
-                    if not new_player_name in live_data['rounds'][round_id]['players']:
-                        current_team = event['team']
-                        live_data, results = new_player_join_a_new_round(new_player_name, current_team, current_map, live_data, results, round_id)
-                elif 'killer' in event:
-                    killer = event['killer']
-                    victim = event['victim']
-                    if not killer in live_data['rounds'][round_id]['players']:
-                        current_team = event['team'] # I don't I have this ...
-                        live_data, results = new_player_join_a_new_round(killer, current_team, current_map, live_data, results, round_id)
-                    if not victim in live_data['rounds'][round_id]['players']:
-                        current_team = event['team'] # I don't I have this ...
-                        live_data, results = new_player_join_a_new_round(victim, current_team, current_map, live_data, results, round_id)
+
+################# SECURITY LINES, USELESS (I HOPE) ###############
+#                if 'player' in event:
+#                    new_player_name = event['player']
+#                    if not new_player_name in live_data['rounds'][round_id]['players']:
+#                        current_team = event['team']
+#                        live_data, results = new_player_join_a_new_round(new_player_name, current_team, current_map, live_data, results, round_id)
+#                elif 'killer' in event:
+#                    killer = event['killer']
+#                    victim = event['victim']
+#                    if not killer in live_data['rounds'][round_id]['players']:
+#                        current_team = event['team'] # I don't I have this ...
+#                        live_data, results = new_player_join_a_new_round(killer, current_team, current_map, live_data, results, round_id)
+#                    if not victim in live_data['rounds'][round_id]['players']:
+#                        current_team = event['team'] # I don't I have this ...
+#                        live_data, results = new_player_join_a_new_round(victim, current_team, current_map, live_data, results, round_id)
+################# SECURITY LINES, USELESS (I HOPE) ###############
 
                 # Some tee join the game
                 if event['type'] == 'join':
@@ -389,7 +422,6 @@ def get_stats(selected_player=None, selected_gametype=None):
 
                 # A tee kills a tee
                 elif event['type'] == 'kill':
-#                    print event
                     weapon = event['weapon']
                     # Exit kill ... just pass
                     if event['weapon'] == -3:
@@ -505,8 +537,6 @@ def get_stats(selected_player=None, selected_gametype=None):
                     if not'no death' in results[player_name]:
                         results[player_name]['no death'] = 0
                     results[player_name]['no death'] += 1
-
-
 
             # ADD round points
             nb_players = len(live_data['rounds'][round_id]['players'])

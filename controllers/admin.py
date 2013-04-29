@@ -122,7 +122,7 @@ def map_delete(id_):
 
 
 def reset_data():
-    #empty_db()
+    empty_db()
     redirect("/admin")
 
 
@@ -133,3 +133,20 @@ def kick(player):
                                     }
                           })
     redirect("/admin")
+
+
+def export(stats_tables):
+    for table in no_stats_tables:
+        import pdb;pdb.set_trace()
+        print "mongodump -d teeworlds -c %s" % table
+    if stats_tables:
+        for table in tables:
+            import pdb;pdb.set_trace()
+            print "mongodump -d teeworlds -c %s" % table
+    # TODO export maps
+    # TODO put in a tar/zip
+    redirect("/admin")
+
+def restore():
+    redirect("/admin")
+

@@ -174,7 +174,7 @@ class TeeWorldsServer(threading.Thread):
         self.master = master
 
         self.stop = threading.Event()
-        self.debug = False
+        self.debug = True
 
     def stop_server(self):
         self.stop.set()
@@ -200,8 +200,11 @@ class TeeWorldsServer(threading.Thread):
                 continue
 
             for line in lines.splitlines():
+                # Skip empty lines
+                if line == '':
+                    continue
                 # Join team:
-                if re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
+                elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
                     when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line).groups()
                     if self.debug:
                         print "JOIN: ", player, team
@@ -213,7 +216,7 @@ class TeeWorldsServer(threading.Thread):
                 elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line):
                     when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line).groups()
                     if self.debug:
-                        print "Change name: ", name, " -> ", new_name
+                        print "Change team:", player, team
                     when = datetime.fromtimestamp(int(when, 16))
                     data = {'when': when,  'name': name.strip(), 'new_name': new_name.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.changename_table.save(data)
@@ -223,7 +226,7 @@ class TeeWorldsServer(threading.Thread):
                 elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' changed name to '(.*)'", line):
                     when, name, new_name = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' changed name to '(.*)'", line).groups()
                     if self.debug:
-                        print "Change: ", player, team
+                        print "Change name: ", name, " -> ", new_name
                     when = datetime.fromtimestamp(int(when, 16))
                     data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.changename_table.save(data)
@@ -327,7 +330,9 @@ class TeeWorldsServer(threading.Thread):
                     self.manager.flagcapture_table.save(data)
                 # Other
                 else:
-                     print line
+                    if self.debug:
+#                        import pdb;pdb.set_trace()
+                        print "NON CAPTURED LINE", line
 
 engine_settings = [
     ('sv_name', 'Name of the server', 'unnamed server'),

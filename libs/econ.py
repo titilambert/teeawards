@@ -63,7 +63,7 @@ class EconClient(threading.Thread):
                 command = econ_command_queue.get(True, 2)
             except Queue.Empty:
                 continue
-            print "command", command
+#            print "command", command
             getattr(self, command['type'])(**command['data'])
 
 

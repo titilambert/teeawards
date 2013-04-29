@@ -67,6 +67,8 @@ def setup_routing(app):
     bottle.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)
     bottle.route('/admin/conf/delete/<id_>', method=['GET', 'POST'], callback=conf_delete)
     bottle.route('/admin/kick/<player>', method=['GET', 'POST'], callback=kick)
+    bottle.route('/admin/export', method=['GET', 'POST'], callback=kick)
+    bottle.route('/admin/restore', method=['GET', 'POST'], callback=kick)
     bottle.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
     bottle.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
     bottle.route('/items', method=['GET', 'POST'], callback=item_stats)

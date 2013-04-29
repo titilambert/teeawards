@@ -36,17 +36,15 @@ class LiveStats(threading.Thread):
                 data = {}
                 data['kstats'], data['vstats'], data['pstats'] = get_player_stats(player)
                 score = get_player_score(player, data)
-                if score in [x[1] for x in ranks]:
+                if score > 0 and score in [x[1] for x in ranks]:
                     # New rank
                     new_rank = get_rank(player, data)
                     rank_name = ranks[new_rank][0]
                     msg = """%s is now "%s" """ % (player, rank_name)
                     econ_command_queue.put({'type': 'broadcast', 'data': {'message': msg}})
-                # Check achievements
-                # TODO ....
+                # Check live achievements
                 for key, achievement in achievement_livestat_list.items():
-                    achievement(self, stat['data'])
-#                achievement[1](player)
+                    achievement(stat['data'])
             if stat['type'] == 'join':
                 player = stat['data']['player']
                 rank = get_rank(player)

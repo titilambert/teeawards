@@ -32,7 +32,7 @@ def player_medals(player, gametype):
             'medals_list': medals_list}
 
 
-def livestat_medals(live_stat, new_data):
+def livestat_medals(new_data):
     return None
 
 
