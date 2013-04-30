@@ -1,12 +1,12 @@
 import glob
 import re
+import os
 """Lists all of the importable plugins"""
 
-achievements = glob.glob('achievements/*/*.py')
-achievements = list([re.match('achievements/*/(.*).py', x).groups()[0] for x in achievements])
-for i, f in enumerate(achievements):
-    if f.endswith('/__init__'):
-        del(achievements[i])
+regexp = os.path.join(os.path.dirname(__file__), "..", 'achievements/(.*/.*)\.py')
+achievements = glob.glob(os.path.join(os.path.dirname(__file__), "..", 'achievements/*/*.py'))
+achievements = list([re.match(regexp, x).groups()[0] for x in achievements])
 
-print achievements
+achievements = [a for a in achievements if not a.endswith('__init__')]
+
 __all__ = achievements

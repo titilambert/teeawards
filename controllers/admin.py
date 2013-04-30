@@ -1,6 +1,8 @@
 from time import sleep
+import subprocess
+import tarfile
 
-from bottle import mako_view, request, response, redirect
+from bottle import mako_view, request, response, redirect, static_file
 
 from libs.lib import *
 from libs.rank import get_rank
@@ -135,18 +137,55 @@ def kick(player):
     redirect("/admin")
 
 
-def export(stats_tables):
+def export():
+    # Delete old dumps
+    command = "rm -rf %s" % dump_folder
+    p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, errors = p.communicate()
+    # Dump config tables
     for table in no_stats_tables:
-        import pdb;pdb.set_trace()
-        print "mongodump -d teeworlds -c %s" % table
-    if stats_tables:
+        command = "mongodump -d teeworlds -c %s" % table.name
+        p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = p.communicate()
+    # Dump stats tables
+    if 'stats' in request.params:
         for table in tables:
-            import pdb;pdb.set_trace()
-            print "mongodump -d teeworlds -c %s" % table
-    # TODO export maps
-    # TODO put in a tar/zip
-    redirect("/admin")
+            command = "mongodump -d teeworlds -c %s" % table.name
+            p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, errors = p.communicate()
+    file_name = 'teeawards_dump.tar.gz'
+    file_path = os.path.join(data_folder, file_name)
+    tf = tarfile.open(file_path, 'w:gz')
+    # Add dumps
+    tf.add(dump_folder, 'dump')
+    # Add Maps
+    tf.add(map_folder, 'map')
+    # Add Map screenshots
+    tf.add(map_screenshot_folder, 'map_screenshots')
+    tf.close()
+    return static_file(file_name, root=data_folder, download=file_name)
 
 def restore():
-    redirect("/admin")
+    if 'dumpfile' in request.files:
+        tf = tarfile.open(mode='r:gz', fileobj=(request.files['dumpfile'].file))
+        mandatory_files = ['dump/teeworlds/maps.bson',
+                           'dump/teeworlds/config.bson',
+                           'map',
+                           'map_screenshots']
+        if set(mandatory_files).issubset(set(tf.getnames())):
+            for f in tf.getnames():
+                # TODO import dumps and send maps in good folder
+                if f.startswith('dump/'):
+                    tf.extract(f, '/tmp/')
+                elif f.startswith('map/'):
+                    tf.extract(f, '/tmp/' + data_folder)
+                elif f.startswith('map_screenshots/'):
+                    tf.extract(f, '/tmp/' + data_folder)
+
+        else:
+            # Missing files
+            redirect("/admin")
+    else:
+        # No file submitted
+        redirect("/admin")
 

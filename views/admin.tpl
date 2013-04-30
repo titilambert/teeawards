@@ -174,10 +174,54 @@
       </tr>
     </tbody>
   </table>
-  <div>
-    <form action="/admin/reset_data">
-    <button onclick='return reset_confirm();' >Reset data</button>
-    <script type'text/javascript'>
+</div>
+
+
+
+<div>
+  <table>
+  <head>
+    <tr>
+      <th colspan="4">
+        Administration
+      </th>
+    </tr>
+  </head>
+  <body>
+    <tr>
+      <form action="/admin/export" method="post">
+        <td>
+          Export data
+        </td>
+        <td>
+          <span class="export_stats">
+            <label>Export stats</label>
+            <input type="checkbox" name="stats" />
+          </span>
+        </td>
+        <td>
+          <button >Export data</button>
+        </td>
+      </form>
+    </tr>
+    <tr>
+      <form action="/admin/restore" method="post" enctype="multipart/form-data">
+        <td>
+          Restore data
+        </td>
+        <td>
+          <input type="file" name="dumpfile" />
+        </td>
+        <td>
+          <button >Restore data</button>
+        </td>
+      </form>
+    </tr>
+    <tr>
+      <td>
+      <form action="/admin/reset_data" method="post">
+        <button onclick='return reset_confirm();' >Reset data</button>
+        <script type'text/javascript'>
 function reset_confirm() {
     var r = confirm("You're going to RESET ALL STATS !\nAre you sure ?")
     if ( r == true ) {
@@ -192,8 +236,11 @@ function reset_confirm() {
         return false;
     }
 }
-    </script>
-    </form>
-  </div>
+        </script>
+      </form>
+      </td>
+    </tr>
+  </body>
+  </table>
 </div>
 

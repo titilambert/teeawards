@@ -15,7 +15,7 @@ from controllers.ladder import ladder
 from controllers.item_stats import item_stats
 from controllers.player_stats import player_stats
 from controllers.ranks import ranks
-from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delete, reset_data, kick
+from controllers.admin import admin, conf_edit, conf_delete, map_edit, map_delete, reset_data, kick, export, restore
 from controllers.achievements import achievements
 from controllers.maps import maps
 from libs.teeworldsserver import twms
@@ -67,8 +67,8 @@ def setup_routing(app):
     bottle.route('/admin/conf/edit/<id_>', method=['GET', 'POST'], callback=conf_edit)
     bottle.route('/admin/conf/delete/<id_>', method=['GET', 'POST'], callback=conf_delete)
     bottle.route('/admin/kick/<player>', method=['GET', 'POST'], callback=kick)
-    bottle.route('/admin/export', method=['GET', 'POST'], callback=kick)
-    bottle.route('/admin/restore', method=['GET', 'POST'], callback=kick)
+    bottle.route('/admin/export', method=['GET', 'POST'], callback=export)
+    bottle.route('/admin/restore', method=['GET', 'POST'], callback=restore)
     bottle.route('/admin/<action>', method=['GET', 'POST'], callback=admin)
     bottle.route('/ladder/<sort>', method=['GET', 'POST'], callback=ladder)
     bottle.route('/items', method=['GET', 'POST'], callback=item_stats)
