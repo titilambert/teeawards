@@ -1,20 +1,20 @@
-<link rel="stylesheet" type="text/css" href="/css/achievements/badges/badges.css"/>
-<table class="badges_desc_achievement achievements">
+<link rel="stylesheet" type="text/css" href="/css/achievements/medals/medals.css"/>
+<table class="medals_desc_achievement achievements">
   <thead>
     <tr>
-      <th class="badges_title" colspan="10">
-        Badges
+      <th class="medals_title" colspan="10">
+        Medals
       </th>
     </tr>
   </thead>
   <tbody>
-    % for i, t in enumerate(badge_list):
-      <% badge, limits = t %>
+    % for i, t in enumerate(medal_list):
+      <% medal, desc = t %>
       % if i % 3 == 0:
         <tr>
       % endif
-        <td class="badge_image">
-            <img class="badge" src="/images/achievements/badges/${badge}_3.png" >
+        <td class="medal_image">
+            <img class="badge" src="/images/achievements/medals/${medal}.jpg" >
         </td>
       % if i % 3 == 2:
         <td class="last descr">
@@ -22,14 +22,12 @@
         <td class="descr">
       % endif
           <br/>
-          <span class="badge_name">${badge.capitalize()}</span>
+          <span class="medal_name">${medal.capitalize()}</span>
           <ul>
-          % for i, metal in enumerate(['bronze', 'silver', 'gold']):
-            <li>${metal}: ${limits[i]}</li>
-          % endfor
+            <li>${desc}</li>
           </ul>
         </td>
-      % if i % 3 == 1:
+      % if i % 3 == 2:
         </tr>
       % endif
 

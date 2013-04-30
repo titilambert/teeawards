@@ -2,6 +2,12 @@ table.medals_desc_achievement, table.medals_achievement {
     background: #474642;
 }
 
+table.medals_desc_achievement span.medal_name {
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
 table.medals_achievement th.medals_title {
     font-size: 20px;
 }
@@ -41,7 +47,6 @@ table.medals_achievement td.medal_title span.desc {
     font-size: 8px;
     text-decoration: none;
 }
-
 
 table.medals_achievement td.medal_title span.nb_medals {
     font-size: 18px;

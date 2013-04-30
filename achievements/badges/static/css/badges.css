@@ -2,6 +2,12 @@ table.badges_desc_achievement, table.badges_achievement {
     background: #474642;
 }
 
+table.badges_desc_achievement span.badge_name {
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
 table.badges_achievement th.badges_title {
     font-size: 20px;
 }
