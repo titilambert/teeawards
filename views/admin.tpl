@@ -220,7 +220,7 @@
     <tr>
       <td>
       <form action="/admin/reset_data" method="post">
-        <button onclick='return reset_confirm();' >Reset data</button>
+        <button onclick='return reset_confirm();' >Reset stats</button>
         <script type'text/javascript'>
 function reset_confirm() {
     var r = confirm("You're going to RESET ALL STATS !\nAre you sure ?")

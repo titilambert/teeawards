@@ -174,7 +174,7 @@ class TeeWorldsServer(threading.Thread):
         self.master = master
 
         self.stop = threading.Event()
-        self.debug = True
+        self.debug = False
 
     def stop_server(self):
         self.stop.set()
@@ -189,6 +189,8 @@ class TeeWorldsServer(threading.Thread):
         self.gametype = None
         # Map is None at Starting then is it possible ???
         self.map_ = None
+        if self.debug:
+            f = open('teeawards.log', 'w')
 
         while not self.stopped():
 #            print "read"
@@ -212,14 +214,23 @@ class TeeWorldsServer(threading.Thread):
                     data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype} 
                     self.manager.join_table.save(data)
                     live_stats_queue.put({'type': 'join', 'data': data})
+                # Other Join team ???: (Fixed in teeworlds 0.6.2 ??????)
+                elif re.match(".*_join player='.*:(.*)' team=(.*)", line):
+                    when, player, team = re.match(" ?t?e?am_join player='.*:(.*)' team=(.*)", line).groups()
+                    if self.debug:
+                        print "JOIN_other: ", player, team
+                    when = datetime.fromtimestamp(int(when, 16))
+                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype} 
+                    self.manager.join_table.save(data)
+                    live_stats_queue.put({'type': 'join', 'data': data})
                 # Change team
                 elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line):
                     when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' m_Team=(.*)", line).groups()
                     if self.debug:
                         print "Change team:", player, team
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'name': name.strip(), 'new_name': new_name.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
-                    self.manager.changename_table.save(data)
+                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
+                    self.manager.changeteam_table.save(data)
                     # KICK THE PLAYER !!!!!
                     # JUST FOR don't fuck stats
                 # Change name
@@ -228,7 +239,8 @@ class TeeWorldsServer(threading.Thread):
                     if self.debug:
                         print "Change name: ", name, " -> ", new_name
                     when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
+
+                    data = {'when': when,  'name': name.strip(), 'new_name': new_name.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.changename_table.save(data)
                     econ_command_queue.put({'type': 'kick',
                                             'data': {'player': new_name,
@@ -331,8 +343,10 @@ class TeeWorldsServer(threading.Thread):
                 # Other
                 else:
                     if self.debug:
-#                        import pdb;pdb.set_trace()
+                        f.write("NON CAPTURED LINE: " + line)
+                        f.write("\n")
                         print "NON CAPTURED LINE", line
+        f.close()
 
 engine_settings = [
     ('sv_name', 'Name of the server', 'unnamed server'),

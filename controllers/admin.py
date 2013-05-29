@@ -176,16 +176,16 @@ def restore():
             for f in tf.getnames():
                 # TODO import dumps and send maps in good folder
                 if f.startswith('dump/'):
-                    tf.extract(f, '/tmp/')
+                    tf.extract(f , data_folder + '/../restore_dump/')
+                    if f.endswith('.bson'):
+                        db = f.rsplit('/', 1)[-1].split(".")[0]
+                        file_path = data_folder + '/../restore_dump/' + f
+                        command = "mongorestore --collection teeworlds --db %s %s" % (db, file_path)
+                        p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        output, errors = p.communicate()
                 elif f.startswith('map/'):
-                    tf.extract(f, '/tmp/' + data_folder)
+                    tf.extract(f, data_folder)
                 elif f.startswith('map_screenshots/'):
-                    tf.extract(f, '/tmp/' + data_folder)
+                    tf.extract(f, data_folder)
 
-        else:
-            # Missing files
-            redirect("/admin")
-    else:
-        # No file submitted
-        redirect("/admin")
-
+    redirect("/admin")

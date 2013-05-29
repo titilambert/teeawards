@@ -2,12 +2,16 @@ import os
 import sys
 import Queue
 import copy
+import datetime
+import pickle
 
 from pymongo import Connection
 
 con = Connection()
 tee_db = con['teeworlds']
 
+# cache timeout (seconds)
+cache_timeout = 10
 
 # Queues
 ## live stats
@@ -52,6 +56,8 @@ tables.append(flagcapture_table)
 servershutdown_table = tee_db['servershutdown']
 tables.append(servershutdown_table)
 
+# OTHER TABLES
+cache_table = tee_db['cache_data']
 
 # Empty log tables to reset stats
 def empty_db():
@@ -166,7 +172,21 @@ def get_player_list():
 # +1 : Grab flag
 # +1 : Return flag
 # +5 : Capture flag
-def get_stats(selected_player=None, selected_gametype=None):
+def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
+    # search in cache
+    if use_cache:
+        cache_data = cache_table.find_one({'type': 'get_stats'})
+        if cache_data:
+            now = datetime.datetime.now()
+            if now - cache_data['when'] < datetime.timedelta(0, cache_timeout):
+                print "Cache used"
+                results = pickle.loads(cache_data['data'])
+                # Return
+                if selected_player and selected_player in results:
+                    return results[selected_player]
+                else:
+                    return results
+
     # Sort all events by rounds
     def reducer(ret, data):
         ret, type_ = ret  
@@ -331,7 +351,11 @@ def get_stats(selected_player=None, selected_gametype=None):
                 live_data, results = new_player_join_a_new_round(player_name, current_team, current_map, live_data, results)
             elif event['type'] in ['leave', 'timeout', 'kick']:
                 player_name = event['player']
-                del(live_data['players'][player_name])
+                try:
+                    del(live_data['players'][player_name])
+                except KeyError:
+                    print "ERROR - The player %s didn't the game ?.?.?" % player_name
+                    pass
             elif event['type'] == 'servershutdown':
                 # DO NOTHING ????
                 break
@@ -395,7 +419,7 @@ def get_stats(selected_player=None, selected_gametype=None):
                 continue
             # Iter on events in a round
             for event in events_by_round[round_['_id']]:
-
+                try:
 ################# SECURITY LINES, USELESS (I HOPE) ###############
 #                if 'player' in event:
 #                    new_player_name = event['player']
@@ -412,117 +436,130 @@ def get_stats(selected_player=None, selected_gametype=None):
 #                        current_team = event['team'] # I don't I have this ...
 #                        live_data, results = new_player_join_a_new_round(victim, current_team, current_map, live_data, results, round_id)
 ################# SECURITY LINES, USELESS (I HOPE) ###############
+                    # Some tee join the game
+                    if event['type'] == 'join':
+                        # Set is 
+                        new_player_name = event['player']
+                        current_team = event['team']
+                        # If not a new player in this round, we NOT reset its score ... :)
+                        live_data, results = new_player_join_a_new_round(new_player_name, current_team, current_map, live_data, results, round_id)
 
-                # Some tee join the game
-                if event['type'] == 'join':
-                    # Set is 
-                    new_player_name = event['player']
-                    current_team = event['team']
-                    # If not a new player in this round, we NOT reset its score ... :)
-                    live_data, results = new_player_join_a_new_round(new_player_name, current_team, current_map, live_data, results, round_id)
-
-                # A tee kills a tee
-                elif event['type'] == 'kill':
-                    weapon = event['weapon']
-                    # Exit kill ... just pass
-                    if event['weapon'] == -3:
-                        continue
-                    # OK, this is a real kill
-                    killer = event['killer']
-                    victim = event['victim']
-                    killer_team = live_data['rounds'][round_id]['players'][killer]['team']
-                    victim_team = live_data['rounds'][round_id]['players'][victim]['team']
-                    # Is it Auto kill ?
-                    if killer == victim:
-                        live_data['rounds'][round_id]['players'][killer]['score'] -= 1
-                        results[killer]['score'] -= 1
-                        results[killer]['suicides'] += 1
-                        if not 'deaths' in results[killer]:
-                            results[killer]['deaths'] = 0
-                        results[killer]['deaths'] += 1
-                        live_data['rounds'][round_id]['players'][killer]['deaths'] += 1
-                    # Is it Team kill ?
-                    elif current_teamplay and killer_team == victim_team:
-                        # +1 team kill for the killer
-                        if not victim in results[killer]['teamkills']:
-                            results[killer]['teamkills'][victim] = 0
-                        results[killer]['teamkills'][victim] += 1
-                        # +1 team victim(death) for the victim
-                        if not killer in results[victim]['teamvictims']:
-                            results[victim]['teamvictims'][killer] = 0
-                        results[victim]['teamvictims'][killer] += 1
-                        # -1 score ...
-                        live_data['rounds'][round_id]['players'][killer]['score'] -= 1
-                        results[killer]['score'] -= 1
-                        if not 'deaths' in results[victim]:
-                            results[victim]['deaths'] = 0
-                        results[victim]['deaths'] += 1
-                        live_data['rounds'][round_id]['players'][victim]['deaths'] += 1
-                    else:
-                        # Normal kill
-                        # +1 kill for the killer
-                        if not victim in results[killer]['kills']:
-                            results[killer]['kills'][victim] = 0
-                        results[killer]['kills'][victim] += 1
-                        live_data['rounds'][round_id]['players'][killer]['kills'] += 1
-                        live_data['rounds'][round_id]['players'][victim]['deaths'] += 1
-                        # +1 victim(death) for the victim
-                        if not killer in results[victim]['victims']:
-                            results[victim]['victims'][killer] = 0
-                        results[victim]['victims'][killer] += 1
-                        # +1 score ...
-                        live_data['rounds'][round_id]['players'][killer]['score'] += 1
-                        results[killer]['score'] += 1
-                        if not 'deaths' in results[victim]:
-                            results[victim]['deaths'] = 0
-                        results[victim]['deaths'] += 1
-                elif event['type'] == 'flaggrab':
-                    player_name = event['player']
-                    if not 'flaggrab' in live_data['rounds'][round_id]['players'][player_name]:
-                        live_data['rounds'][round_id]['players'][player_name]['flaggrab'] = 0
-                    live_data['rounds'][round_id]['players'][player_name]['flaggrab'] += 1
-                    if not 'flaggrab' in results[player_name]:
-                        results[player_name]['flaggrab'] = 0
-                    results[player_name]['flaggrab'] += 1
-                    results[player_name]['score'] += 1
-                elif event['type'] == 'flagreturn':
-                    player_name = event['player']
-                    if not 'flagreturn' in live_data['rounds'][round_id]['players'][player_name]:
-                        live_data['rounds'][round_id]['players'][player_name]['flagreturn'] = 0
-                    live_data['rounds'][round_id]['players'][player_name]['flagreturn'] += 1
-                    if not 'flagreturn' in results[player_name]:
-                        results[player_name]['flagreturn'] = 0
-                    results[player_name]['flagreturn'] += 1
-                    results[player_name]['score'] += 1
-                elif event['type'] == 'flagcapture':
-                    player_name = event['player']
-                    if not 'flagcapture' in live_data['rounds'][round_id]['players'][player_name]:
-                        live_data['rounds'][round_id]['players'][player_name]['flagcapture'] = 0
-                    live_data['rounds'][round_id]['players'][player_name]['flagcapture'] += 1
-                    if not 'flagcapture' in results[player_name]:
-                        results[player_name]['flagcapture'] = 0
-                    results[player_name]['flagcapture'] += 1
-                    results[player_name]['score'] += 5
-                elif event['type'] == 'changeteam':
-                    #import pdb;pdb.set_trace()
-                    # TODO handle this
-                    print "changeteam", event
-                    pass
-                elif event['type'] == 'kick':
-                    live_data['rounds'][round_id]['players'][event['player']]['status'] = 'kicked'
-                    # TODO add this in stats
-                elif event['type'] == 'timeout':
-                    live_data['rounds'][round_id]['players'][event['player']]['status'] = 'timeout'
-                    # TODO add this in stats
-                elif event['type'] == 'leave':
-                    live_data['rounds'][round_id]['players'][event['player']]['status'] = 'left'
-                    # TODO add this in stats
-                elif event['type'] == 'servershutdown':
-                    for p in live_data['rounds'][round_id]['players'].values():
-                        p['status'] = 'servershutdown'
+                    # A tee kills a tee
+                    elif event['type'] == 'kill':
+                        weapon = int(event['weapon'])
+                        # Exit kill ... just pass
+                        if weapon == -3:
+                            continue
+                        # OK, this is a real kill
+                        killer = event['killer']
+                        victim = event['victim']
+                        killer_team = live_data['rounds'][round_id]['players'][killer]['team']
+                        victim_team = live_data['rounds'][round_id]['players'][victim]['team']
+                        # Is it Auto kill ?
+                        if killer == victim:
+                            live_data['rounds'][round_id]['players'][killer]['score'] -= 1
+                            results[killer]['score'] -= 1
+                            results[killer]['suicides'] += 1
+                            if not 'deaths' in results[killer]:
+                                results[killer]['deaths'] = 0
+                            results[killer]['deaths'] += 1
+                            live_data['rounds'][round_id]['players'][killer]['deaths'] += 1
+                            if weapon == 3:
+                                # TODO handle GRENADE autokill
+                                pass
+                        # Is it Team kill ?
+                        elif current_teamplay and killer_team == victim_team:
+                            # +1 team kill for the killer
+                            if not victim in results[killer]['teamkills']:
+                                results[killer]['teamkills'][victim] = 0
+                            results[killer]['teamkills'][victim] += 1
+                            # +1 team victim(death) for the victim
+                            if not killer in results[victim]['teamvictims']:
+                                results[victim]['teamvictims'][killer] = 0
+                            results[victim]['teamvictims'][killer] += 1
+                            # -1 score ...
+                            live_data['rounds'][round_id]['players'][killer]['score'] -= 1
+                            results[killer]['score'] -= 1
+                            if not 'deaths' in results[victim]:
+                                results[victim]['deaths'] = 0
+                            results[victim]['deaths'] += 1
+                            live_data['rounds'][round_id]['players'][victim]['deaths'] += 1
+                        else:
+                            # Normal kill
+                            # +1 kill for the killer
+                            if not victim in results[killer]['kills']:
+                                results[killer]['kills'][victim] = 0
+                            results[killer]['kills'][victim] += 1
+                            live_data['rounds'][round_id]['players'][killer]['kills'] += 1
+                            live_data['rounds'][round_id]['players'][victim]['deaths'] += 1
+                            # +1 victim(death) for the victim
+                            if not killer in results[victim]['victims']:
+                                results[victim]['victims'][killer] = 0
+                            results[victim]['victims'][killer] += 1
+                            # +1 score ...
+                            live_data['rounds'][round_id]['players'][killer]['score'] += 1
+                            results[killer]['score'] += 1
+                            if not 'deaths' in results[victim]:
+                                results[victim]['deaths'] = 0
+                            results[victim]['deaths'] += 1
+                    elif event['type'] == 'flaggrab':
+                        try:
+                            player_name = event['player']
+                            if not 'flaggrab' in live_data['rounds'][round_id]['players'][player_name]:
+                                live_data['rounds'][round_id]['players'][player_name]['flaggrab'] = 0
+                            live_data['rounds'][round_id]['players'][player_name]['flaggrab'] += 1
+                            if not 'flaggrab' in results[player_name]:
+                                results[player_name]['flaggrab'] = 0
+                            results[player_name]['flaggrab'] += 1
+                            results[player_name]['score'] += 1
+                        except:
+                            continue
+                    elif event['type'] == 'flagreturn':
+                        try:
+                            player_name = event['player']
+                            if not 'flagreturn' in live_data['rounds'][round_id]['players'][player_name]:
+                                live_data['rounds'][round_id]['players'][player_name]['flagreturn'] = 0
+                            live_data['rounds'][round_id]['players'][player_name]['flagreturn'] += 1
+                            if not 'flagreturn' in results[player_name]:
+                                results[player_name]['flagreturn'] = 0
+                            results[player_name]['flagreturn'] += 1
+                            results[player_name]['score'] += 1
+                        except:
+                            continue
+                    elif event['type'] == 'flagcapture':
+                        try:
+                            player_name = event['player']
+                            if not 'flagcapture' in live_data['rounds'][round_id]['players'][player_name]:
+                                live_data['rounds'][round_id]['players'][player_name]['flagcapture'] = 0
+                            live_data['rounds'][round_id]['players'][player_name]['flagcapture'] += 1
+                            if not 'flagcapture' in results[player_name]:
+                                results[player_name]['flagcapture'] = 0
+                            results[player_name]['flagcapture'] += 1
+                            results[player_name]['score'] += 5
+                        except:
+                            continue
+                    elif event['type'] == 'changeteam':
+                        #import pdb;pdb.set_trace()
+                        # TODO handle this
+                        pass
+                    elif event['type'] == 'kick':
+                        live_data['rounds'][round_id]['players'][event['player']]['status'] = 'kicked'
                         # TODO add this in stats
-                    # END OF ROUND
-                    break
+                    elif event['type'] == 'timeout':
+                        live_data['rounds'][round_id]['players'][event['player']]['status'] = 'timeout'
+                        # TODO add this in stats
+                    elif event['type'] == 'leave':
+                        live_data['rounds'][round_id]['players'][event['player']]['status'] = 'left'
+                        # TODO add this in stats
+                    elif event['type'] == 'servershutdown':
+                        for p in live_data['rounds'][round_id]['players'].values():
+                            p['status'] = 'servershutdown'
+                            # TODO add this in stats
+                        # END OF ROUND
+                        break
+                except Exception, e:
+                    print "ERROR - Calculing stat: %s" % e
+                    print "IGNORING EVENT: %s" % event
 
             # MEDALS TODO must be in achievements ...
             for player_name, player in live_data['rounds'][round_id]['players'].items():
@@ -580,6 +617,14 @@ def get_stats(selected_player=None, selected_gametype=None):
                     results[third_player]['third_place'] += 1
                     results[third_player]['score'] += nb_players / 2
 
+    # Cache results
+    now = datetime.datetime.now()
+    cache_data = {'type': 'get_stats',
+         'data': pickle.dumps(results),
+         'when': now}
+    cache_table.remove({'type': 'get_stats'})
+    cache_table.save(cache_data)
+    # Return
     if selected_player and selected_player in results:
         return results[selected_player]
     else:
