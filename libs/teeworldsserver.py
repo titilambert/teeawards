@@ -232,7 +232,7 @@ class TeeWorldsServer(threading.Thread):
                     data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.changeteam_table.save(data)
                     # KICK THE PLAYER !!!!!
-                    # JUST FOR don't fuck stats
+                    # JUST FOR don't fuck stats or NOT ??
                 # Change name
                 elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' changed name to '(.*)'", line):
                     when, name, new_name = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' changed name to '(.*)'", line).groups()
@@ -346,7 +346,8 @@ class TeeWorldsServer(threading.Thread):
                         f.write("NON CAPTURED LINE: " + line)
                         f.write("\n")
                         print "NON CAPTURED LINE", line
-        f.close()
+        if self.debug:
+            f.close()
 
 engine_settings = [
     ('sv_name', 'Name of the server', 'unnamed server'),
