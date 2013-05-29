@@ -175,11 +175,14 @@ def get_player_list():
 def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
     # search in cache
     if use_cache:
-        cache_data = cache_table.find_one({'type': 'get_stats'})
+        cache_data = cache_table.find_one({"$and" :[{'type': 'get_stats'},
+                                                    {'selected_gametype': selected_gametype}
+                                                   ]
+                                          })
         if cache_data:
             now = datetime.datetime.now()
             if now - cache_data['when'] < datetime.timedelta(0, cache_timeout):
-                print "Cache used"
+                #print "Cache used"
                 results = pickle.loads(cache_data['data'])
                 # Return
                 if selected_player and selected_player in results:
@@ -620,9 +623,13 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
     # Cache results
     now = datetime.datetime.now()
     cache_data = {'type': 'get_stats',
-         'data': pickle.dumps(results),
-         'when': now}
-    cache_table.remove({'type': 'get_stats'})
+                  'data': pickle.dumps(results),
+                  'selected_gametype': selected_gametype,
+                  'when': now}
+    cache_table.remove({"$and" :[{'type': 'get_stats'},
+                                 {'selected_gametype': selected_gametype}
+                                ]
+                       })
     cache_table.save(cache_data)
     # Return
     if selected_player and selected_player in results:
