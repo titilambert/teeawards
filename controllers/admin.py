@@ -180,7 +180,7 @@ def restore():
                     if f.endswith('.bson'):
                         db = f.rsplit('/', 1)[-1].split(".")[0]
                         file_path = data_folder + '/../restore_dump/' + f
-                        command = "mongorestore --collection teeworlds --db %s %s" % (db, file_path)
+                        command = "mongorestore -d teeworlds -c %s %s" % (db, file_path)
                         p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                         output, errors = p.communicate()
                 elif f.startswith('map/'):
