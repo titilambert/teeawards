@@ -41,7 +41,7 @@ def player_badges(player, gametype):
     return {'results': badge_result}
 
 
-def livestat_badges(live_stat, new_data):
+def livestat_badges(new_data):
     return None
 
 

@@ -62,7 +62,12 @@
         </td>
         <td class="last">
         % if k == 'players':
-          ${"<br/>".join([p['name'] for p in v])}
+          % for player in v:
+            <form action="/admin/kick/${player['name']}" method="post">
+              ${player['name']}
+              <button>Kick</button>
+            </form>
+          % endfor
         % else:
           ${v}
         % endif
@@ -169,10 +174,73 @@
       </tr>
     </tbody>
   </table>
-  <div>
-    <form action="/admin/reset_data">
-    <button >Reset data</button>
-    </form>
-  </div>
+</div>
+
+
+
+<div>
+  <table>
+  <head>
+    <tr>
+      <th colspan="4">
+        Administration
+      </th>
+    </tr>
+  </head>
+  <body>
+    <tr>
+      <form action="/admin/export" method="post">
+        <td>
+          Export data
+        </td>
+        <td>
+          <span class="export_stats">
+            <label>Export stats</label>
+            <input type="checkbox" name="stats" />
+          </span>
+        </td>
+        <td>
+          <button >Export data</button>
+        </td>
+      </form>
+    </tr>
+    <tr>
+      <form action="/admin/restore" method="post" enctype="multipart/form-data">
+        <td>
+          Restore data
+        </td>
+        <td>
+          <input type="file" name="dumpfile" />
+        </td>
+        <td>
+          <button >Restore data</button>
+        </td>
+      </form>
+    </tr>
+    <tr>
+      <td>
+      <form action="/admin/reset_data" method="post">
+        <button onclick='return reset_confirm();' >Reset stats</button>
+        <script type'text/javascript'>
+function reset_confirm() {
+    var r = confirm("You're going to RESET ALL STATS !\nAre you sure ?")
+    if ( r == true ) {
+        var c = confirm("Are you really really sure to RESET ALL STATS !?")
+        if ( c == true ) {
+            alert("OK, OK...  ALL STATS WILL BE DELETE ...");
+            return true;
+        }
+        return false;
+    }
+    else {
+        return false;
+    }
+}
+        </script>
+      </form>
+      </td>
+    </tr>
+  </body>
+  </table>
 </div>
 

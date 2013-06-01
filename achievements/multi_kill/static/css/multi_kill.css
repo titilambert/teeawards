@@ -2,6 +2,7 @@ table.multikill_achievement th.multikill_title {
     text-align: center;
     font-size: 26px;
     text-decoration: underline;
+    height: 90px;
 }
 
 table.multikill_achievement img.multikill_icon {

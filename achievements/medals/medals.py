@@ -9,11 +9,7 @@ from libs.lib import kill_table
 
 @mako_view("desc_medals")
 def desc_medals():
-    ordered_list = ['winner', 'heart', 'shield', 'hammer', 'gun',
-                    'shotgun', 'grenade', 'laser', 'ninja']
-    badges = [(i, badge_list[i]) for i in ordered_list]
-
-    return {'badge_list': badges}
+    return {'medal_list': medals_list}
 
 @mako_view("player_medals")
 def player_medals(player, gametype):
@@ -32,7 +28,7 @@ def player_medals(player, gametype):
             'medals_list': medals_list}
 
 
-def livestat_medals(live_stat, new_data):
+def livestat_medals(new_data):
     return None
 
 

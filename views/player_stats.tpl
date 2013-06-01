@@ -54,6 +54,14 @@ ${lib.search_player()}
       </tr>
       <tr>
         <td class="dataname">
+          Rounds
+        </td>
+        <td class="datavalue">
+          ${rounds} rounds
+        </td>
+      </tr>
+      <tr>
+        <td class="dataname">
           Kills
         </td>
         <td class="datavalue">
@@ -244,6 +252,7 @@ ${lib.search_player()}
 </div>
 </div>
 
+% if selected_gametype in ['ctf', 'all']:
 <div class="statscard">
 <div class="profilecard">
   <table>
@@ -283,6 +292,7 @@ ${lib.search_player()}
   </table>
 </div>
 </div>
+% endif
 
 
 

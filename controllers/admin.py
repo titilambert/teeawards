@@ -1,6 +1,8 @@
 from time import sleep
+import subprocess
+import tarfile
 
-from bottle import mako_view, request, response, redirect
+from bottle import mako_view, request, response, redirect, static_file
 
 from libs.lib import *
 from libs.rank import get_rank
@@ -122,7 +124,68 @@ def map_delete(id_):
 
 
 def reset_data():
-    print "RESET DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    if False:
-        empty_db()
+    empty_db()
+    redirect("/admin")
+
+
+def kick(player):
+    econ_command_queue.put({'type': 'kick',
+                            'data': {'player': player,
+                                     'message': 'Kicked from website'
+                                    }
+                          })
+    redirect("/admin")
+
+
+def export():
+    # Delete old dumps
+    command = "rm -rf %s" % dump_folder
+    p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, errors = p.communicate()
+    # Dump config tables
+    for table in no_stats_tables:
+        command = "mongodump -d teeworlds -c %s" % table.name
+        p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, errors = p.communicate()
+    # Dump stats tables
+    if 'stats' in request.params:
+        for table in tables:
+            command = "mongodump -d teeworlds -c %s" % table.name
+            p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, errors = p.communicate()
+    file_name = 'teeawards_dump.tar.gz'
+    file_path = os.path.join(data_folder, file_name)
+    tf = tarfile.open(file_path, 'w:gz')
+    # Add dumps
+    tf.add(dump_folder, 'dump')
+    # Add Maps
+    tf.add(map_folder, 'map')
+    # Add Map screenshots
+    tf.add(map_screenshot_folder, 'map_screenshots')
+    tf.close()
+    return static_file(file_name, root=data_folder, download=file_name)
+
+def restore():
+    if 'dumpfile' in request.files:
+        tf = tarfile.open(mode='r:gz', fileobj=(request.files['dumpfile'].file))
+        mandatory_files = ['dump/teeworlds/maps.bson',
+                           'dump/teeworlds/config.bson',
+                           'map',
+                           'map_screenshots']
+        if set(mandatory_files).issubset(set(tf.getnames())):
+            for f in tf.getnames():
+                # TODO import dumps and send maps in good folder
+                if f.startswith('dump/'):
+                    tf.extract(f , data_folder + '/../restore_dump/')
+                    if f.endswith('.bson'):
+                        db = f.rsplit('/', 1)[-1].split(".")[0]
+                        file_path = data_folder + '/../restore_dump/' + f
+                        command = "mongorestore --collection teeworlds --db %s %s" % (db, file_path)
+                        p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        output, errors = p.communicate()
+                elif f.startswith('map/'):
+                    tf.extract(f, data_folder)
+                elif f.startswith('map_screenshots/'):
+                    tf.extract(f, data_folder)
+
     redirect("/admin")

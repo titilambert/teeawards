@@ -7,6 +7,7 @@ from bottle import mako_view
 from datetime import datetime, timedelta
 from libs.achievement import achievement_desc_list, achievement_player_list, achievement_livestat_list
 from libs.lib import kill_table
+from libs.lib import econ_command_queue
 
 
 
@@ -68,7 +69,7 @@ def player_multi_kill(player, gametype):
     return {'multikill_list': ret_multikill}
 
 
-def livestat_multi_kill(live_stat, new_data):
+def livestat_multi_kill(new_data):
     def reduce_data(ret, data):
         if data['killer'] != data['victim'] and ret[1] and data['killer'] == player:
             return (ret[0] + 1, True)
@@ -88,7 +89,9 @@ def livestat_multi_kill(live_stat, new_data):
     multikill_name = multikill_list.get(multi_level[0], None)
     if multikill_name:
         msg = "(%s) !!! %s !!! (%s kills)" % (player, multikill_name[0].upper(), multi_level[0])
-        live_stat.communicate({'type': 'broadcast', 'msg': msg})
+        econ_command_queue.put({'type': 'broadcast',
+                                'data': {'message': msg}
+                              })
 
 
 #multikill_list = {

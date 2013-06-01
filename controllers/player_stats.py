@@ -38,6 +38,7 @@ def player_stats(player=None, context={}, gametype=None):
     
     context['kills'] = sum(player_stats.get('kills', {None: 0}).values())
     context['suicides'] = player_stats.get('suicides', 0)
+    context['rounds'] = player_stats.get('rounds', 0)
     context['teamkills'] = sum(player_stats.get('teamkills', {None: 0}).values())
     context['flaggrab'] = player_stats.get('flaggrab', 0)
     context['flagreturn'] = player_stats.get('flagreturn', 0)
