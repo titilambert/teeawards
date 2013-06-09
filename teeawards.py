@@ -83,23 +83,6 @@ def setup_routing(app):
     bottle.route('/map_screenshots/:filepath#.+#', method=['GET', 'POST'], callback=server_map_screenshots)
     bottle.route('/set_gametype', method=['POST'], callback=set_gametype)
 
-
-achvmts = glob.glob("achievements/*/views/")
-for a in achvmts:
-    bottle.TEMPLATE_PATH.append(a)
-
-app = bottle.app()
-
-session_opts = {
-    'session.type': 'file',
-    'session.data_dir': './session_data',
-    'session.secret': 'Ki2ho0zeeghiemie9eengaxu7zaung1aico2shee7aechei7moozumuisae1',
-    'session.auto': True,
-    'session.key': 'teeaward',
-}
-app = SessionMiddleware(app, session_opts)
-setup_routing(app)
-
 def signal_handler(signal, frame):
         print 'You pressed Ctrl+C!'
         econ_client.stop_server()
@@ -107,7 +90,26 @@ def signal_handler(signal, frame):
             print 'Please waiting... The teeworlds server is stopping !'
             time.sleep(3)
         sys.exit(0)
-signal.signal(signal.SIGINT, signal_handler)
 
-run(app, host='0.0.0.0', port=8081)
+def main():
+    achvmts = glob.glob("achievements/*/views/")
+    for a in achvmts:
+        bottle.TEMPLATE_PATH.append(a)
+    
+    session_opts = {
+        'session.type': 'file',
+        'session.data_dir': './session_data',
+        'session.secret': 'Ki2ho0zeeghiemie9eengaxu7zaung1aico2shee7aechei7moozumuisae1',
+        'session.auto': True,
+        'session.key': 'teeaward',
+    }
 
+    app = bottle.app()
+    app = SessionMiddleware(app, session_opts)
+    setup_routing(app)
+    signal.signal(signal.SIGINT, signal_handler)
+    sys.stderr = open('teeawards.log', 'a')
+    run(app, host='0.0.0.0', port=8081)
+
+if __name__ == '__main__':
+    main()
