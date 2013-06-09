@@ -47,15 +47,11 @@ do_start()
 {
     # Return
     #   0 if daemon has been started
-    #   1 if daemon was already running
     #   2 if daemon could not be started
     
-        # Test to see if the daemon is already running - return 1 if it is. 
-    start-stop-daemon --start --pidfile $PIDFILE \
-        --exec $DAEMON --test -c $USER -- start > /dev/null || return 1
-        
         # Start the daemon for real, return 2 if failed
     start-stop-daemon --start --pidfile $PIDFILE --make-pidfile \
+        --chdir $teeawards_DIR/teeawards \
         --exec $DAEMON --background -c $USER -- start > /dev/null || return 2
 }
 
