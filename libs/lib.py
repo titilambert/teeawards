@@ -9,6 +9,7 @@ from pymongo import Connection
 
 con = Connection()
 tee_db = con['teeworlds']
+econ_port = 9999
 
 # cache timeout (seconds)
 cache_timeout = 10

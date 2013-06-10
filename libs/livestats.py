@@ -24,6 +24,7 @@ class LiveStats(threading.Thread):
         while not self.stopped():
             try:
                 stat = live_stats_queue.get(True, 2)
+                #print stat
             except Queue.Empty:
                 continue
             if stat['type'] == 'kill':

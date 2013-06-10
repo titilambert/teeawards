@@ -7,9 +7,10 @@ import time
 from libs.lib import econ_command_queue
 
 class EconClient(threading.Thread):
-    def __init__(self):
+    def __init__(self, econ_port=9999):
         threading.Thread.__init__(self)
         self.tn = None
+        self.econ_port = econ_port
         self.stop = threading.Event()
 
     def stop_server(self):
@@ -19,13 +20,18 @@ class EconClient(threading.Thread):
         return self.stop.isSet()
 
     def connect(self):
-        self.tn = telnetlib.Telnet('127.0.0.1', 9999)
+        self.tn = telnetlib.Telnet('127.0.0.1', self.econ_port)
         self.tn.read_until("Enter password:")
         self.tn.write("teeawards\n")
         self.tn.read_until("[econ]: cid=0 authed")
 
     def disconnect(self):
         self.tn.close()
+
+    def set_econ_port(self, new_econ_port):
+        self.econ_port = new_econ_port
+        print "set_econ_port", new_econ_port
+#        self.connect()
 
     def command(fnt):
         def wrapper(self, **kwargs):

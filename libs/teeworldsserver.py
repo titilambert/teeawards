@@ -16,7 +16,7 @@ from bson.objectid import ObjectId
 from libs.lib import conf_table, data_folder, server_folder
 from libs.livestats import LiveStats
 from libs.econ import econ_client
-from libs.lib import live_stats_queue, econ_command_queue
+from libs.lib import live_stats_queue, econ_command_queue, econ_port
 
 
 TIMEOUT = 2
@@ -46,7 +46,6 @@ class TeeWorldsManagerServer(object):
         self.server_executable = None
         self.conf = conf
         self.process = None
-        #import pdb;pdb.set_trace()
 
     def empty_db(self):
         self.join_table.drop()
@@ -114,7 +113,7 @@ class TeeWorldsManagerServer(object):
 
     def start(self, conf_name):
         self.conf = get_config(conf_name)
-        filename = export_conf(self.conf)
+        filename, real_econ_port = export_conf(self.conf)
         # Prepare server
         ## Prepare storage file
         f = open(os.path.join(data_folder,'storage.cfg'), 'w')
@@ -143,7 +142,8 @@ class TeeWorldsManagerServer(object):
         self.server.start()
         # Start live stats thread
         self.live_stats.start()
-
+        # Econ client
+        econ_client.set_econ_port(real_econ_port)
 
     def stop(self):
         if self.process:
@@ -174,7 +174,7 @@ class TeeWorldsServer(threading.Thread):
         self.master = master
 
         self.stop = threading.Event()
-        self.debug = False
+        self.debug = True
 
     def stop_server(self):
         self.stop.set()
@@ -192,6 +192,7 @@ class TeeWorldsServer(threading.Thread):
         if self.debug:
             f = open('teeawards.log', 'w')
 
+        last_line = ''
         while not self.stopped():
 #            print "read"
             ready, _, _ = select.select([self.master], [], [], timeout)
@@ -205,20 +206,14 @@ class TeeWorldsServer(threading.Thread):
                 # Skip empty lines
                 if line == '':
                     continue
+                # Handle splitted lines
+                if not re.match("^\[[a-z0-9]*\]\[", line):
+                    line = last_line.strip() + line.strip()
                 # Join team:
-                elif re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
+                if re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line):
                     when, player, team = re.match("\[(.*)\]\[game\]: team_join player='.*:(.*)' team=(.*)", line).groups()
                     if self.debug:
                         print "JOIN: ", player, team
-                    when = datetime.fromtimestamp(int(when, 16))
-                    data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype} 
-                    self.manager.join_table.save(data)
-                    live_stats_queue.put({'type': 'join', 'data': data})
-                # Other Join team ???: (Fixed in teeworlds 0.6.2 ??????)
-                elif re.match(".*_join player='.*:(.*)' team=(.*)", line):
-                    when, player, team = re.match(" ?t?e?am_join player='.*:(.*)' team=(.*)", line).groups()
-                    if self.debug:
-                        print "JOIN_other: ", player, team
                     when = datetime.fromtimestamp(int(when, 16))
                     data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype} 
                     self.manager.join_table.save(data)
@@ -346,6 +341,9 @@ class TeeWorldsServer(threading.Thread):
                         f.write("NON CAPTURED LINE: " + line)
                         f.write("\n")
                         print "NON CAPTURED LINE", line
+                # Save last line
+                last_line = line
+
         if self.debug:
             f.close()
 
@@ -430,12 +428,20 @@ def export_conf(conf):
         f.write("%s %s\n" % (setting, value))
         
     # export external commands
-    f.write("ec_port 9999\n")
+    from libs.lib import econ_port
+    result = 0
+    # FIXME: FIND EMPTY PORT
+    while result == 0:
+        s = socket(AF_INET, SOCK_STREAM)
+        result = s.connect_ex(('127.0.0.1', econ_port))
+        econ_port += 1
+    print "CONFIG", econ_port
+    f.write("ec_port %s\n" % econ_port)
     f.write("ec_password teeawards\n")
     f.write("ec_auth_timeout 10\n")
     f.write("ec_bantime 0\n")
     f.close()
-    return filename
+    return filename, econ_port
 
 def get_config(name):
     return conf_table.find_one({'name': name})
