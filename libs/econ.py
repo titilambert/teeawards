@@ -20,7 +20,7 @@ class EconClient(threading.Thread):
         return self.stop.isSet()
 
     def connect(self):
-        self.tn = telnetlib.Telnet('127.0.0.1', self.econ_port)
+        self.tn = telnetlib.Telnet('localhost', self.econ_port)
         self.tn.read_until("Enter password:")
         self.tn.write("teeawards\n")
         self.tn.read_until("[econ]: cid=0 authed")

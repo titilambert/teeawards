@@ -159,6 +159,7 @@ class TeeWorldsManagerServer(object):
                 os.kill(int(pid_str), 15)
             # Kill teeworlds server !!
             self.process.terminate()
+            self.process.wait()
             data = {'when': datetime.now(), 'round': self.server.round_, 'map': self.server.map_}
             self.servershutdown_table.save(data)
             self.process = None
