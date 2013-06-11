@@ -12,7 +12,7 @@ tee_db = con['teeworlds']
 econ_port = 9999
 
 # cache timeout (seconds)
-cache_timeout = 10
+cache_timeout = 60
 
 # Queues
 ## live stats
@@ -154,6 +154,38 @@ special = {
 r_kill_mapping = dict([(x[1], x[0]) for x in kill_mapping.items()])
 r_pickup_mapping = dict([(x[1], x[0]) for x in pickup_mapping.items()])
 
+#### HANDLE CACHE
+def get_from_cache(data, gametype, player=None):
+    cache_data = cache_table.find_one({"$and" :[{'type': data},
+                                                {'selected_gametype': gametype}
+                                               ]
+                                      })
+    if cache_data:
+        #print "CACHE", data
+        now = datetime.datetime.now()
+        if now - cache_data['when'] < datetime.timedelta(0, cache_timeout):
+            #print "Cache used"
+            results = pickle.loads(cache_data['data'])
+            # Return
+            if player and player in results:
+                return results[player]
+            else:
+                return results
+#    print "NOT CACHE", data
+
+def save_to_cache(data, gametype, results):
+    now = datetime.datetime.now()
+    cache_data = {'type': data,
+                  'data': pickle.dumps(results),
+                  'selected_gametype': gametype,
+                  'when': now}
+    cache_table.remove({"$and" :[{'type': data},
+                                 {'selected_gametype': gametype}
+                                ]
+                       })
+    cache_table.save(cache_data)
+#### END HANDLE CACHE
+
 
 def get_player_list():
     player_list = set([x['player'] for x in pickup_table.find(fields=['player'])])
@@ -175,21 +207,9 @@ def get_player_list():
 # +5 : Capture flag
 def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
     # search in cache
-    if use_cache:
-        cache_data = cache_table.find_one({"$and" :[{'type': 'get_stats'},
-                                                    {'selected_gametype': selected_gametype}
-                                                   ]
-                                          })
-        if cache_data:
-            now = datetime.datetime.now()
-            if now - cache_data['when'] < datetime.timedelta(0, cache_timeout):
-                #print "Cache used"
-                results = pickle.loads(cache_data['data'])
-                # Return
-                if selected_player and selected_player in results:
-                    return results[selected_player]
-                else:
-                    return results
+    cached_data = get_from_cache('get_stats', selected_gametype, selected_player)
+    if cached_data:
+        return cached_data
 
     # Sort all events by rounds
     def reducer(ret, data):
@@ -622,16 +642,7 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
                     results[third_player]['score'] += nb_players / 2
 
     # Cache results
-    now = datetime.datetime.now()
-    cache_data = {'type': 'get_stats',
-                  'data': pickle.dumps(results),
-                  'selected_gametype': selected_gametype,
-                  'when': now}
-    cache_table.remove({"$and" :[{'type': 'get_stats'},
-                                 {'selected_gametype': selected_gametype}
-                                ]
-                       })
-    cache_table.save(cache_data)
+    save_to_cache('get_stats', selected_gametype, results)
     # Return
     if selected_player and selected_player in results:
         return results[selected_player]
@@ -639,7 +650,13 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
         return results
 
 
-def get_item_stats(item, gametype=None, with_warmup=False):
+
+def get_item_stats(item, gametype=None, with_warmup=False, use_cache=True):
+    # search in cache
+    cached_data = get_from_cache('get_item_stats_' + str(item), gametype)
+    if cached_data:
+        return cached_data
+
     kill_with_key = 'kill with ' + item.capitalize()
     dead_by_key = 'dead by ' + item.capitalize()
     def compute_weapon_stats(ret, data):
@@ -686,9 +703,17 @@ def get_item_stats(item, gametype=None, with_warmup=False):
         pstats = reduce(compute_item_stats, praw_data, {})
         stats.update({'pick up': pstats})
 
+    # Cache results
+    save_to_cache('get_item_stats_' + str(item), gametype, stats)
+    # return
     return stats
 
 def get_player_items_stats(player, gametype=None, with_warmup=False):
+    # search in cache
+    cached_data = get_from_cache('get_player_items_stats_' + str(player), gametype)
+    if cached_data:
+        return cached_data
+
     def compute_item_stats(ret, data):
         # warmup
         if (not with_warmup) and data['round'] == None:
@@ -703,10 +728,17 @@ def get_player_items_stats(player, gametype=None, with_warmup=False):
     raw_pickup_stats = pickup_table.find({'player' : player})
     pstats = reduce(compute_item_stats, raw_pickup_stats, {})
 
+    # Cache results
+    save_to_cache('get_player_items_stats_' + str(player), gametype, pstats)
     return pstats
 
 
 def get_general_players_stats(gametype=None, with_warmup=False):
+    # search in cache
+    cached_data = get_from_cache('get_general_players_stats', gametype)
+    if cached_data:
+        return cached_data
+
     def get_stats_by_players(ret, data):
         # warmup
         if (not with_warmup) and data['round'] == None:
@@ -741,10 +773,19 @@ def get_general_players_stats(gametype=None, with_warmup=False):
         return ret
 
     raw_data = kill_table.find()
-    return reduce(get_stats_by_players, raw_data, {})
+    stats = reduce(get_stats_by_players, raw_data, {})
+    # Cache results
+    save_to_cache('get_general_players_stats', gametype, stats)
+
+    return stats
 
 
 def get_player_stats(player, gametype=None, with_warmup=False):
+    # search in cache
+    cached_data = get_from_cache('get_players_stats_' + player, gametype)
+    if cached_data:
+        return cached_data
+
     def compute_item_stats(ret, data):
         # warmup
         if (not with_warmup) and data['round'] == None:
@@ -807,6 +848,10 @@ def get_player_stats(player, gametype=None, with_warmup=False):
     vstats = reduce(compute_victim_stats, raw_victim_stats, {'weapon': {}, 'killer': {}, 'suicide': 0})
     raw_pickup_stats = pickup_table.find({'player': player})
     pstats = reduce(compute_item_stats, raw_pickup_stats, {})
+
+
+    # Cache results
+    save_to_cache('get_players_stats_' + player, gametype, (kstats, vstats, pstats))
 
     return kstats, vstats, pstats
 
