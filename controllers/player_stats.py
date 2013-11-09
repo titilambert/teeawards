@@ -84,5 +84,7 @@ def player_stats(player=None, context={}, gametype=None):
     for achievement in achievement_player_list.items():
         context['achievement_list'][achievement[0]] = achievement[1](player, gametype)
 
+    if gametype == None:
+        context['gametype'] = 'all'
     return context
 

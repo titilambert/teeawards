@@ -144,13 +144,13 @@ def export():
     output, errors = p.communicate()
     # Dump config tables
     for table in no_stats_tables:
-        command = "mongodump -d teeworlds -c %s" % table.name
+        command = "%s -d teeworlds -c %s" % (mongodump, table.name)
         p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, errors = p.communicate()
     # Dump stats tables
     if 'stats' in request.params:
         for table in tables:
-            command = "mongodump -d teeworlds -c %s" % table.name
+            command = "%s -d teeworlds -c %s" % (mongodump, table.name)
             p = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, errors = p.communicate()
     file_name = 'teeawards_dump.tar.gz'
