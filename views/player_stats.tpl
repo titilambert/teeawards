@@ -240,7 +240,7 @@ ${lib.search_player()}
           Map
         </td>
         <td class="image">
-          <img src="/map_screenshots/${map_list[map_name]['screenshot']}" alt="${map_name}" />
+          <img src="/map_screenshots/${map_list[map_name].get('screenshot', '')}" alt="${map_name}" />
         </td>
         <td class="datavalue">
           You played ${favorite_map[1]} rounds on ${map_name}

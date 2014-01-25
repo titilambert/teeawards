@@ -13,6 +13,7 @@ econ_port = 9999
 
 # cache timeout (seconds)
 cache_timeout = 60
+cache_timeout = 0
 
 # Queues
 ## live stats
@@ -112,20 +113,19 @@ for folder in folders:
 #+1 for fragging an enemy 
 #-1 for killing a teammate or yourself
 
-
-#Team
+# Team mapping
 team_mapping = {
     'Spectator': '-1',
     'Red': '0',
     'Blue': 1,
 }
 
-# Mapping
+# Pickup mapping
 pickup_mapping = {
     'heart': '0/0',
     'shield': '1/0',
     'shotgun': '2/2',
-    'grenade': '2/3',
+'grenade': '2/3',
     'laser': '2/4',
     'ninja': '3/5',
 }
@@ -142,7 +142,7 @@ kill_mapping = {
     'ninja': '5',
     }
 
-# Special
+# Special mapping
 special = {
     'normal_death': '0',
     'die_with_flag': '1',
@@ -211,6 +211,15 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
     if cached_data:
         return cached_data
 
+    # Get all round with the selected_gametype
+    if selected_gametype != None:
+        selected_rounds = [r.values()[0] for r in round_table.find(spec={'gametype': selected_gametype}, 
+                                                       fields=['_id'],
+                                                       )]
+    else:
+        selected_rounds = [r.values()[0] for r in round_table.find(fields=['_id'])]
+    selected_rounds.append(None)
+
     # Sort all events by rounds
     def reducer(ret, data):
         ret, type_ = ret  
@@ -229,17 +238,39 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
                 ret[data['round']].sort(key=lambda x: x['when'])
         return ret, type_
     # TODO MAKE mongo filters ('round' != NONE) and selected_gametype
-    events_by_round, _ = reduce(reducer, kill_table.find(), ({}, 'kill'))
-    events_by_round, _ = reduce(reducer, flaggrab_table.find(), (events_by_round, 'flaggrab'))
-    events_by_round, _ = reduce(reducer, flagreturn_table.find(), (events_by_round, 'flagreturn'))
-    events_by_round, _ = reduce(reducer, flagcapture_table.find(), (events_by_round, 'flagcapture'))
-    events_by_round, _ = reduce(reducer, join_table.find(), (events_by_round, 'join'))
-    events_by_round, _ = reduce(reducer, changeteam_table.find(), (events_by_round, 'changeteam'))
-    events_by_round, _ = reduce(reducer, round_table.find(), (events_by_round, 'round'))
-    events_by_round, _ = reduce(reducer, kick_table.find(), (events_by_round, 'kick'))
-    events_by_round, _ = reduce(reducer, timeout_table.find(), (events_by_round, 'timeout'))
-    events_by_round, _ = reduce(reducer, leave_table.find(), (events_by_round, 'leave'))
-    events_by_round, _ = reduce(reducer, servershutdown_table.find(), (events_by_round, 'servershutdown'))
+    events_by_round, _ = reduce(reducer,
+                                kill_table.find({'round': {'$in' : selected_rounds}}),
+                                ({}, 'kill'))
+    events_by_round, _ = reduce(reducer,
+                                flaggrab_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'flaggrab'))
+    events_by_round, _ = reduce(reducer,
+                                flagreturn_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'flagreturn'))
+    events_by_round, _ = reduce(reducer,
+                                flagcapture_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'flagcapture'))
+    events_by_round, _ = reduce(reducer,
+                                join_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'join'))
+    events_by_round, _ = reduce(reducer,
+                                changeteam_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'changeteam'))
+    events_by_round, _ = reduce(reducer,
+                                round_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'round'))
+    events_by_round, _ = reduce(reducer,
+                                kick_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'kick'))
+    events_by_round, _ = reduce(reducer,
+                                timeout_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'timeout'))
+    events_by_round, _ = reduce(reducer,
+                                leave_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'leave'))
+    events_by_round, _ = reduce(reducer,
+                                servershutdown_table.find({'round': {'$in' : selected_rounds}}),
+                                (events_by_round, 'servershutdown'))
 
     # Sort event by warmups
     def none_reducer(ret, data):
@@ -252,11 +283,21 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
             ret[data['map']].sort(key=lambda x: x['when'])
         return ret, type_
     # TODO MAKE mongo filters ('round' == NONE) and selected_gametype
-    none_event_by_map, _ = reduce(none_reducer, join_table.find(), ({}, 'join'))
-    none_event_by_map, _ = reduce(none_reducer, kick_table.find(), (none_event_by_map, 'kick'))
-    none_event_by_map, _ = reduce(none_reducer, timeout_table.find(), (none_event_by_map, 'timeout'))
-    none_event_by_map, _ = reduce(none_reducer, leave_table.find(), (none_event_by_map, 'leave'))
-    none_event_by_map, _ = reduce(none_reducer, servershutdown_table.find(), (none_event_by_map, 'servershutdown'))
+    none_event_by_map, _ = reduce(none_reducer,
+                                  join_table.find({'round': {'$in' : selected_rounds}}),
+                                  ({}, 'join'))
+    none_event_by_map, _ = reduce(none_reducer,
+                                  kick_table.find({'round': {'$in' : selected_rounds}}),
+                                  (none_event_by_map, 'kick'))
+    none_event_by_map, _ = reduce(none_reducer,
+                                  timeout_table.find({'round': {'$in' : selected_rounds}}),
+                                  (none_event_by_map, 'timeout'))
+    none_event_by_map, _ = reduce(none_reducer,
+                                  leave_table.find({'round': {'$in' : selected_rounds}}),
+                                  (none_event_by_map, 'leave'))
+    none_event_by_map, _ = reduce(none_reducer,
+                                  servershutdown_table.find({'round': {'$in' : selected_rounds}}),
+                                  (none_event_by_map, 'servershutdown'))
 
     # Sort rounds by map
     def round_reducer(ret, data):
@@ -269,11 +310,12 @@ def get_stats(selected_player=None, selected_gametype=None, use_cache=True):
             ret[data['map']].append(data)
         return ret
     # TODO MAKE mongo filters ('round' == NONE) and selected_gametype
-    rounds = reduce(round_reducer, round_table.find(), {})
+    rounds = reduce(round_reducer,
+                    round_table.find({'_id': {'$in' : selected_rounds}}),
+                    {})
 
     # Prepare maps to get map name
     maps = dict([(x['_id'], x) for x in map_table.find()])
-
 
     def new_player_join_a_new_round(player, team, current_map, live_data, results, round_id=None):
         if not round_id is None:
