@@ -22,7 +22,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Path to teeawards
-teeawards_DIR=/opt/teeawards
+teeawards_DIR=/opt
 
 # Name of executable daemon
 NAME=teeawards
@@ -52,7 +52,7 @@ do_start()
         # Start the daemon for real, return 2 if failed
     start-stop-daemon --start --pidfile $PIDFILE --make-pidfile \
         --chdir $teeawards_DIR/teeawards \
-        --exec $DAEMON --background -c $USER -- start > /dev/null || return 2
+        --exec $DAEMON --background -c $USER  > /dev/null || return 2
 }
 
 #

@@ -85,6 +85,7 @@ demo_folder = os.path.join(data_folder, 'demo')
 skin_folder = os.path.join(data_folder, 'skin')
 map_screenshot_folder = os.path.join(data_folder, 'map_screenshots')
 dump_folder = os.path.join(os.path.dirname(__file__), "..", 'dump')
+mongodump = '/opt/mongo/bin/mongodump'
 server_folder = os.path.join(data_folder, 'servers')
 folders = [
     data_folder,
@@ -105,10 +106,11 @@ for folder in folders:
 #Team score
 #+1 for taking the flag from the flag stand 
 #+100 for capture 
+
 #Player score
 #+1 for taking the flag from the flag stand 
 #+1 for returning the flag 
-#+1 for fragging the enemy flag carrier 
+#NOT YET#+1 for fragging the enemy flag carrier 
 #+5 for capturing the flag 
 #+1 for fragging an enemy 
 #-1 for killing a teammate or yourself
