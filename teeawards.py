@@ -20,6 +20,7 @@ from controllers.achievements import achievements
 from controllers.maps import maps
 from libs.teeworldsserver import twms
 from libs.econ import econ_client
+from libs.statisticator import stats_mgr
 
 from libs import hooks
 
@@ -89,6 +90,7 @@ def signal_handler(signal, frame):
         if twms.stop():
             print 'Please waiting... The teeworlds server is stopping !'
             time.sleep(3)
+        stats_mgr.stop()
         sys.exit(0)
 
 def main():
@@ -108,7 +110,8 @@ def main():
     app = SessionMiddleware(app, session_opts)
     setup_routing(app)
     signal.signal(signal.SIGINT, signal_handler)
-    sys.stderr = open('teeawards.log', 'a')
+#    sys.stderr = open('teeawards.log', 'a')
+    stats_mgr.start()
     run(app, host='0.0.0.0', port=8081)
 
 if __name__ == '__main__':

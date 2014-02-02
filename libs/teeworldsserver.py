@@ -227,9 +227,9 @@ class TeeWorldsServer(threading.Thread):
                     when = datetime.fromtimestamp(int(when, 16))
                     data = {'when': when,  'player': player.strip(), 'team': team.strip(), 'round': self.round_, 'map': self.map_, 'gametype': self.gametype}
                     self.manager.changeteam_table.save(data)
+                # Change name
                     # KICK THE PLAYER !!!!!
                     # JUST FOR don't fuck stats or NOT ??
-                # Change name
                 elif re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' changed name to '(.*)'", line):
                     when, name, new_name = re.match("\[(.*)\]\[chat\]: \*\*\* '(.*)' changed name to '(.*)'", line).groups()
                     if self.debug:
