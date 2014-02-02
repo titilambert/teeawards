@@ -83,9 +83,18 @@ class Statisticator(threading.Thread):
                             'PlayersJob',
                             'GametypesJob',
                             'KillsJob',
+                            'SuicidesJob',
+                            'DeathsJob',
+                            'RatiosJob',
+                            'PickupsJob',
+                            'Kills_by_weaponsJob',
+                            'Deaths_by_weaponsJob',
+                            'FlagcapturesJob',
+                            'FlaggrabsJob',
+                            'FlagreturnsJob',
                             ]
         while not self.stopped():
-            time.sleep(10)
+            time.sleep(1)
             for o_job_name in ordered_job_list: 
  
                 # Pause when there is at leat one player on the server

@@ -6,20 +6,20 @@ from libs.lib import tee_db
 from libs.statisticator import Job
 
 
-class KillsJob(Job):
+class SuicidesJob(Job):
     def __init__(self):
-        """ Job to get player kills
+        """ Job to get player suicides
               Collection name: kill_results
               Struture:
                     {'player': STR ,
-                     'kills': INT ,
+                     'suicides': INT ,
                      'gametype': STR,
                      'last_event_date': DATE ,
               }
               Primary key : 'player'
         """
         Job.__init__(self)
-        results_db_name = 'results_kills'
+        results_db_name = 'results_suicides'
         self.results_db = tee_db[results_db_name]
 
         self.dependencies = ('players', 'gametypes')
@@ -40,14 +40,11 @@ class KillsJob(Job):
         else:
             return None
 
-    def get_results(self):
-        return self.load_results_from_cache()['kills']
-
     def save_results_to_cache(self):
         # Save new line only when data changes
         # Else update only the date
         last_data = self.load_results_from_cache()
-        if last_data is not None and last_data['kills'] == self.results['kills']:
+        if last_data is not None and last_data['suicides'] == self.results['suicides']:
             last_data['date'] = self.results['date']
             self.results = last_data
         self.results_db.save(self.results)
@@ -64,43 +61,37 @@ class KillsJob(Job):
             self.results = {}
             self.results['player'] = self.player_name
             self.results['gametype'] = self.gametype
-            self.results['kills'] = 0
+            self.results['suicides'] = 0
             self.results['last_event_date'] = datetime(1,1,1,0,0,0)
-        # Get new kills
+        # Get new suicides
         if self.gametype:
-            kills = tee_db['kill'].find(spec={'$and': [
-                                              {'weapon': {'$in': ['0', '1', '2', '3', '4', '5']}},
+            suicides = tee_db['kill'].find(spec={'$and': [
+                                              {'weapon': {'$in': ['-1', '0', '1', '2', '3', '4', '5']}},
                                               {'killer': self.player_name},
+                                              {'victim': self.player_name},
                                               {'gametype': self.gametype},
-                                              {"$where": "this.killer != this.victim"},
-# TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
-#                                              {"killer_team": {"$ne": None}},
                                               {'round': { "$ne": None}},
                                               {'when': {'$gt': self.results['last_event_date']}},
                                              ]},
                                     sort=[{'when', DESCENDING}],
                                    )
         else:
-            kills = tee_db['kill'].find(spec={'$and': [
-                                              {'weapon': {'$in': ['0', '1', '2', '3', '4', '5']}},
+            suicides = tee_db['kill'].find(spec={'$and': [
+                                              {'weapon': {'$in': ['-1', '0', '1', '2', '3', '4', '5']}},
                                               {'killer': self.player_name},
-                                              {"$where": "this.killer != this.victim"},
-# TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
-#                                              {"killer_team": {"$ne": None}},
+                                              {'victim': self.player_name},
                                               {'round': { "$ne": None}},
                                               {'when': {'$gt': self.results['last_event_date']}},
                                              ]},
                                     sort=[{'when', DESCENDING}],
                                    )
-        # Set new kills
-        self.results['kills'] += kills.count()
+        # Set new suicides
+        self.results['suicides'] += suicides.count()
 
         # Set last event date
 
-        if kills.count() > 0:
-            self.results['last_event_date'] = kills[0]['when']
+        if suicides.count() > 0:
+            self.results['last_event_date'] = suicides[0]['when']
         self.results['date'] = datetime.now()
 
         # Save to mongo

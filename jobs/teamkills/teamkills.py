@@ -6,20 +6,20 @@ from libs.lib import tee_db
 from libs.statisticator import Job
 
 
-class KillsJob(Job):
+class TeamkillsJob(Job):
     def __init__(self):
-        """ Job to get player kills
+        """ Job to get player teamkills
               Collection name: kill_results
               Struture:
                     {'player': STR ,
-                     'kills': INT ,
+                     'teamkills': INT ,
                      'gametype': STR,
                      'last_event_date': DATE ,
               }
               Primary key : 'player'
         """
         Job.__init__(self)
-        results_db_name = 'results_kills'
+        results_db_name = 'results_teamkills'
         self.results_db = tee_db[results_db_name]
 
         self.dependencies = ('players', 'gametypes')
@@ -41,13 +41,13 @@ class KillsJob(Job):
             return None
 
     def get_results(self):
-        return self.load_results_from_cache()['kills']
+        return self.load_results_from_cache()['teamkills']
 
     def save_results_to_cache(self):
         # Save new line only when data changes
         # Else update only the date
         last_data = self.load_results_from_cache()
-        if last_data is not None and last_data['kills'] == self.results['kills']:
+        if last_data is not None and last_data['teamkills'] == self.results['teamkills']:
             last_data['date'] = self.results['date']
             self.results = last_data
         self.results_db.save(self.results)
@@ -55,6 +55,9 @@ class KillsJob(Job):
     def process(self, player_name, gametype):
         self.player_name = player_name
         self.gametype = gametype
+        # DO NOT Consider none-team gameplay
+        if self.gametype in ['DM']:
+            return
         # Change status
         self.status = 'processing'
         # Get old data
@@ -64,17 +67,17 @@ class KillsJob(Job):
             self.results = {}
             self.results['player'] = self.player_name
             self.results['gametype'] = self.gametype
-            self.results['kills'] = 0
+            self.results['teamkills'] = 0
             self.results['last_event_date'] = datetime(1,1,1,0,0,0)
-        # Get new kills
+        # Get new teamkills
         if self.gametype:
-            kills = tee_db['kill'].find(spec={'$and': [
+            teamkills = tee_db['kill'].find(spec={'$and': [
                                               {'weapon': {'$in': ['0', '1', '2', '3', '4', '5']}},
                                               {'killer': self.player_name},
                                               {'gametype': self.gametype},
                                               {"$where": "this.killer != this.victim"},
 # TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
+#                                              {"$where": "this.killer_team == this.victim_team"},
 #                                              {"killer_team": {"$ne": None}},
                                               {'round': { "$ne": None}},
                                               {'when': {'$gt': self.results['last_event_date']}},
@@ -82,25 +85,25 @@ class KillsJob(Job):
                                     sort=[{'when', DESCENDING}],
                                    )
         else:
-            kills = tee_db['kill'].find(spec={'$and': [
+            teamkills = tee_db['kill'].find(spec={'$and': [
                                               {'weapon': {'$in': ['0', '1', '2', '3', '4', '5']}},
                                               {'killer': self.player_name},
                                               {"$where": "this.killer != this.victim"},
 # TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
+#                                              {"$where": "this.killer_team == this.victim_team"},
 #                                              {"killer_team": {"$ne": None}},
                                               {'round': { "$ne": None}},
                                               {'when': {'$gt': self.results['last_event_date']}},
                                              ]},
                                     sort=[{'when', DESCENDING}],
                                    )
-        # Set new kills
-        self.results['kills'] += kills.count()
+        # Set new teamkills
+        self.results['teamkills'] += teamkills.count()
 
         # Set last event date
 
-        if kills.count() > 0:
-            self.results['last_event_date'] = kills[0]['when']
+        if teamkills.count() > 0:
+            self.results['last_event_date'] = teamkills[0]['when']
         self.results['date'] = datetime.now()
 
         # Save to mongo

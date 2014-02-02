@@ -127,7 +127,7 @@ pickup_mapping = {
     'heart': '0/0',
     'shield': '1/0',
     'shotgun': '2/2',
-'grenade': '2/3',
+    'grenade': '2/3',
     'laser': '2/4',
     'ninja': '3/5',
 }
