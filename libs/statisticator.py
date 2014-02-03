@@ -82,6 +82,8 @@ class Statisticator(threading.Thread):
         ordered_job_list = [
                             'PlayersJob',
                             'GametypesJob',
+                            'RoundsJob',
+                            'Played_roundsJob',
                             'KillsJob',
                             'SuicidesJob',
                             'DeathsJob',
