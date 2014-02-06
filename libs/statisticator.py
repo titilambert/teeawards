@@ -94,6 +94,8 @@ class Statisticator(threading.Thread):
                             'FlagcapturesJob',
                             'FlaggrabsJob',
                             'FlagreturnsJob',
+                            'Favorite_killersJob',
+                            'Favorite_victimsJob',
                             ]
         while not self.stopped():
             time.sleep(1)
