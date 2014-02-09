@@ -97,7 +97,7 @@ ${lib.search_player()}
 </div>
 </div>
 
-% if kstats['weapon']:
+% if kills_by_weapons:
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -121,8 +121,8 @@ ${lib.search_player()}
       %for w in kill_mapping:
         % if w != 'exit' and w != 'death fall':
           <td>
-            % if w in kstats['weapon']:
-              ${kstats['weapon'][w]}
+            % if w in kills_by_weapons:
+              ${kills_by_weapons[w]}
             % else:
               0
             % endif
@@ -135,7 +135,7 @@ ${lib.search_player()}
 </div>
 % endif
 
-% if vstats['weapon']:
+% if deaths_by_weapons:
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -159,8 +159,8 @@ ${lib.search_player()}
       %for w in kill_mapping:
         % if w != 'exit':
           <td>
-            % if w in vstats['weapon']:
-              ${vstats['weapon'][w]}
+            % if w in deaths_by_weapons:
+              ${deaths_by_weapons[w]}
             % else:
               0
             % endif
@@ -297,7 +297,7 @@ ${lib.search_player()}
 
 
 
-% if pstats:
+% if item_stats:
 <div class="statscard">
 <table class="weaponstats">
   <thead>
@@ -318,8 +318,8 @@ ${lib.search_player()}
     <tr>
       %for i in pickup_mapping:
           <td>
-            % if i in pstats:
-              ${pstats[i]}
+            % if i in item_stats:
+              ${item_stats[i]}
             % else:
               0
             % endif
