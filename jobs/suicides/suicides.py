@@ -40,6 +40,13 @@ class SuicidesJob(Job):
         else:
             return None
 
+    def get_results(self):
+        res = self.load_results_from_cache()
+        if res is None:
+            return []
+        else:
+            return res['suicides']
+
     def save_results_to_cache(self):
         # Save new line only when data changes
         # Else update only the date

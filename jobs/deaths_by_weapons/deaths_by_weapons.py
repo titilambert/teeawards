@@ -42,8 +42,15 @@ class Deaths_by_weaponsJob(Job):
         else:
             return None
 
+    def set_weapon(self, weapon):
+        self.weapon = weapon
+
     def get_results(self):
-        return self.load_results_from_cache()['deaths_by_weapons']
+        res = self.load_results_from_cache()
+        if res is None:
+            return []
+        else:
+            return res['deaths_by_weapons']
 
     def save_results_to_cache(self):
         # Save new line only when data changes

@@ -2,6 +2,8 @@
 
 import time
 import threading
+import itertools
+
 import jobs
 
 class Job(object):
@@ -24,6 +26,15 @@ class Job(object):
 
     def process(self):
         pass
+
+    def empty_db(self):
+        self.results_db.drop()
+
+    def set_gametype(self, gametype):
+        self.gametype = gametype
+
+    def set_player_name(self, player_name):
+        self.player_name = player_name
 
 
 class StatisticatorManager(object):
@@ -96,7 +107,7 @@ class Statisticator(threading.Thread):
                             'FlagreturnsJob',
                             'Favorite_killersJob',
                             'Favorite_victimsJob',
-                            'MultikillsJob',
+#                            'MultikillsJob',
                             ]
         while not self.stopped():
             time.sleep(1)
@@ -107,7 +118,7 @@ class Statisticator(threading.Thread):
                 # Usefull for resourceless server (ei Raspi)
                 while self.pause:
                     time.sleep(30)
-                print o_job_name
+#                print o_job_name
                 # Get job from dict (just to have an ordered dict ...)
                 job_module = job_list[o_job_name]
                 job_class_name = o_job_name
@@ -124,23 +135,13 @@ class Statisticator(threading.Thread):
                         dep_job_module = job_list[dep_job_class_name]
                         dep_job = getattr(dep_job_module, dep_job_class_name)()
                         dep_lists.append(dep_job.get_results())
-                    # Find lists lengths
-                    list_dicts = {}
-                    for index, dep_list in enumerate(dep_lists):
-                        list_dicts[index] = (dep_list, len(dep_list))
-                    # Prepare lists for zipping
-                    final_dep_list = []
-                    for index, dep_list in enumerate(dep_lists):
-                        multiplicators = [l[1] for k, l in list_dicts.items() if k != index]
-                        multiplicator = reduce(lambda x,y: x * y, multiplicators, 1)
-                        final_dep_list.append(dep_list * multiplicator)
-                    # zipping lists
-                    argument_lists = zip(*final_dep_list)
+
+                    argument_lists = [x for x in itertools.product(*dep_lists)]
                     for arguments in argument_lists:
                         current_job.process(*arguments)
                 else:
                     current_job.process()
-            print "NEXT"
+#            print "NEXT"
 
 
 stats_mgr = StatisticatorManager()

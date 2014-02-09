@@ -99,9 +99,9 @@ class MultikillsJob(Job):
                                               {'weapon': {'$in': ['0', '1', '2', '3', '4', '5']}},
                                               {'killer': self.player_name},
                                               {"$where": "this.killer != this.victim"},
-# TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
-#                                              {"killer_team": {"$ne": None}},
+                                              # "this.killer_team != this.victim_team" bad condition in non TEAM gametype
+                                              {"$where": "this.killer_team != this.victim_team"},
+                                              {"killer_team": {"$ne": None}},
                                               {'round': round_['_id']},
                                               {'when': {'$gt': self.results['last_event_date']}},
                                              ]},
@@ -124,7 +124,8 @@ class MultikillsJob(Job):
                 kills_in_row= 0
             elif event['killer'] == self.player_name:
                 kills_in_row += 1
-        import pdb;pdb.set_trace()
+        return
+#        import pdb;pdb.set_trace()
         # Set new multikills
         self.results['multikills'] += multikills.count()
 

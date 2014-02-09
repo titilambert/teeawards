@@ -1,8 +1,11 @@
 from bottle import mako_view, request, response, redirect
-from libs.lib import *
 from libs.teeworldsserver import twms
+from libs.lib import get_player_list
+from libs.lib import job_list
+from libs.lib import kill_mapping
+#### BAD !!!
 from libs.hooks import *
-
+from libs.lib import *
 
 @mako_view('index')
 @prepare_context
@@ -14,8 +17,78 @@ def index(context={}, gametype=None):
     # Get score
     stats_by_players = get_stats(selected_gametype=gametype)
     # Get old stats TODO use only get_stats
-    #import pdb;pdb.set_trace()
+
+    # Prepare list
+    best_killers = []
+    best_ratios = []
+    best_victims = []
+    best_suiciders = []
+    best_hammer_victims = []
+    
+    players = get_player_list()
+    for player in players:
+        # Best Killer
+        killjob = getattr(job_list['KillsJob'], 'KillsJob')()
+        killjob.set_gametype(gametype)
+        killjob.set_player_name(player)
+        kills = killjob.get_results()
+        best_killers.append((player, kills))
+        # Best Ratio
+        ratiojob = getattr(job_list['RatiosJob'], 'RatiosJob')()
+        ratiojob.set_gametype(gametype)
+        ratiojob.set_player_name(player)
+        ratio = ratiojob.get_results()
+        best_ratios.append((player, ratio))
+        # Best Victim
+        deathjob = getattr(job_list['DeathsJob'], 'DeathsJob')()
+        deathjob.set_gametype(gametype)
+        deathjob.set_player_name(player)
+        deaths = deathjob.get_results()
+        best_victims.append((player, deaths))
+        # Best Suicider
+        suicidejob = getattr(job_list['SuicidesJob'], 'SuicidesJob')()
+        suicidejob.set_gametype(gametype)
+        suicidejob.set_player_name(player)
+        suicides = suicidejob.get_results()
+        best_suiciders.append((player, suicides))
+        # Hammer Deaths
+        hammer_deathsjob = getattr(job_list['Deaths_by_weaponsJob'], 'Deaths_by_weaponsJob')()
+        hammer_deathsjob.set_gametype(gametype)
+        hammer_deathsjob.set_player_name(player)
+        hammer_deathsjob.set_weapon(kill_mapping['hammer'])
+        hammer_deaths = hammer_deathsjob.get_results()
+        best_hammer_victims.append((player, hammer_deaths))
+        
+    # Best Killer
+    context['best_killer'] = sorted(best_killers, key=lambda x: x[1], reverse=True)[0]
+    if context['best_killer'][1] == 0:
+        context['best_killer'] = ("Nostat", 0)
+
+    # Best Ratio
+    context['best_ratio'] = sorted(best_ratios, key=lambda x: x[1], reverse=True)[0]
+    if context['best_ratio'][1] == 0:
+        context['best_ratio'] = ("Nostat", 0)
+
+    # Best Victim
+    context['best_victim'] = sorted(best_victims, key=lambda x: x[1], reverse=True)[0]
+    if context['best_victim'][1] == 0:
+        context['best_victim'] = ("Nostat", 0)
+
+    # Best Suicider
+    context['best_suicider'] = sorted(best_suiciders, key=lambda x: x[1], reverse=True)[0]
+    if context['best_suicider'][1] == 0:
+        context['best_suicider'] = ("Nostat", 0)
+
+    # Best hammer_victim
+    context['best_hammer_victim'] = sorted(best_hammer_victims, key=lambda x: x[1], reverse=True)[0]
+    if context['best_hammer_victim'][1] == 0:
+        context['best_hammer_victim'] = ("Nostat", 0)
+
+
+
+#    import pdb;pdb.set_trace()
     #stats_by_players = get_general_players_stats()
+
     stats_by_players = [(p, {'kills': sum(data['kills'].values()),
                              'suicides': data['suicides'],
                              'deaths': data['deaths'],
@@ -24,14 +97,7 @@ def index(context={}, gametype=None):
                               }
                         )
                         for p, data in stats_by_players.items()]
-    try:
-        context['best_killer'] = sorted([(x, data['kills']) for x, data in stats_by_players],
-                                    key=lambda x: x[1],
-                                    reverse=True)[0]
-    except:
-        context['best_killer'] = ("Nostat", 0)
-    if context['best_killer'][1] == 0:
-        context['best_killer'] = ("Nostat", 0)
+
 
     try:
         context['best_score'] = sorted([(x, data['score']) for x, data in stats_by_players],
@@ -41,44 +107,6 @@ def index(context={}, gametype=None):
         context['best_score'] = ("Nostat", 0)
     if context['best_score'][1] == 0:
         context['best_score'] = ("Nostat", 0)
-
-    try:
-        context['best_ratio'] = sorted([(x, data['ratio']) for x, data in stats_by_players],
-                                   key=lambda x: x[1],
-                                   reverse=True)[0]
-    except:
-        context['best_ratio'] = ("Nostat", 0)
-    if context['best_ratio'][1] == 0:
-        context['best_ratio'] = ("Nostat", 0)
-
-    try:
-        context['best_suicider'] = sorted([(x, data['suicides']) for x, data in stats_by_players],
-                                      key=lambda x: x[1],
-                                      reverse=True)[0]
-    except:
-        context['best_suicider'] = ("Nostat", 0)
-    if context['best_suicider'][1] == 0:
-        context['best_suicider'] = ("Nostat", 0)
-
-    try:
-        context['best_victim'] = sorted([(x, data['deaths']) for x, data in stats_by_players],
-                                    key=lambda x: x[1],
-                                    reverse=True)[0]
-    except:
-        context['best_victim'] = ("Nostat", 0)
-    if context['best_victim'][1] == 0:
-        context['best_victim'] = ("Nostat", 0)
-
-
-    try:
-        hammer_victims = get_item_stats('hammer', gametype)['dead by Hammer']
-        context['best_hammer_victim'] = sorted([(x, data) for x, data in hammer_victims.items()],
-                                           key=lambda x: x[1],
-                                           reverse=True)[0]
-    except:
-        context['best_hammer_victim'] = ("Nostat", 0)
-    if context['best_hammer_victim'][1] == 0:
-        context['best_hammer_victim'] = ("Nostat", 0)
 
     return context
 

@@ -49,7 +49,11 @@ class PlayersJob(Job):
         self.results_db.save(self.results)
 
     def get_results(self):
-        return self.load_results_from_cache()['players']
+        res = self.load_results_from_cache()
+        if res is None:
+            return []
+        else:
+            return self.load_results_from_cache()['players']
 
     def process(self):
         # Change status
@@ -62,7 +66,8 @@ class PlayersJob(Job):
         self.results['date'] = datetime.now()
 
         # Save to mongo
-        self.save_results_to_cache()
+        if len(self.results['players']) > 0:
+            self.save_results_to_cache()
 
         # Change status
         self.status = 'done'

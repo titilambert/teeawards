@@ -3,6 +3,7 @@ from datetime import datetime
 from pymongo import DESCENDING
 
 from libs.lib import tee_db
+from libs.lib import team_gametypes
 from libs.statisticator import Job
 
 
@@ -41,7 +42,11 @@ class KillsJob(Job):
             return None
 
     def get_results(self):
-        return self.load_results_from_cache()['kills']
+        res = self.load_results_from_cache()
+        if res is None:
+            return []
+        else:
+            return res['kills']
 
     def save_results_to_cache(self):
         # Save new line only when data changes
@@ -73,9 +78,13 @@ class KillsJob(Job):
                                               {'killer': self.player_name},
                                               {'gametype': self.gametype},
                                               {"$where": "this.killer != this.victim"},
-# TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
-#                                              {"killer_team": {"$ne": None}},
+                                              {'$or': [{'$and': [
+                                                                {'gametypes': {"$in": team_gametypes}},
+                                                                {"$where": "this.killer_team != this.victim_team"},
+                                                               ]},
+                                                       {'gametypes': {"$ne": {"$in": team_gametypes}}},
+                                                       ]},
+                                              {"killer_team": {"$ne": None}},
                                               {'round': { "$ne": None}},
                                               {'when': {'$gt': self.results['last_event_date']}},
                                              ]},
@@ -85,10 +94,15 @@ class KillsJob(Job):
             kills = tee_db['kill'].find(spec={'$and': [
                                               {'weapon': {'$in': ['0', '1', '2', '3', '4', '5']}},
                                               {'killer': self.player_name},
+                                              # "this.killer_team != this.victim_team" bad condition in non TEAM gametype
                                               {"$where": "this.killer != this.victim"},
-# TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-#                                              {"$where": "this.killer_team != this.victim_team"},
-#                                              {"killer_team": {"$ne": None}},
+                                              {'$or': [{'$and': [
+                                                                {'gametypes': {"$in": team_gametypes}},
+                                                                {"$where": "this.killer_team != this.victim_team"},
+                                                               ]},
+                                                       {'gametypes': {"$ne": {"$in": team_gametypes}}},
+                                                       ]},
+                                              {"killer_team": {"$ne": None}},
                                               {'round': { "$ne": None}},
                                               {'when': {'$gt': self.results['last_event_date']}},
                                              ]},

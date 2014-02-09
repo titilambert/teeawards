@@ -79,9 +79,9 @@ class Kills_by_weaponsJob(Job):
                                                   {'killer': self.player_name},
                                                   {'gametype': self.gametype},
                                                   {"$where": "this.killer != this.victim"},
-    # TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-    #                                              {"$where": "this.killer_team != this.victim_team"},
-    #                                              {"killer_team": {"$ne": None}},
+                                              # "this.killer_team != this.victim_team" bad condition in non TEAM gametype
+                                                  {"$where": "this.killer_team != this.victim_team"},
+                                                  {"killer_team": {"$ne": None}},
                                                   {'round': { "$ne": None}},
                                                   {'when': {'$gt': self.results['last_event_date']}},
                                                  ]},
@@ -92,9 +92,9 @@ class Kills_by_weaponsJob(Job):
                                                   {'weapon': self.weapon},
                                                   {'killer': self.player_name},
                                                   {"$where": "this.killer != this.victim"},
-    # TODO: DELETE WHEN THE LOG DBS ARE UPTODATE
-    #                                              {"$where": "this.killer_team != this.victim_team"},
-    #                                              {"killer_team": {"$ne": None}},
+                                              # "this.killer_team != this.victim_team" bad condition in non TEAM gametype
+                                                  {"$where": "this.killer_team != this.victim_team"},
+                                                  {"killer_team": {"$ne": None}},
                                                   {'round': { "$ne": None}},
                                                   {'when': {'$gt': self.results['last_event_date']}},
                                                  ]},

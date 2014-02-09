@@ -5,6 +5,8 @@ import copy
 import datetime
 import pickle
 
+import jobs
+
 from pymongo import Connection
 
 con = Connection()
@@ -61,22 +63,8 @@ tables.append(servershutdown_table)
 # OTHER TABLES
 cache_table = tee_db['cache_data']
 
-# Empty log tables to reset stats
-def empty_db():
-    join_table.drop()
-    changeteam_table.drop()
-    changename_table.drop()
-    round_table.drop()
-    map_table.drop()
-    kick_table.drop()
-    timeout_table.drop()
-    leave_table.drop()
-    servershutdown_table.drop()
-    pickup_table.drop()
-    kill_table.drop()
-    flaggrab_table.drop()
-    flagreturn_table.drop()
-    flagcapture_table.drop()
+
+    
 
 # DATA FOLDER (maps, daemon, ...)
 data_folder = os.path.join(os.path.dirname(__file__), "..", "server_data")
@@ -153,8 +141,56 @@ special = {
     # TODO: FIND KILLED WITH FLAG BY FLAG ?????
     }
 
+team_gametypes = ['TDM', 'CTF']
+
 r_kill_mapping = dict([(x[1], x[0]) for x in kill_mapping.items()])
 r_pickup_mapping = dict([(x[1], x[0]) for x in pickup_mapping.items()])
+
+def get_jobs():
+    job_list = {}
+
+    for job in jobs.__all__:
+        #job_folder_name, job_file_name = job.split("/")
+        job_name = job.split("/")[0]
+        job_class_name = job_name.capitalize() + "Job"
+        job_module_name = 'jobs.' + job.replace("/", ".")
+        job_module = __import__(job_module_name, fromlist=True)
+        # JobClass available with getattr(job_module, job_class_name)
+        job_list[job_class_name] = job_module
+
+    return job_list
+
+job_list = get_jobs()
+
+
+# Empty log tables to reset stats
+def empty_db():
+    join_table.drop()
+    changeteam_table.drop()
+    changename_table.drop()
+    round_table.drop()
+    map_table.drop()
+    kick_table.drop()
+    timeout_table.drop()
+    leave_table.drop()
+    servershutdown_table.drop()
+    pickup_table.drop()
+    kill_table.drop()
+    flaggrab_table.drop()
+    flagreturn_table.drop()
+    flagcapture_table.drop()
+    cache_table.drop()
+    # TODO empty job results table
+    for class_name, module in job_list.items():
+        getattr(module, class_name)().results_db.drop()
+
+
+def get_player_list():
+    return getattr(job_list['PlayersJob'], 'PlayersJob')().get_results()
+
+
+############# OLD FUNCTIONS ############
+
 
 #### HANDLE CACHE
 def get_from_cache(data, gametype, player=None):
@@ -189,9 +225,9 @@ def save_to_cache(data, gametype, results):
 #### END HANDLE CACHE
 
 
-def get_player_list():
-    player_list = set([x['player'] for x in pickup_table.find(fields=['player'])])
-    return player_list
+#def get_player_list():
+#    player_list = set([x['player'] for x in pickup_table.find(fields=['player'])])
+#    return player_list
 
 
 # Get stats and score

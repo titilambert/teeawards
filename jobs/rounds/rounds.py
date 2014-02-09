@@ -68,6 +68,7 @@ class RoundsJob(Job):
 
         self.results['date'] = datetime.now()
         self.results['rounds'] = round_list
+
         # Save to mongo
         self.save_results_to_cache()
 
