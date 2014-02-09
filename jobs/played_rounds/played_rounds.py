@@ -28,7 +28,7 @@ class Played_roundsJob(Job):
 
     def load_results_from_cache(self):
         res = self.results_db.find(
-                                    spec={'player': self.player, 'gametype': self.gametype},
+                                    spec={'player': self.player_name, 'gametype': self.gametype},
                                     limit=1,
                                     sort=[{'date', DESCENDING}],
                                     )
@@ -49,8 +49,8 @@ class Played_roundsJob(Job):
     def get_results(self):
         return self.load_results_from_cache()['played_rounds']
 
-    def process(self, player, gametype):
-        self.player = player
+    def process(self, player_name, gametype):
+        self.player_name = player_name
         self.gametype = gametype
         # Change status
         self.status = 'processing'
@@ -59,7 +59,7 @@ class Played_roundsJob(Job):
         # Set data if no history
         if self.results is None:
             self.results = {}
-            self.results['player'] = self.player
+            self.results['player'] = self.player_name
             self.results['played_rounds'] = 0
             self.results['last_event_date'] = datetime(1,1,1,0,0,0)
 
@@ -67,7 +67,7 @@ class Played_roundsJob(Job):
         # Get datas
         if self.gametype:
             raw_results = tee_db['pickup'].find(spec={'$and': [
-                                                        {'player': self.player},
+                                                        {'player': self.player_name},
                                                         {'gametype': self.gametype},
                                                         {'round': { "$ne": None}},
                                                         {'when': {'$gt': self.results['last_event_date']}},
@@ -78,7 +78,7 @@ class Played_roundsJob(Job):
                                         )
         else:
             raw_results = tee_db['pickup'].find(spec={'$and': [
-                                                        {'player': self.player},
+                                                        {'player': self.player_name},
                                                         {'round': { "$ne": None}},
                                                         {'when': {'$gt': self.results['last_event_date']}},
                                                         ]

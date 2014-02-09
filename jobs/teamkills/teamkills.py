@@ -41,7 +41,13 @@ class TeamkillsJob(Job):
             return None
 
     def get_results(self):
-        return self.load_results_from_cache()['teamkills']
+        res = self.load_results_from_cache()
+        if res is None:
+            return 0
+        else:
+            return res['teamkills']
+
+
 
     def save_results_to_cache(self):
         # Save new line only when data changes

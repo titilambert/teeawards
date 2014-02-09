@@ -1,11 +1,17 @@
 from bottle import mako_view, request, response, redirect
-from libs.lib import *
+from libs.lib import kill_mapping, pickup_mapping
+from libs.lib import get_player_list
+from libs.lib import job_list
+
+
 from libs.rank import get_rank, ranks
 from libs.maps import get_maps
 from libs.teeworldsserver import twms
 from libs.achievement import achievement_player_list
 from libs.hooks import *
 
+# old
+from libs.lib import get_stats, get_player_stats
 
 @mako_view('player_stats')
 @prepare_context
@@ -28,7 +34,64 @@ def player_stats(player=None, context={}, gametype=None):
     context['player'] = player
     context['kill_mapping'] = kill_mapping
     context['pickup_mapping'] = pickup_mapping
-    context['pstats'] = get_player_items_stats(player)
+
+    # Kills
+    killjob = getattr(job_list['KillsJob'], 'KillsJob')()
+    killjob.set_gametype(gametype)
+    killjob.set_player_name(player)
+    context['kills'] = killjob.get_results()
+    # Ratio
+    ratiojob = getattr(job_list['RatiosJob'], 'RatiosJob')()
+    ratiojob.set_gametype(gametype)
+    ratiojob.set_player_name(player)
+    context['ratio'] = ratiojob.get_results()
+    # Deaths
+    deathjob = getattr(job_list['DeathsJob'], 'DeathsJob')()
+    deathjob.set_gametype(gametype)
+    deathjob.set_player_name(player)
+    context['deaths'] = deathjob.get_results()
+    # Suicides
+    suicidejob = getattr(job_list['SuicidesJob'], 'SuicidesJob')()
+    suicidejob.set_gametype(gametype)
+    suicidejob.set_player_name(player)
+    context['suicides'] = suicidejob.get_results()
+    # Played rounds
+    played_roundjob = getattr(job_list['Played_roundsJob'], 'Played_roundsJob')()
+    played_roundjob.set_gametype(gametype)
+    played_roundjob.set_player_name(player)
+    context['rounds'] = played_roundjob.get_results()
+    # Flag Grab
+    flaggrabjob = getattr(job_list['FlaggrabsJob'], 'FlaggrabsJob')()
+    flaggrabjob.set_gametype(gametype)
+    flaggrabjob.set_player_name(player)
+    context['flaggrab'] = flaggrabjob.get_results()
+    # Flag Return
+    flagreturnsjob = getattr(job_list['FlagreturnsJob'], 'FlagreturnsJob')()
+    flagreturnsjob.set_gametype(gametype)
+    flagreturnsjob.set_player_name(player)
+    context['flagreturn'] = flagreturnsjob.get_results()   
+    # Flag captupre
+    flagcapturesjob = getattr(job_list['FlagcapturesJob'], 'FlagcapturesJob')()
+    flagcapturesjob.set_gametype(gametype)
+    flagcapturesjob.set_player_name(player)
+    context['flagcapture'] = flagcapturesjob.get_results()
+    # TeamKills
+    teamkillsjob = getattr(job_list['TeamkillsJob'], 'TeamkillsJob')()
+    teamkillsjob.set_gametype(gametype)
+    teamkillsjob.set_player_name(player)
+    context['teamkills'] = teamkillsjob.get_results()
+
+
+
+
+    # Weapon Deaths
+    hammer_deathsjob = getattr(job_list['Deaths_by_weaponsJob'], 'Deaths_by_weaponsJob')()
+    hammer_deathsjob.set_gametype(gametype)
+    hammer_deathsjob.set_player_name(player)
+    hammer_deathsjob.set_weapon(kill_mapping['hammer'])
+    hammer_deaths = hammer_deathsjob.get_results()
+
+
 
     player_stats = get_stats(player, gametype)
 #    context['kstats'] = player_stats['kills']
@@ -36,19 +99,14 @@ def player_stats(player=None, context={}, gametype=None):
     # TODO integrate weapon stats in get_stat function
     context['kstats'], context['vstats'], context['pstats'] = get_player_stats(player)
     
-    context['kills'] = sum(player_stats.get('kills', {None: 0}).values())
-    context['suicides'] = player_stats.get('suicides', 0)
-    context['rounds'] = player_stats.get('rounds', 0)
-    context['teamkills'] = sum(player_stats.get('teamkills', {None: 0}).values())
-    context['flaggrab'] = player_stats.get('flaggrab', 0)
-    context['flagreturn'] = player_stats.get('flagreturn', 0)
-    context['flagcapture'] = player_stats.get('flagcapture', 0)
-
+    print context['kstats']
+    print context['vstats']
+    print context['pstats'] 
 
     context['score'] = player_stats['score']
-    context['deaths'] = player_stats['deaths']
+#    context['deaths'] = player_stats['deaths']
 
-    context['ratio'] = context['kills'] / float(context['deaths']) if context['deaths'] > 0 else 0
+#    context['ratio'] = context['kills'] / float(context['deaths']) if context['deaths'] > 0 else 0
 
     rank_level = get_rank(player, context['score'])
     context['rank'] = (rank_level, ranks[rank_level][0], ranks[rank_level][1])

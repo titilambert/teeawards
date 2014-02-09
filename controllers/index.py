@@ -86,6 +86,7 @@ def index(context={}, gametype=None):
 
 
 
+    ############# OLD CODES 
 #    import pdb;pdb.set_trace()
     #stats_by_players = get_general_players_stats()
 
@@ -107,6 +108,8 @@ def index(context={}, gametype=None):
         context['best_score'] = ("Nostat", 0)
     if context['best_score'][1] == 0:
         context['best_score'] = ("Nostat", 0)
+
+    ############# OLD CODES 
 
     return context
 
