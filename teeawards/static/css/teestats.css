@@ -1,0 +1,668 @@
+body, input, select { 
+    color: #666666;
+    font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+body { 
+    background: url("/images/bg.png") repeat-x #91C5FF;
+    margin: 0px;
+}
+
+a:visited { 
+    color: #AA7733;
+    text-decoration: none;
+}
+
+a { 
+    color: #800080;
+    text-decoration: underline;
+}
+
+a:hover { 
+    color: #FFAA33;
+    text-decoration: underline;
+}
+
+table th {
+    padding: 3px 15px;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+table {
+    border: 1px solid #918F61;
+    border-collapse:collapse;
+}
+
+table td.last {
+    border-right: 1px solid #918F61;
+}
+
+
+/* Header */
+#top_left { 
+    background: url("/images/top_left.png") no-repeat transparent;
+}
+
+#top_mid { 
+    background: url("/images/top_mid.png") 100% 0% transparent;
+    height: 143px;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#top_right { 
+    background: url("/images/top_right.png") 100% 0% no-repeat transparent;
+}
+
+div { 
+    display: block;
+}
+
+div#outer { 
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1100px;
+    min-width: 880px;
+    width: 90%;
+}
+
+div#top_left img.logo {
+}
+
+
+div.teeawards_title{
+    padding-top: 30px;
+    text-align: center;
+    width: 77%;
+    float: left; 
+}
+
+div.serverstatus {
+    text-align: center;
+    float: left; 
+    width: 10%;
+    margin-top: 3px;
+}
+
+
+div.select_gametype {
+    padding-top: 30px;
+    float: left;
+    text-align: center;
+    width: 13%;
+}
+
+div.select_gametype label {
+    font-size: 20px;
+    color: #E7E5BE;
+    line-height: 30px;
+}
+
+/* main menu */
+#menu_left { 
+    background: url("/images/menu_left.png") no-repeat transparent;
+}
+
+#menu_right { 
+    background: url("/images/menu_right.png") 100% 0% no-repeat transparent;
+}
+
+#menu_mid { 
+    background: url("/images/menu_mid.png") 100% 0% transparent;
+    height: 53px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#menu, #forum-menu { 
+    font-size: 14px;
+    height: 53px;
+    padding-right: 20px;
+    text-align: right;
+    vertical-align: bottom;
+}
+
+#menu ul, #forum-menu ul { 
+    list-style: none outside none;
+    margin: 0px;
+    padding: 0px;
+}
+
+#menu li, #forum-menu li { 
+    background: url("/images/menu_closed_left.png") no-repeat transparent;
+    float: right;
+    margin: 0px;
+    padding: 0px 0px 0px 13px;
+}
+
+#menu a, #menu strong, #menu span, #forum-menu a { 
+    background: url("/images/menu_closed_right.png") 100% 0% no-repeat transparent;
+    color: #666666;
+    display: block;
+    padding: 23px 19px 15px 8px;
+    text-decoration: none;
+}
+
+#menu #current, #forum-menu .isactive { 
+    background-image: url("/images/menu_open_left.png");
+}
+
+#menu #current a, #forum-menu .isactive a { 
+    background-image: url("/images/menu_open_right.png");
+    padding-bottom: 31px;
+    padding-top: 7px;
+}
+
+#tlc { 
+    background: url("/images/tlc.png") no-repeat transparent;
+}
+
+#trc { 
+    background: url("/images/trc.png") 100% 0% no-repeat transparent;
+}
+
+#tb { 
+    background: url("/images/tb.png") 100% 0% repeat-x transparent;
+}
+
+#tb, #bb { 
+    font-size: 0px;
+    height: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+
+/* Footer */
+#blc { 
+    background: url("/images/blc.png") no-repeat transparent;
+}
+
+#brc { 
+    background: url("/images/brc.png") 100% 0% no-repeat transparent;
+}
+
+#bb { 
+    background: url("/images/bb.png") 100% 0% repeat-x transparent;
+}
+
+
+#page_foot { 
+    color: #FFFFFF;
+    font-size: 10px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    text-align: center;
+}
+
+/* Main Container */
+
+#lb { 
+    background: url("/images/lb.png") repeat-y transparent;
+}
+
+#rb { 
+    background: url("/images/rb.png") 100% 0% repeat-y transparent;
+}
+
+#mid { 
+    background: url("/images/mid.png") 100% 0% transparent;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#container { 
+    padding: 20px 10px 10px 20px;
+}
+
+
+/* search player */
+
+div#search_player {
+    padding: 10px 20px ;
+    background: #A5CF4A;
+    border: 1px solid #918F61;
+}
+
+div#search_player label {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+
+div#search_player input {
+    font-size: 20px;
+    line-height: 20px;
+    width: 300px;
+}
+
+
+
+
+/* Ladder */
+
+table.ladder {
+    margin: 0px 25px;
+    text-align: center;
+}
+
+table.ladder th {
+    font-size: 18px;
+    padding: 3px 10px;
+}
+
+table.ladder td {
+    padding: 5px 10px 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    text-align: center;
+    width: 100px;
+}
+
+table.ladder td.nickname {
+    width: 240px;
+}
+
+table.ladder td.last {
+    border-right: 1px solid #918F61;
+}
+
+table.ladder th a {
+    text-decoration: none;
+    color: #AA7733;
+}
+
+table.ladder th.sorted a.visited {
+    color: #AA7733;
+}
+
+table.ladder th.sorted a {
+    text-decoration: underline;
+    color: #AA7733;
+}
+
+
+/* Home cards */
+div.card {
+    margin: 30px;
+    padding: 20px;
+    width: 250px;
+    height: 320px;
+    text-align: center;
+    float: left;
+    background: #E7E5BE;
+}
+
+div.card div.title {
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 30px;
+}
+
+div.card div.img {
+    margin: 10px 0px;
+    line-height: 220px;
+    height: 220px;
+    border: 1px solid #CCCCCC;
+    background: white;
+}
+
+div.card div.img img {
+    vertical-align: middle;
+}
+
+
+div.card div.data div.player a {
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 30px;
+    text-decoration: underline;
+}
+
+div.card div.data div.score {
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 30px;
+}
+
+
+/* Profile */
+
+div.error {
+    margin: 30px 20%;
+    width: 60%;
+    text-align: center;
+    
+    background: #E7E5BE;
+    border: 1px solid #918F61;
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 60px;
+}
+
+div.statstitle {
+    margin: 50px 10% 20px 10%;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 50px;
+    padding: 5px 0px;
+    width: 80%;
+    text-align: center;
+    background: #E7E5BE;
+    color: black;
+    border: 1px solid #918F61;
+    vertical-align: middle;
+}
+
+div.statstitle div.imagerank {
+    float: left;
+    padding: 7px 0px 7px 12px;
+    position: absolute;
+}
+
+div.statstitle div.playername {
+    float: left;
+}
+
+div.statstitle img {
+    vertical-align: middle;
+    border: 2px solid #CCCCCC;
+    width: 83px;
+}
+
+div.statscard {
+    margin: 10px;
+    float: left;
+}
+
+div.profilecard table {
+    border: 1px solid #918F61;
+    border-collapse:collapse;
+}
+
+div.profilecard table tr th {
+    padding: 3px 15px;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
+}
+div.profilecard table tr td {
+    padding: 5px 15px;
+    border-top : 1px solid #CCCCCC;
+}
+
+div.profilecard table tr td.dataname{
+    font-size: 15px;
+    text-align: left;
+    width: 60px;
+}
+
+div.profilecard table tr td.image{
+    width: 150px;
+    text-align: center;
+    height: 120px;
+}
+
+div.profilecard table tr td.image img{
+    max-width: 150px;
+    max-height: 120px;
+}
+
+div.profilecard table tr td.datavalue{
+    text-align: right;
+    font-size: 15px;
+}
+
+div.favorites table tr td.dataname{
+    font-size: 20px;
+    width: 120px;
+    line-height: 25px;
+}
+
+div.favorites table tr td.datavalue{
+    font-size: 20px;
+    width: 130px;
+    line-height: 25px;
+}
+
+div.favorites table tr td.datavalue span{
+    font-size: 15px;
+}
+
+
+table.weaponstats {
+    border: 1px solid #918F61;
+    border-collapse:collapse;
+}
+
+table.weaponstats th {
+    padding: 3px 15px;
+    background: #E7E5BE;
+    color: #666666;
+    font-size: 20px;
+    line-height: 30px;
+}
+
+table.weaponstats tr td {
+    padding: 5px 15px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    text-align: center;
+    width: 55px;
+}
+
+table.weaponstats tr td a {
+    font-weight: bold;
+    color: #AA7733;
+    text-decoration: underline
+}
+
+
+div.statscard table.nextrank {
+    width: 490px;
+}
+
+div.statscard table.nextrank th {
+    width: 490px;
+    border-bottom: 1px solid #CCCCCC;
+}
+
+div.statscard table.nextrank td.image {
+    padding: 5px 10px;
+    width:  100px;
+}
+
+div.statscard table.nextrank img {
+    border: 1px solid #CCCCCC;
+}
+
+div.statscard td.requirements {
+    padding: 20px;
+}
+
+div.statscard div.progressbar { 
+    background-color: #E3E3E3;
+    border: 0px solid #3F3F3F;
+    float: left;
+    margin: 10px 0px 5px 0px;
+    padding: 0px;
+    width: 100%;
+}
+
+div.statscard div.progressbar div { 
+    background: #5EAA5E;
+}
+
+/* Ranks */
+
+table.ranklist {
+    margin: 10px 5%;
+    width:90%
+}
+
+table.ranklist th {
+    background: #E7E5BE;
+    color: #666666;
+    text-align: left;
+    font-size: 27px;
+    line-height: 35px;
+    padding: 3px 15px 3px 20px;
+    border: 1px solid #CCCCCC;
+}
+
+table.ranklist td {
+    padding-bottom: 40px;
+    line-height: 40px;
+}
+
+table.ranklist td.image {
+    width: 150px;
+}
+
+table.ranklist td.image img{
+    border: 1px solid #918F61;
+    margin: 15px;
+}
+
+table.ranklist td.requirements {
+    font-size: 20px;
+    line-height: 25px;
+}
+
+table.achievements td {
+    text-align: center;
+    padding: 3px 15px 3px 20px;
+    border-top: 1px solid #CCCCCC;
+}
+
+/* Item */
+
+table.itemstats {
+    margin: 20px;
+}
+
+table.itemstats th {
+    border: 1px solid #918F61;
+}
+
+table.itemstats td.statname {
+    width: 150px;
+}
+
+table.itemstats td {
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    width: 100px;
+    margin: 20px;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+/* Admin */
+table.servermanager {
+    margin-bottom: 30px;
+}
+
+table.servermanager td {
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}
+
+table.serverstatus {
+    margin-bottom: 30px;
+}
+
+table.serverstatus td {
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}
+
+table.configlist td {
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+}
+
+table.configlist {
+    margin-bottom: 30px;
+}
+
+table.maplist tr.subhead th{
+    font-weight: normal;
+}
+
+table.maplist td{
+    text-align: center;
+    padding: 5px 10px;
+    border-top: 1px solid #CCCCCC;
+}
+
+/* Maps */
+table.maps th form label{
+    font-size: 16px;
+}
+
+table.maps td {
+    padding: 20px 20px;
+}
+
+table.maps td.info {
+    width: 200px;
+    vertical-align: top;
+    font-size: 15px;
+}
+
+table.maps td.info div.title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+table.maps td.map_screenshot img{
+    max-width: 760px;
+}
+
+/* Achievements */
+div.achievement_div_title {
+    width: 100%;
+}
+table.achievement_title {
+    margin: 50px 10% 15px 10%;
+    width: 80%;
+}
+
+div.achievement {
+    float: left;
+    margin: 10px;
+}
+
+div.achievements_list {
+    text-align: center;
+    width: 100%;
+}
+
+div.achievements_title {
+    padding: 10px 20px ;
+    background: #A5CF4A;
+    border: 1px solid #918F61;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+div.achievements_title label {
+    font-weight: bold;
+    font-size: 35px;
+    line-height: 35px;
+}
+
+
