@@ -6,6 +6,7 @@ from teeawards.web.directives import mako_template
 
 
 @hug.get('/', output=hug.output_format.html)
+@hug.get('/home', output=hug.output_format.html)
 def api_index(request, mako_tpl:mako_template='index'):
     """
     """

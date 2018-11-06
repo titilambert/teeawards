@@ -35,6 +35,7 @@ setup(name='teeawards',
       zip_safe=False,
       platforms='any',
       install_requires=[
+                        "pymongo",
                         "influxdb",
                         "Mako",
                         "hug",
