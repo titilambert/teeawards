@@ -12,7 +12,7 @@
         <select onchange="submit();" name="gametype">
             <option value="">All</option>
           % for mod in mods:
-            <option ${'selected=selected' if selected_mod == mod else ''} value="${mod}">${mod}</option>
+            <option ${'selected=selected' if selected_mod.encode('utf-8') == mod else ''} value="${mod.decode('utf-8')}">${mod.decode('utf-8')}</option>
           % endfor
         </select>
         </form>
@@ -20,19 +20,19 @@
   </thead>
   <tbody>
     %for map_ in map_list:
-      <tr id="${map_['map_name']}">
+      <tr id="${map_['name'].decode('utf-8')}">
         <td class="info">
-          <div class="title">${map_['map_name']}</div>
+          <div class="title">${map_['name'].decode('utf-8')}</div>
           <br/>
-          Best mod: ${map_['prefered_mod']}
+          Best mod: ${map_['map']['prefered_mod'].decode('utf-8')}
           <br/>
-          Min players: ${map_['min_players']}
+          Min players: ${map_['map']['min_players'].decode('utf-8')}
           <br/>
-          Max players: ${map_['max_players']}
+          Max players: ${map_['map']['max_players'].decode('utf-8')}
           <br/>
         </td>
         <td class="map_screenshot">
-          <img src="/map/${map_['map_name']}/screenshot" >
+             <img src="/map_screenshots/${map_['_id']}" >
         </td>
       </tr>
     %endfor

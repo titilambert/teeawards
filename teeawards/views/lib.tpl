@@ -79,7 +79,7 @@
       </div>
     </div>
     <div id="page_foot">
-      TeeWorlds Stats - Awards - Copyright (C) Thibault cohen - 
+      TeeWorlds Stats - Awards - Copyright (C) Thibault cohen -
       <a href="/">Contact us!</a>
     </div>
   </body>

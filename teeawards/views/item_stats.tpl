@@ -3,15 +3,14 @@
 <%inherit file="base.tpl" />
 
 
-% for i, item in enumerate(items):
-<% item_name = itemlist[i] %>
+% for item_name, item in items.items():
 <table class="itemstats" id="${item_name}">
   <thead>
     <tr>
       <th>
         ${item_name.capitalize()} Stats
       </th>
-      %for i in xrange(min(max([len(x) for x in item.values()]),7)):
+      %for i in range(min(max([len(x) for x in item.values()]),7)):
       <th>
         #${i + 1}
       </th>
@@ -20,6 +19,7 @@
   </thead>
   <tbody>
   <% sorted_items = sorted(item.keys(), reverse=True) %>
+    ${sorted_items}
     %for stat in sorted_items:
       <% sorted_data = sorted([x for x in item[stat].items()], key=lambda x: x[1], reverse=True) %>
       <tr>

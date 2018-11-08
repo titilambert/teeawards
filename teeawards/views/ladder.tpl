@@ -29,7 +29,7 @@
     </tr>
   </thead>
   <tbody>
-    %for i, data in enumerate(stats_by_players):
+    %for i, data in enumerate(stats_by_players.items()):
     <% player, stats = data %>
       <tr>
         <td>

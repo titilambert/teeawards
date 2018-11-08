@@ -30,7 +30,7 @@
     <td>
         <select name="config">
           % for conf in configlist:
-            <option value="${conf['name']}">${conf['name']}</option>
+            <option value="${conf['_id']}">${conf['name'].decode('utf-8')}</option>
           % endfor
         </select>
     </td>
@@ -92,10 +92,10 @@
       % for conf in configlist:
           <tr>
             <td>
-              ${conf['name']}
+              ${conf['name'].decode('utf-8')}
             </td>
             <td>
-              <a href="/admin/conf/edit/${conf['name']}">Edit</a>
+              <a href="/admin/conf/edit/${conf['_id']}">Edit</a>
             </td>
             <td class="last">
               <a href="/admin/conf/delete/${conf['_id']}">Delete</a>
@@ -145,25 +145,25 @@
       % for map_ in map_list:
           <tr>
             <td>
-              <a href="/maps#${map_['map_name']}">${map_['map_name']}</a>
+              <a href="/maps#${map_['name']}">${map_['name'].decode('utf-8')}</a>
             </td>
             <td>
-              ${map_['min_players']}
+              ${map_['map']['min_players'].decode('utf-8')}
             </td>
             <td>
-              ${map_['max_players']}
+              ${map_['map']['max_players'].decode('utf-8')}
             </td>
             <td>
-              ${map_['prefered_mod']}
+              ${map_['map']['prefered_mod'].decode('utf-8')}
             </td>
             <td>
-              ${map_['likes'] if 'like' in map_ else '0'}
+              ${map_['map']['likes'] if 'like' in map_['map'] else '0'}
             </td>
             <td>
-              <a href="/admin/map/edit/${map_['map_name']}">Edit</a>
+              <a href="/admin/map/edit/${map_['_id']}">Edit</a>
             </td>
             <td class="last">
-              <a href="/admin/map/delete/${map_['map_name']}">Delete</a>
+              <a href="/admin/map/delete/${map_['_id']}">Delete</a>
             </td>
           </tr>
       % endfor

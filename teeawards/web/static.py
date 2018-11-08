@@ -21,6 +21,7 @@ def get_css(filename, request, response):
 #@hug.get('/images/other/badge/{filename}.png', output=hug.output_format.png_image)
 #@hug.get('/images/other/raw/{filename}.png', output=hug.output_format.png_image)
 @hug.get('/images/ranks/{filename}.png', output=hug.output_format.png_image)
+@hug.get('/images/ranks/{filename}.gif', output=hug.output_format.png_image)
 @hug.get('/images/weapon/{filename}.png', output=hug.output_format.png_image)
 @hug.get('/images/weapon_set/{filename}.png', output=hug.output_format.png_image)
 def get_images(filename, request, response):  # pylint: disable=W0613
