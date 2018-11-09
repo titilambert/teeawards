@@ -9,7 +9,7 @@ from hug.store import InMemoryStore
 
 from teeawards.logger import http_logger
 #from teeawards.web import index, static, admin, conf, map
-from teeawards.web import index, static, admin, maps, ladder, items
+from teeawards.web import index, static, admin, maps, ladder, items, ranks, achievements, player_stats
 #from teeawards.server.conf import ConfigManager
 #from teeawards.server.map import MapManager
 from teeawards.libs.teeworldsserver import TeeWorldsServerManager
@@ -20,7 +20,7 @@ from teeawards.libs.teeworldsserver import TeeWorldsServerManager
 def with_other_apis():
     """Load all API views."""
     #return [index, static, admin, conf, map]
-    return [index, static, admin, maps, ladder, items]
+    return [index, static, admin, maps, ladder, items, ranks, achievements, player_stats]
 
 
 def main():

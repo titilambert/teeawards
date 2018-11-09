@@ -336,8 +336,8 @@ class TeeWorldsServer(threading.Thread):
                     self.teams = {}
                     self.manager.influx_client.write_points(data)
                 # Pickup
-                elif re.match(b"\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*\/.*)$", line):
-                    when, player, item = re.match(b"\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*\/.*)$", line).groups()
+                elif re.match(b"\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*)$", line):
+                    when, player, item = re.match(b"\[(.*)\]\[game\]: pickup player='.*:(.*)' item=(.*)$", line).groups()
                     when = datetime.fromtimestamp(int(when, 16))
                     print("PICKUP: ", when, player, item)
                     player = player.strip()

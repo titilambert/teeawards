@@ -1,0 +1,40 @@
+table.badges_desc_achievement, table.badges_achievement {
+    background: #474642;
+}
+
+table.badges_desc_achievement span.badge_name {
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+table.badges_achievement th.badges_title {
+    font-size: 20px;
+}
+
+table.badges_achievement td.badge_title {
+    color: #E7E5BE;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+table.badges_achievement img.badge_notok {
+    opacity: 0.20;
+    filter: alpha(opacity=20); /* For IE8 and earlier */
+}
+
+
+table.badges_desc_achievement {
+    color: #E7E5BE;
+}
+
+table.badges_desc_achievement ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+table.badges_desc_achievement td.descr {
+    padding: 5px 50px 5px 10px;
+    border-right: 1px solid #CCCCCC;
+}

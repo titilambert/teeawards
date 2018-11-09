@@ -19,7 +19,6 @@
   </thead>
   <tbody>
   <% sorted_items = sorted(item.keys(), reverse=True) %>
-    ${sorted_items}
     %for stat in sorted_items:
       <% sorted_data = sorted([x for x in item[stat].items()], key=lambda x: x[1], reverse=True) %>
       <tr>

@@ -1,30 +1,4 @@
-
-from teeawards.const import R_PICKUP_MAPPING, R_KILL_MAPPING
-
-RANKS = [
-        ('Private', 0),
-        ('Private First Class', 40),
-        ('Lance Corporal', 100),
-        ('Corporal', 250),
-        ('Sergeant', 500),
-        ('Staff Sergeant', 1000),
-        ('Gunnery Sergeant', 2000),
-        ('Master Sergeant', 4000),
-        ('First Sergeant', 6500),
-        ('Master Gunnery Sergeant', 10000),
-        ('Sergeant Major', 15000),
-        ('Sergeant Major of the Corps', 20000),
-        ('2nd Lieutenant', 30000),
-        ('1st Lieutenant', 40000),
-        ('Captain', 50000),
-        ('Major', 65000),
-        ('Lieutenant Colonel', 80000),
-        ('Colonel', 100000),
-        ('Brigadier General', 125000),
-        ('Major General', 150000),
-        ('Lieutenant General', 175000),
-        ('General', 200000),
-    ]
+from teeawards.const import R_PICKUP_MAPPING, R_KILL_MAPPING, RANKS
 
 
 def get_rounds(influx_client):
@@ -65,6 +39,56 @@ def get_suicides_by_players(influx_client):
     suicides_by_players = dict((x[0][1]['victim'], [y['suicides_value'] for y in x[1]][0]) for x in res.items())
     # [('player1', 5), ('player2', 4)]
     return suicides_by_players
+
+def get_rounds_by_players(influx_client):
+    """Get number of rounds by player.
+
+    * Excluding warmup round (round == '')
+    * Removing round duplication
+
+    .. todo:: validate this query
+    """
+    query = """select count(*) as rounds from (SELECT count(value) FROM join GROUP BY player, round) WHERE round != '' group by player"""
+    res = influx_client.query(query)
+    rounds_by_players = dict((x[0][1]['player'], [y['rounds_count'] for y in x[1]][0]) for x in res.items()) 
+    return rounds_by_players
+    
+
+#######################################################3
+
+def get_rounds_for_player(influx_client, player):
+    """Return nb rounds for one player."""
+    rounds_by_players = get_rounds_by_players(influx_client)
+    return rounds_by_players.get(player, 0)
+
+def get_rank_for_player(influx_client, player):
+    """Return rank for one player."""
+    rank_by_players = get_rank_by_players(influx_client)
+    return rank_by_players.get(player, 0)
+
+
+def get_kills_for_player(influx_client, player):
+    """Return kills for one player."""
+    kills_by_players = get_kills_by_players(influx_client)
+    return kills_by_players.get(player, 0)
+
+def get_deaths_for_player(influx_client, player):
+    """Return deaths for one player."""
+    deaths_by_players = get_deaths_by_players(influx_client)
+    return deaths_by_players.get(player, 0)
+
+def get_suicides_for_player(influx_client, player):
+    """Return suicides for one player."""
+    suicides_by_players = get_suicides_by_players(influx_client)
+    return suicides_by_players.get(player, 0)
+
+def get_score_for_player(influx_client, player):
+    score_by_players = get_scores(influx_client)
+    return score_by_players.get(player, 0)
+
+def get_ratio_for_player(influx_client, player):
+    ratio_by_players = get_ratios(influx_client)
+    return ratio_by_players.get(player, 0)
 
 #######################################################3
 
