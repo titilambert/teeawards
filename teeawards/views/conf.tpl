@@ -7,11 +7,7 @@
 </div>
 
 % if engine_settings and game_settings:
-  % if id:
   <form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/conf/edit/${id}">
-  % else:   
-  <form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/conf/edit">
-  % endif
     <button>Save configuration</button>
     <table>
       <thead>
@@ -27,7 +23,7 @@
           ${setting[1]}
         </td>
         <td>
-          <input name="${setting[0]}" type="text" value="${setting[2]}" />
+          <input name="${setting[0]}" type="text" value="${setting[2].decode('utf-8')}" />
         </td>
       </tr>
     % endfor
@@ -46,7 +42,7 @@
           ${setting[1]}
         </td>
         <td>
-          <input name="${setting[0]}" type="text" value="${setting[2]}" />
+          <input name="${setting[0]}" type="text" value="${setting[2].decode('utf-8')}" />
         </td>
       </tr>
     % endfor
@@ -65,14 +61,14 @@
           ${other_settings[0][1]}
         </td>
         <td>
-          <input name="${other_settings[0][0]}" type="file" value="${other_settings[0][2]}" />
+          <input name="${other_settings[0][0]}" type="file" value="${other_settings[0][2].decode('utf-8')}" />
         </td>
       </tr>
         <td colspan="2">
           % if other_settings[1][2]:
               Current server : ${other_settings[1][2]}
           % endif
-          <input name="${other_settings[1][0]}" type="hidden" value="${other_settings[1][2]}" />
+          <input name="${other_settings[1][0]}" type="hidden" value="${other_settings[1][2].decode('utf-8')}" />
         </td>
       <tr>
       </tr>
@@ -81,7 +77,7 @@
           ${other_settings[2][1]}
         </td>
         <td>
-          <input name="${other_settings[2][0]}" type="text" value="${other_settings[2][2]}" />
+          <input name="${other_settings[2][0]}" type="text" value="${other_settings[2][2].decode('utf-8')}" />
         </td>
       </tr>
     </table>

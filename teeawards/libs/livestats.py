@@ -1,17 +1,15 @@
-#from libs.lib import live_stats_queue, econ_command_queue, get_player_stats, get_player_score
-#from libs.rank import get_rank, ranks
-#from libs.achievement import achievement_livestat_list
+from libs.lib import live_stats_queue, econ_command_queue, get_player_stats, get_player_score
+from libs.rank import get_rank, ranks
+from libs.achievement import achievement_livestat_list
 import threading
-import queue
+import Queue
 import telnetlib
 
 
 class LiveStats(threading.Thread):
-    def __init__(self, econ_command_queue):
+    def __init__(self):
         threading.Thread.__init__(self)
         self.stop = threading.Event()
-        self.queue = queue.Queue()
-        self.econ_command_queue = econ_command_queue
 
     def stop_server(self):
         self.stop.set()
@@ -25,9 +23,9 @@ class LiveStats(threading.Thread):
 
         while not self.stopped():
             try:
-                stat = self.queue.get(True, 2)
+                stat = live_stats_queue.get(True, 2)
                 #print stat
-            except queue.Empty:
+            except Queue.Empty:
                 continue
             if stat['type'] == 'kill':
                 # Detect if is an autokill !!!
@@ -44,7 +42,7 @@ class LiveStats(threading.Thread):
                     new_rank = get_rank(player, data)
                     rank_name = ranks[new_rank][0]
                     msg = """%s is now "%s" """ % (player, rank_name)
-                    self.econ_command_queue.put({'type': 'broadcast', 'data': {'message': msg}})
+                    econ_command_queue.put({'type': 'broadcast', 'data': {'message': msg}})
                 # Check live achievements
                 for key, achievement in achievement_livestat_list.items():
                     achievement(stat['data'])
@@ -53,4 +51,4 @@ class LiveStats(threading.Thread):
                 rank = get_rank(player)
                 rank_name = ranks[rank][0]
                 msg = "WELCOME to the '%s' %s" % (rank_name, player)
-                self.econ_command_queue.put({'type': 'broadcast', 'data': {'message': msg}})
+                econ_command_queue.put({'type': 'broadcast', 'data': {'message': msg}})
