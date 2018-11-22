@@ -20,21 +20,19 @@
   </thead>
   <tbody>
     %for map_ in map_list:
-      <tr id="${map_['name']}">
+      <tr id="${map_['map_name']}">
         <td class="info">
-          <div class="title">${map_['name']}</div>
+          <div class="title">${map_['map_name']}</div>
           <br/>
-          Best mod: ${map_['map']['prefered_mod']}
+          Best mod: ${map_['prefered_mod']}
           <br/>
-          Min players: ${map_['map']['min_players']}
+          Min players: ${map_['min_players']}
           <br/>
-          Max players: ${map_['map']['max_players']}
+          Max players: ${map_['max_players']}
           <br/>
         </td>
         <td class="map_screenshot">
-          % if 'screenshot' in map_['map']:
-             <img src="/map_screenshots/${map_['map']['screenshot']}" >
-          % endif
+          <img src="/map/${map_['map_name']}/screenshot" >
         </td>
       </tr>
     %endfor

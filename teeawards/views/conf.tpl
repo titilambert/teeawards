@@ -7,7 +7,11 @@
 </div>
 
 % if engine_settings and game_settings:
+  % if id:
   <form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/conf/edit/${id}">
+  % else:   
+  <form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/conf/edit">
+  % endif
     <button>Save configuration</button>
     <table>
       <thead>

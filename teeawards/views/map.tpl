@@ -6,20 +6,41 @@
     Admin page
 </div>
 
-<form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/map/edit/${id}">
-  <button>Add map</button>
+% if id_ is not None:
+<form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/map/edit/${id_}">
+% else:
+<form enctype="multipart/form-data" name="new_conf" method="post" action="/admin/map/edit">
+% endif
+    % if map:
+    <button>Save map</button>
+    % else:
+    <button>Add map</button>
+    % endif
     <table>
       <thead>
         <tr>
           <th colspan="20">
             % if map:
-              Edit map ${map['name']}
+              Edit map ${map['map_name']}
             % else:
               Add map
             % endif
           </th>
         </tr>
       </thead>
+      <tr>
+        <td>
+            Map name
+        </td>
+        <td>
+          % if map:
+            ${map['map_name']}
+          <input name="map_name" type="hidden" value="${map['map_name']}" />
+          % else:
+          <input name="map_name" type="text" value="${map['map_name']}" />
+          % endif
+        </td>
+      </tr>
       <tr>
         <td>
           Map file
@@ -29,7 +50,7 @@
         </td>
         <td>
         % if map:
-         Map filename: <strong>${map['name']}.map</strong>
+         <strong>${map['map_name']}.map</strong>
         % else:
           <input name="map_file" type="file" value="" />
         % endif
@@ -40,7 +61,7 @@
           Minimum players
         </td>
         <td>
-          <input name="min_players" type="text" value="${map['map']['min_players'] if map else '0'}" />
+          <input name="min_players" type="text" value="${map['min_players'] if map else '0'}" />
         </td>
       </tr>
       <tr>
@@ -48,7 +69,7 @@
           Maximum players
         </td>
         <td>
-          <input name="max_players" type="text" value="${map['map']['max_players'] if map else '32'}" />
+          <input name="max_players" type="text" value="${map['max_players'] if map else '32'}" />
         </td>
       </tr>
       <tr>
@@ -56,7 +77,7 @@
           Best mod for this map
         </td>
         <td>
-          <input name="prefered_mod" type="text" value="${map['map']['prefered_mod'] if map else 'dm'}" />
+          <input name="prefered_mod" type="text" value="${map['prefered_mod'] if map else 'dm'}" />
         </td>
       </tr>
       <tr>
@@ -65,11 +86,15 @@
         </td>
         <td>
           <input name="screenshot" type="file" value="" />
+          % if map:
+          No file means no change
+          % endif
         </td>
       </tr>
     </table>
-  % if map:
-  <input name="map_name" type="hidden" value="${map['name']}" />
-  % endif
-  <button>Add map</button>
+    % if map:
+    <button>Save map</button>
+    % else:
+    <button>Add map</button>
+    % endif
 </form> 

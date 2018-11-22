@@ -145,25 +145,25 @@
       % for map_ in map_list:
           <tr>
             <td>
-              <a href="/maps#${map_['name']}">${map_['name']}</a>
+              <a href="/maps#${map_['map_name']}">${map_['map_name']}</a>
             </td>
             <td>
-              ${map_['map']['min_players']}
+              ${map_['min_players']}
             </td>
             <td>
-              ${map_['map']['max_players']}
+              ${map_['max_players']}
             </td>
             <td>
-              ${map_['map']['prefered_mod']}
+              ${map_['prefered_mod']}
             </td>
             <td>
-              ${map_['map']['likes'] if 'like' in map_['map'] else '0'}
+              ${map_['likes'] if 'like' in map_ else '0'}
             </td>
             <td>
-              <a href="/admin/map/edit/${map_['name']}">Edit</a>
+              <a href="/admin/map/edit/${map_['map_name']}">Edit</a>
             </td>
             <td class="last">
-              <a href="/admin/map/delete/${map_['_id']}">Delete</a>
+              <a href="/admin/map/delete/${map_['map_name']}">Delete</a>
             </td>
           </tr>
       % endfor
