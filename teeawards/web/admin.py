@@ -4,11 +4,12 @@ import hug
 
 from teeawards.libs.teeworldsserver import save_conf, get_configs, get_config, delete_conf, other_settings, engine_settings, game_settings
 
+from teeawards.auth import get_auth
 from teeawards.libs.maps import get_maps, save_map, get_map, delete_map
 from teeawards.web.directives import mako_template
 
 
-@hug.get('/admin', output=hug.output_format.html)
+@hug.get('/admin', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def admin(request=None, mako_tpl:mako_template='admin'):
     ctx = request.context['tpl_ctx']
     ctx['page'] = 'admin'
@@ -27,9 +28,9 @@ def admin(request=None, mako_tpl:mako_template='admin'):
     return mako_tpl.render(**ctx)
 
 
-@hug.get('/admin/conf/edit', output=hug.output_format.html)
-@hug.get('/admin/conf/edit/', output=hug.output_format.html)
-@hug.get('/admin/conf/edit/{id_}', output=hug.output_format.html)
+@hug.get('/admin/conf/edit', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.get('/admin/conf/edit/', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.get('/admin/conf/edit/{id_}', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def conf_edit(id_=None, request=None, mako_tpl:mako_template='conf'):
     ctx = request.context['tpl_ctx']
     ctx['page'] = 'admin'
@@ -67,22 +68,22 @@ def conf_edit(id_=None, request=None, mako_tpl:mako_template='conf'):
     return mako_tpl.render(**ctx)
 
 
-@hug.post('/admin/conf/edit', output=hug.output_format.html)
-@hug.post('/admin/conf/edit/{id_}', output=hug.output_format.html)
+@hug.post('/admin/conf/edit', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.post('/admin/conf/edit/{id_}', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def conf_edit(body, id_=None, request=None, mako_tpl:mako_template='conf'):
     save_conf(body, id_)
     hug.redirect.found('/admin')
 
 
-@hug.get('/admin/conf/delete/{id_}', output=hug.output_format.html)
+@hug.get('/admin/conf/delete/{id_}', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def conf_delete(id_=None, request=None, mako_tpl:mako_template='conf'):
     delete_conf(id_)
     hug.redirect.found('/admin')
 
 
-@hug.get('/admin/map/edit', output=hug.output_format.html)
-@hug.get('/admin/map/edit/', output=hug.output_format.html)
-@hug.get('/admin/map/edit/{id_}', output=hug.output_format.html)
+@hug.get('/admin/map/edit', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.get('/admin/map/edit/', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.get('/admin/map/edit/{id_}', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def map_edit(id_=None, request=None, mako_tpl:mako_template='map'):
     ctx = request.context['tpl_ctx']
     ctx['page'] = 'admin'
@@ -99,9 +100,9 @@ def map_edit(id_=None, request=None, mako_tpl:mako_template='map'):
     return mako_tpl.render(**ctx)
 
 
-@hug.post('/admin/map/edit', output=hug.output_format.html)
-@hug.post('/admin/map/edit/', output=hug.output_format.html)
-@hug.post('/admin/map/edit/{id_}', output=hug.output_format.html)
+@hug.post('/admin/map/edit', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.post('/admin/map/edit/', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
+@hug.post('/admin/map/edit/{id_}', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def map_save(body, id_=None, request=None, mako_tpl:mako_template='map'):
     ctx = request.context['tpl_ctx']
     ctx['page'] = 'admin'
@@ -112,14 +113,14 @@ def map_save(body, id_=None, request=None, mako_tpl:mako_template='map'):
 
     hug.redirect.found('/admin')
 
-@hug.get('/admin/map/delete/{id_}', output=hug.output_format.html)
+@hug.get('/admin/map/delete/{id_}', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def map_delete(id_=None, request=None, mako_tpl:mako_template='conf'):
     delete_map(id_)
     hug.redirect.found('/admin')
   
 
 
-@hug.post('/admin/toggle_server/', output=hug.output_format.html)
+@hug.post('/admin/toggle_server/', output=hug.output_format.html, requires=hug.authentication.basic(get_auth))
 def map_delete(body, request=None, mako_tpl:mako_template='conf'):
     if body['toggle_server'] == 'start':
         conf_name = body['config']

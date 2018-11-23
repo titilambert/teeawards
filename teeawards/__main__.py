@@ -1,4 +1,5 @@
 from io import StringIO
+import argparse
 
 from influxdb import InfluxDBClient
 from mako.runtime import Context
@@ -6,9 +7,8 @@ import hug
 from hug.middleware import SessionMiddleware
 from hug.store import InMemoryStore
 
-
+from teeawards.auth import set_admin_auth
 from teeawards.logger import http_logger
-#from teeawards.web import index, static, admin, conf, map
 from teeawards.web import index, static, admin, maps, ladder, items, ranks, achievements, player_stats
 #from teeawards.server.conf import ConfigManager
 #from teeawards.server.map import MapManager
@@ -25,6 +25,14 @@ def with_other_apis():
 
 def main():
     """Senoapi entrypoint function."""
+    parser = argparse.ArgumentParser(description='Teeawards server.')
+    parser.add_argument('--password', '-p', default="password", help='Admin password.')
+    parser.add_argument('--username', '-u', default="admin", help='Admin username.')
+    arguments = parser.parse_args()
+    # Set admin password
+    set_admin_auth(arguments.username, arguments.password)
+
+    # Influxdb
     influx_client = InfluxDBClient('localhost', 8086, 'root', 'root', 'teeawards')
     influx_client.create_database('teeawards')
 
