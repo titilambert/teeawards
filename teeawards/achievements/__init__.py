@@ -19,8 +19,10 @@
 #__all__ = achievements
 
 
-from teeawards.achievements.badges.badges import desc_badges
+from teeawards.achievements.badges.badges import desc_badges, player_badges
 
 achievement_desc_list = {}
 achievement_desc_list['desc_badges'] = desc_badges
 
+achievement_player_list = {}
+achievement_player_list['player_badges'] = player_badges

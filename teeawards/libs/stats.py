@@ -53,6 +53,41 @@ def get_rounds_by_players(influx_client):
     rounds_by_players = dict((x[0][1]['player'], [y['rounds_count'] for y in x[1]][0]) for x in res.items()) 
     return rounds_by_players
     
+def get_teamkills_by_players(influx_client):
+    """Get number of teamkills by players."""
+    round_list = get_rounds(influx_client)
+    query = "SELECT count(*) AS kills FROM kills WHERE killer_team = victim_team AND killer_team != '0' AND round =~ /{}/ GROUP BY killer".format("|".join(round_list))
+    res = influx_client.query(query)
+    rounds_by_players = dict((x[0][1]['player'], [y['kills_count'] for y in x[1]][0]) for x in res.items())
+    return rounds_by_players
+
+def get_kills_by_players_weapon(influx_client):
+    """Get kills by player."""
+    round_list = get_rounds(influx_client)
+
+    query = "SELECT count(*) AS kills FROM kills WHERE round =~ /{}/ GROUP BY killer, weapon".format("|".join(round_list))
+    res = influx_client.query(query)
+    ret = {}
+    tmp = [(x[0][1]['killer'], {x[0][1]['weapon']: [y['kills_value'] for y in x[1]][0]}) for x in res.items()]  
+    for player, stat in tmp:
+        ret.setdefault(player, {})
+        ret[player].update(stat)
+    # {'player1': {'-3': 3, '1': 2, '3': 1}, 'player2': {'-3': 3, '0': 1, '1': 1, '3': 2}}
+    return ret
+
+def get_pickups_by_players_items(influx_client):
+    """Get pickup by players."""
+    round_list = get_rounds(influx_client)
+
+    query = "SELECT count(*) AS pickup FROM pickup WHERE round =~ /{}/ GROUP BY item, player".format("|".join(round_list))
+    res = influx_client.query(query)
+
+    pickup_by_user = {}
+    for key, data in res.items():
+        pickup_by_user.setdefault(key[1]['player'], {})
+        str_key = R_PICKUP_MAPPING[key[1]['item']]
+        pickup_by_user[key[1]['player']][str_key] = [x['pickup_value'] for x in data][0]
+    return pickup_by_user
 
 #######################################################3
 
@@ -82,6 +117,11 @@ def get_suicides_for_player(influx_client, player):
     suicides_by_players = get_suicides_by_players(influx_client)
     return suicides_by_players.get(player, 0)
 
+def get_teamkills_for_player(influx_client, player):
+    """Return teamkills for one player."""
+    teamkills_by_players = get_teamkills_by_players(influx_client)
+    return teamkills_by_players.get(player, 0)
+
 def get_score_for_player(influx_client, player):
     score_by_players = get_scores(influx_client)
     return score_by_players.get(player, 0)
@@ -89,6 +129,14 @@ def get_score_for_player(influx_client, player):
 def get_ratio_for_player(influx_client, player):
     ratio_by_players = get_ratios(influx_client)
     return ratio_by_players.get(player, 0)
+
+def get_kills_by_weapon_for_player(influx_client, player):
+    kills_by_players_weapon = get_kills_by_players_weapon(influx_client)
+    return kills_by_players_weapon.get(player, {})
+
+def get_pickups_by_items_for_player(influx_client, player):
+    pickups_by_players = get_pickups_by_players_items(influx_client)
+    return pickups_by_players.get(player, {})
 
 #######################################################3
 
@@ -155,7 +203,7 @@ def get_stats_by_players(influx_client):
     #import ipdb;ipdb.set_trace()
 
 def get_stats_by_items(influx_client):
-    """Get best victim."""
+    """???"""
     ret = {}
     round_list = get_rounds(influx_client)
 
@@ -197,7 +245,6 @@ def get_stats_by_items(influx_client):
         ret.setdefault(item, {})
         ret[item]['pickup'] = stat
 
-#    import ipdb;ipdb.set_trace()
     return ret
 
 

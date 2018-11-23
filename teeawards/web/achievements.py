@@ -29,5 +29,8 @@ def get_schievements_images(achievement, filename, request):
 
 @hug.get('/css/achievements/{achievement}/{filename}', output=hug.output_format.html)
 def get_schievements_css(achievement, filename, response, request):
+    filepath = os.path.join(_DIR_PATH, "..", "achievements", achievement, "static", "css", filename)
     response.set_header('Content-type', "text/css")
-    return os.path.join(_DIR_PATH, "..", "achievements", achievement, "static", "css", filename)
+    with open(filepath, "r") as sfh:
+        return sfh.read()
+

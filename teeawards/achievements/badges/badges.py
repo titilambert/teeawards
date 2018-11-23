@@ -6,6 +6,8 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 
+from teeawards.const import R_KILL_MAPPING, KILL_MAPPING
+from teeawards.libs.stats import get_kills_by_weapon_for_player, get_pickups_by_items_for_player
 #from bottle import mako_view
 #from datetime import datetime, timedelta
 #from libs.achievement import achievement_desc_list, achievement_player_list, achievement_livestat_list
@@ -26,18 +28,16 @@ def desc_badges():
     return ret
 
 #@mako_view("player_badges")
-def player_badges(player, gametype):
-    player_stats = get_stats(player, gametype)
-    kills, _, items = get_player_stats(player)
+def player_badges(influx_client, player, gametype):
+#    player_stats = get_stats(player, gametype)
+#    kills, _, items = get_player_stats(player)
+    kills = get_kills_by_weapon_for_player(influx_client, player)
+    items = get_pickups_by_items_for_player(influx_client, player)
+    
 
-    badge_result = dict([(x, 0) for x in badge_list])
+    badge_result = dict((x, 0) for x in badge_list)
     for badge, limits in badge_list.items():
-        if badge in kills['weapon']:
-            badge_result[badge] = 0
-            for i, l in enumerate(limits):
-                if kills['weapon'][badge] > l:
-                    badge_result[badge] = i + 1
-        elif badge in items:
+        if badge in ['heart', 'shield']:
             badge_result[badge] = 0
             for i, l in enumerate(limits):
                 if items[badge] > l:
@@ -45,10 +45,25 @@ def player_badges(player, gametype):
         elif badge == 'winner':
             badge_result[badge] = 0
             for i, l in enumerate(limits):
-                if player_stats.get('first', 0) > l:
+#                import ipdb;ipdb.set_trace()
+                pass
+                # TODO
+#                if player_stats.get('first', 0) > l:
+#                    badge_result[badge] = i + 1
+        elif KILL_MAPPING[badge] in kills.keys():
+            badge_result[badge] = 0
+            for i, l in enumerate(limits):
+                if kills[KILL_MAPPING[badge]] > l:
                     badge_result[badge] = i + 1
 
-    return {'results': badge_result}
+
+
+    template_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "views"))
+    mylookup = TemplateLookup(directories=[template_folder])
+    mytemplate = mylookup.get_template('player_badges.tpl')
+    ret = mytemplate.render(**{'results': badge_result})
+
+    return ret
 
 
 def livestat_badges(new_data):

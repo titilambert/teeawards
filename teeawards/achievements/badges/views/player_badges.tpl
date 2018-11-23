@@ -13,7 +13,7 @@
         <td class="badge_title">
           ${badge}
         </td>
-        % for i in xrange(1, 4): 
+        % for i in range(1, 4): 
         <td ${ 'class="last"' if i == 3 else ''}>
           % if stat >= i :
             <img class="badge" src="/images/achievements/badges/${badge}_${i}.png" >

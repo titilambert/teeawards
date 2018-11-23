@@ -4,8 +4,9 @@ from teeawards.const import KILL_MAPPING, PICKUP_MAPPING, RANKS
 from teeawards.libs.stats import (
     get_kills_for_player, get_rank_for_player, get_score_for_player,
     get_ratio_for_player, get_deaths_for_player, get_suicides_for_player,
-    get_rounds_for_player
+    get_rounds_for_player, get_teamkills_for_player
 )
+from teeawards.achievements import achievement_player_list
 from teeawards.web.directives import mako_template
 
 
@@ -15,6 +16,8 @@ from teeawards.web.directives import mako_template
 #def ladder(player, gametype='all', body=None, request=None, mako_tpl:mako_template='player_stats'):
 def ladder(player, body=None, request=None, mako_tpl:mako_template='player_stats'):
     ctx = request.context['tpl_ctx']
+    # FIXME
+    gametype = None
 
     ctx = {}
 
@@ -26,7 +29,6 @@ def ladder(player, body=None, request=None, mako_tpl:mako_template='player_stats
     ctx['player'] = player
 
     rank_level = get_rank_for_player(influx_client, player)
-#    import ipdb; ipdb.set_trace()
     ctx['rank'] = (rank_level, RANKS[rank_level][0], RANKS[rank_level][1])
     ctx['nextrank'] = (rank_level + 1, RANKS[rank_level + 1][0], RANKS[rank_level + 1][1])
     ctx['score'] = get_score_for_player(influx_client, player)
@@ -35,7 +37,10 @@ def ladder(player, body=None, request=None, mako_tpl:mako_template='player_stats
     ctx['deaths'] = get_deaths_for_player(influx_client, player)
     ctx['suicides'] = get_suicides_for_player(influx_client, player)
     ctx['rounds'] = get_rounds_for_player(influx_client, player)
+    ctx['teamkills'] = get_teamkills_for_player(influx_client, player)
 
-
+    ctx['achievement_list'] = {}
+    for key, badge_func in achievement_player_list.items():
+        ctx['achievement_list'][key] = badge_func(influx_client, player, gametype)
 
     return mako_tpl.render(**ctx)
