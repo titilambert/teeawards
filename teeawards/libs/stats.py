@@ -4,8 +4,10 @@ from teeawards.const import R_PICKUP_MAPPING, R_KILL_MAPPING, RANKS
 def get_rounds(influx_client):
     """Get rounds."""
     res = influx_client.query('select round from round')
-    round_list = list(set([str(r['round']) for r in res.items()[0][1]]))
-    return round_list
+    if len(res):
+        round_list = list(set([str(r['round']) for r in res.items()[0][1]]))
+        return round_list
+    return []
 
 
 def get_kills_by_players(influx_client):
@@ -199,7 +201,7 @@ def get_stats_by_players(influx_client):
                            'rank': rank_by_players.get(player, 0),
                            }
         return res
-    return None
+    return {}
     #import ipdb;ipdb.set_trace()
 
 def get_stats_by_items(influx_client):

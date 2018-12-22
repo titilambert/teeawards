@@ -29,7 +29,7 @@ def main():
     parser.add_argument('--password', '-p', default="password", help='Admin password.')
     parser.add_argument('--username', '-u', default="admin", help='Admin username.')
     arguments = parser.parse_args()
-    # Set admin password
+    # Set webadmin password
     set_admin_auth(arguments.username, arguments.password)
 
     # Influxdb

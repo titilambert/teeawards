@@ -108,14 +108,26 @@ def save_conf(request, id_=None):
         res = fs.find_one({'filename': str(object_id)})
         try:
             server_file = fs.new_file(filename=str(object_id))
-            server_file.write(conf['server_binary'])
+            server_file.write(params['server_binary'])
         finally:
             server_file.close()
             if res:
                 fs.delete(res._id)
 
+def export_binary(conf):
+    object_id = str(conf['_id'])
+    fs = GridFS(conf_table.database)
+    res = fs.find_one({'filename': object_id})
+    if res:
+        binary_file = os.path.join(data_folder, "teeworlds_srv")
+        with open(binary_file, "wb") as fhs:
+            fhs.write(res.read())
+        print(binary_file)
+        return binary_file
+    return None
+
 def export_conf(conf):
-    filename = data_folder + '/teeworlds.conf'
+    filename = os.path.join(data_folder, 'teeworlds.conf')
     f = open(filename, 'w')
     for setting, value in conf['conf'].items():
         f.write("%s %s\n" % (setting, value.decode('utf-8')))
@@ -202,13 +214,13 @@ class TeeWorldsServerManager(object):
         f.write('add_path $CURRENTDIR')
         f.close()
         # Server Command
-        if self.conf['conf'].get('server', ''):
-            # TODO fix me
-            server_bin = self.conf['conf']['server']
+        binary_file = export_binary(self.conf)
+        if binary_file:
+            server_bin = binary_file
         else:
             server_bin = "`which teeworlds-server`"
 #        self.command = 'cd %s && %s -f %s' % (data_folder, server_bin, os.path.abspath(filename))
-        self.command = '%s -f %s' % (server_bin, os.path.basename(filename))
+        self.command = 'cd %s && %s -f %s' % (data_folder, server_bin, os.path.basename(filename))
         # Open pty
         master, slave = pty.openpty()
         # Launch server
